@@ -4,7 +4,7 @@ import "leaflet/dist/leaflet.css";
 //初始化地图中心和地图尺寸
 /**
  * 注册地图瓦片
- * @param {string} area_idx 地图别名 twt25：大世界 qd28：梦想群岛 yxg2：渊下宫/三界路飨祭 qd:群岛1 qd2:群岛2 
+ * @param {string} area_idx 地图别名 twt29：大世界 qd28：梦想群岛 yxg2：渊下宫/三界路飨祭 qd:群岛1 qd2:群岛2 
  * @param {Array} mapCenter 地图中心坐标
  * @param {Array} mapSize 地图尺寸
  * @param {Array} mapTilesOffset 地图瓦片的偏移
@@ -43,14 +43,14 @@ function create_map_layer(area_idx, mapCenter, mapSize, mapTilesOffset = [0, 0])
 }
 /**
  * 生成地图
- * @param {string} area_idx 地图别名 twt25：大世界 qd28：梦想群岛 yxg2：渊下宫/三界路飨祭 qd:群岛1 qd2:群岛2 
+ * @param {string} area_idx 地图别名 twt29：大世界 qd28：梦想群岛 yxg2：渊下宫/三界路飨祭 qd:群岛1 qd2:群岛2 
  * @param {object} settings leaflet 地图设置
  * @param {Array} mapCenter 地图中心坐标
  * @param {Array} mapSize 地图尺寸
  * @param {Array} mapTilesOffset 地图瓦片的偏移
  * @returns 地图对象
  */
-function create_map(area_idx, settings, mapCenter = [3568, 6286], mapSize = [12288, 15360], mapTilesOffset = [0, 0]) {
+function create_map(area_idx, settings, mapCenter = [3568, 6286], mapSize = [14080, 15360], mapTilesOffset = [-1792, 0]) {
     //设置地图要使用的坐标参考系（CRS），本地图使用simple类型CRS，将经度和纬度直接映射到x和y。
     let mapCRS = L.Util.extend({}, L.CRS.Simple, {
         //用给定的系数表示变换对象。
@@ -114,8 +114,34 @@ function add_map_overlay_qd(type, index) {
     let imageBounds = [qd_postion[type]]
     return L.imageOverlay(imageUrl, imageBounds)
 }
+function init_map(area) {
+    switch (area) {
+        case '群岛':
+            return create_map(
+                "qd28",
+                {
+                    center: [600, -2190],
+                    zoom: -2,
+                },
+                [3568, 6286],
+                [8192, 8192]
+            );
+        case '渊下宫':
+        case '三界路飨祭':
+            return create_map('yxg2', {
+            },
+                [3568, 6286],
+                [12288, 12288],
+                [0, 0]
+            )
+        default:
+            return create_map('twt29');
+
+    }
+}
 export {
     create_map_layer,
     create_map,
-    add_map_overlay_qd
+    add_map_overlay_qd,
+    init_map
 }

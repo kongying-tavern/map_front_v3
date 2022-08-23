@@ -1,7 +1,8 @@
 import { route } from 'quasar/wrappers'
 import { createRouter, createMemoryHistory, createWebHistory, createWebHashHistory } from 'vue-router'
 import routes from './routes'
-
+import { quest_request } from "../service/user_request"
+import { set_user_token, get_user_token } from "../api/common"
 /*
  * If not building with SSR mode, you can
  * directly export the Router instantiation;
@@ -25,6 +26,17 @@ export default route(function (/* { store, ssrContext } */) {
     // quasar.conf.js -> build -> publicPath
     history: createHistory(process.env.VUE_ROUTER_BASE)
   })
-
+  Router.beforeEach((to, from, next) => {
+    //鉴定是否存在token，若否，默认以游客身份登录
+    if (get_user_token() == null) {
+      quest_request().then(res => {
+        set_user_token(res.data.access_token, res.data.expires_in)
+        next();
+      })
+    }
+    else {
+      next();
+    }
+  })
   return Router
 })
