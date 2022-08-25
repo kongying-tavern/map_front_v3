@@ -1,5 +1,9 @@
 import enUS from './en-US'
+import zhCN from './zh-CN'
+import JA from './JA'
 
 export default {
-  'en-US': enUS
+  'zh-CN': zhCN,
+  'en-US': enUS,
+  'ja': JA
 }
