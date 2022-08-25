@@ -1,6 +1,6 @@
 <!-- 地区选择器 -->
 <template>
-  <div class="area_selector">
+  <div class="area_selector gt-sm">
     <div class="area_selector_container">
       <!-- 右方地区信息和切换部分 -->
       <div

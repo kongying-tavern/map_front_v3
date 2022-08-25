@@ -1,5 +1,9 @@
 //各个选择器的样式
-
+@media screen and (max-height: 650px) {
+    .item_selector {
+        display: none;
+    }
+}
 //地区选择器的样式
 .area_selector {
     position: absolute;

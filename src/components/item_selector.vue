@@ -1,6 +1,6 @@
 <!-- 物品选择器 -->
 <template>
-  <div class="item_selector" :class="{ off: selector_type }">
+  <div class="item_selector gt-md"  :class="{ off: selector_type }">
     <div class="item_selector_main">
       <!-- 折叠按钮 -->
       <div class="fold_btn" @click="selector_type = !selector_type">

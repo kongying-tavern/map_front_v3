@@ -149,6 +149,10 @@ export default {
     },
   },
   mounted() {
+    if(this.$q.platform.is.mobile)
+    {
+      alert('测试版暂未开放手机端使用，请切换至电脑端以正常使用')
+    }
     this.map = init_map();
     this.layergroup_map = new Map();
     if (localStorage.getItem("marked_layers") == null) {
