@@ -1,11 +1,12 @@
 <template>
   <q-layout class="main">
     <!-- 地图容器 -->
+    <div class="map_overlay"></div>
     <div class="map_containor">
       <div class="stars"></div>
       <div class="twinkling"></div>
       <div id="map"></div>
-      <q-inner-loading :showing="loading" style="z-index: 1000">
+      <q-inner-loading :showing="loading" style="z-index: 2000">
         <q-spinner-gears size="50px" color="primary" />
       </q-inner-loading>
     </div>
@@ -149,9 +150,8 @@ export default {
     },
   },
   mounted() {
-    if(this.$q.platform.is.mobile)
-    {
-      alert('测试版暂未开放手机端使用，请切换至电脑端以正常使用')
+    if (this.$q.platform.is.mobile) {
+      alert("测试版暂未开放手机端使用，请切换至电脑端以正常使用");
     }
     this.map = init_map();
     this.layergroup_map = new Map();

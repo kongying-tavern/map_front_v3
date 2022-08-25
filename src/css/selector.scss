@@ -11,7 +11,7 @@
     height: 130px;
     top: 0;
     right: 0;
-    z-index: 3000;
+    z-index: 2000;
     .area_selector_container {
         font-family: HYWH;
         font-weight: 400;
@@ -164,7 +164,7 @@
     position: absolute;
     top: 133px;
     right: 24px;
-    z-index: 5000;
+    z-index: 2000;
     .item_selector_main {
         position: relative;
         .fold_btn {
