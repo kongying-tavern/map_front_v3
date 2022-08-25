@@ -23,7 +23,7 @@
           </div>
           <div class="area_icon">
             <q-img
-              :src="`/src/assets/imgs/${selected_area.name}_Color.png`"
+              :src="`/imgs/${selected_area.name}_Color.png`"
               spinner-color="white"
             />
           </div>
@@ -42,13 +42,13 @@
             >
               <q-img
                 v-if="selected_area.areaId != item.areaId"
-                :src="`/src/assets/imgs/${item.name}_off.png`"
+                :src="`/imgs/${item.name}_off.png`"
                 style="height: 72px; width: 72px"
                 no-spinner
               ></q-img>
               <q-img
                 v-else
-                :src="`/src/assets/imgs/Light_${item.name}.png`"
+                :src="`/imgs/Light_${item.name}.png`"
                 style="height: 120x; width: 120px"
                 no-spinner
               ></q-img>
@@ -76,6 +76,27 @@
         </div>
       </div>
     </div>
+    <!-- 功能按钮 -->
+    <div class="extra_btn row">
+      <div
+        class="btn feedback"
+        @click="openURL('https://yuanshen.site/docs/communication-group.html')"
+      >
+        <q-tooltip> 加入讨论组 </q-tooltip>
+      </div>
+      <div
+        class="btn discuss"
+        @click="openURL('https://support.qq.com/product/321980')"
+      >
+        <q-tooltip> 反馈/建议 </q-tooltip>
+      </div>
+      <div
+        class="btn save"
+        @click="openURL('https://yuanshen.site/docs/download-client.html')"
+      >
+        <q-tooltip> 下载客户端 </q-tooltip>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -83,6 +104,7 @@
 import { mapStores } from "pinia";
 import { useCounterStore } from "../stores/example-store";
 import { query_area } from "../service/base_request";
+import { openURL } from "quasar";
 export default {
   name: "AreaSelector",
   data() {
@@ -96,6 +118,7 @@ export default {
     };
   },
   methods: {
+    openURL,
     //切换地区选择器的显隐
     switch_area_show() {
       this.area_selector_show = !this.area_selector_show;

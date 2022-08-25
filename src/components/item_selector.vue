@@ -37,7 +37,7 @@
             >
               <div class="row items-center">
                 <q-img
-                  :src="`/src/assets/imgs/itemicon_${item.name}.png`"
+                  :src="`/imgs/itemicon_${item.name}.png`"
                   style="width: 32px; height: 32px; margin-left: 12px"
                 ></q-img>
                 <span class="item_name">{{ item.name }}</span>
@@ -105,6 +105,30 @@
           <q-spinner-gears size="50px" color="primary" />
         </q-inner-loading>
       </div>
+      <!-- 已选项 -->
+      <div class="item_selected_bar" v-show="selected_item_list.length != 0">
+        <div class="close-all" @click="closeall"></div>
+        <div class="item_list">
+          <q-scroll-area
+            style="height: 90%; width: 100%"
+            :thumb-style="{ background: 'none' }"
+          >
+            <div
+              class="item"
+              v-for="(item, index) in selected_item_list"
+              :key="index"
+              @click="insert_selected_item(item)"
+            >
+              <div class="item_close"></div>
+              <q-img
+                :src="get_itemicon(item)"
+                style="width: 32px; height: 32px; margin: 6px 0px 5px 6px"
+              ></q-img>
+              <q-tooltip>{{ item.area }}-{{ item.name }}</q-tooltip>
+            </div>
+          </q-scroll-area>
+        </div>
+      </div>
     </div>
   </div>
 </template>
@@ -118,6 +142,7 @@ import {
   query_itemlayer_infolist,
   query_iconlist,
 } from "../service/base_request";
+import { switch_area_list } from "../api/common";
 export default {
   name: "ItemSelector",
   data() {
@@ -174,7 +199,7 @@ export default {
         }
         for (let i of res.data.data.record) {
           for (let j of i.typeIdList) {
-            if (i.hiddenFlag == 0) {
+            if (i.hiddenFlag == 0 && i.name.indexOf("测试") == -1) {
               this.item_list[j].push(i);
             }
           }
@@ -214,39 +239,64 @@ export default {
         (item) => item.itemId == value.itemId
       );
       if (index == -1) {
+        value.area = this.mainStore.selected_child_area.name;
         this.selected_item_list.push(value);
+        this.mainStore.changeitem = {
+          item: value,
+          type: 1,
+        };
       } else {
+        this.mainStore.changeitem = {
+          item: this.selected_item_list[index],
+          type: 0,
+        };
         this.selected_item_list.splice(index, 1);
       }
       this.mainStore.selected_item_list = this.selected_item_list;
+      if (value.typeIdList.includes(10) || value.typeIdList.includes(11)) {
+        this.$emit("refresh");
+      }
+    },
+    //清除所有已选项
+    closeall() {
+      this.selected_item_list = [];
+      this.$emit("clear");
     },
   },
   mounted() {
-    //查询所有物品图标
-    query_iconlist({
-      iconIdList: [],
-      typeIdList: [],
-      current: 0,
-      size: 9999,
-    }).then((res) => {
-      this.icon_list = res.data.data.record;
-    });
-    //查询所有分类
-    query_type(1, {
-      current: 1,
-      typeIdList: [],
-      size: 999,
-    }).then((res) => {
-      for (let i of res.data.data.record) {
-        if (i.hiddenFlag != 1) {
-          this.type_list.push(i);
-          this.type_list_map.set(i.name, {
-            ...i,
-            fold: false,
-          });
-        }
-      }
-    });
+    this.item_loading = true;
+    this.$axios
+      .all([
+        //查询所有物品图标
+        query_iconlist({
+          iconIdList: [],
+          typeIdList: [],
+          current: 0,
+          size: 9999,
+        }),
+        //查询所有分类
+        query_type(1, {
+          current: 1,
+          typeIdList: [],
+          size: 999,
+        }),
+      ])
+      .then(
+        this.$axios.spread((res1, res2) => {
+          this.icon_list = res1.data.data.record;
+          this.$emit("callback", this.icon_list);
+          for (let i of res2.data.data.record) {
+            if (i.hiddenFlag != 1) {
+              this.type_list.push(i);
+              this.type_list_map.set(i.name, {
+                ...i,
+                fold: false,
+              });
+            }
+          }
+          this.item_loading = false;
+        })
+      );
   },
   computed: {
     //请参考pinia不使用组合式api的用法的说明文档
@@ -256,7 +306,9 @@ export default {
   watch: {
     "mainStore.selected_child_area": function (val) {
       this.get_itemlist(val.areaId);
-      this.selected_item_list = [];
+      if (switch_area_list.includes(val.name)) {
+        this.closeall();
+      }
     },
   },
 };

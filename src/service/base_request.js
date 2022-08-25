@@ -1,4 +1,23 @@
 import { api } from '../boot/axios'
+import { get_user_token } from "../api/common"
+function default_request(url, data, method = 'post') {
+    return api({
+        method: method,
+        url: url,
+        data: JSON.stringify(data),
+        transformRequest: (data) => {
+            if (get_user_token() == null) {
+                alert('用户凭证已过期，请刷新页面')
+                window.location.reload();
+            }
+            return data
+        },
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${get_user_token()}`
+        }
+    })
+}
 /**
  * 列出地区
  * @param {Number} parentId 父级ID,默认为-1
@@ -6,7 +25,7 @@ import { api } from '../boot/axios'
  * @returns 地区信息
  */
 function query_area(data) {
-    return api.post('/area/get/list', data);
+    return default_request('/area/get/list', data);
 }
 /**
  * 列出物品类型
@@ -17,7 +36,7 @@ function query_area(data) {
  * @returns 物品类型信息
  */
 function query_type(self, data) {
-    return api.post(`/item/get/type/${self}`, data);
+    return default_request(`/item/get/type/${self}`, data);
 }
 /**
  * 列出物品列表
@@ -28,7 +47,7 @@ function query_type(self, data) {
  * @returns 物品列表信息
  */
 function query_itemlist(data) {
-    return api.post(`/item/get/list`, data);
+    return default_request(`/item/get/list`, data);
 }
 /**
  * 列出物品信息列表
@@ -39,7 +58,7 @@ function query_itemlist(data) {
  * @returns 物品点位id信息
  */
 function query_itemlayer_infolist(data) {
-    return api.post(`/marker/get/list_byinfo`, data);
+    return default_request(`/marker/get/list_byinfo`, data);
 }
 /**
  * 列出所有图标
@@ -48,7 +67,7 @@ function query_itemlayer_infolist(data) {
  * @returns 物品点位图标信息
  */
 function query_iconlist(data) {
-    return api.post(`/icon/get/list`, data);
+    return default_request(`/icon/get/list`, data);
 }
 export {
     query_area,

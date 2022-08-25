@@ -5,34 +5,155 @@
       <div class="stars"></div>
       <div class="twinkling"></div>
       <div id="map"></div>
+      <q-inner-loading :showing="loading" style="z-index: 1000">
+        <q-spinner-gears size="50px" color="primary" />
+      </q-inner-loading>
     </div>
     <!-- 地区选择器 -->
     <area-selector></area-selector>
     <!-- 物品筛选器 -->
-    <item-selector></item-selector>
+    <item-selector
+      @callback="item_selector_callback"
+      @clear="clearall"
+      @refresh="refresh_layergroup"
+    ></item-selector>
+    <!-- 地图上点位的弹窗 -->
+    <div id="popup_window" ref="window" v-show="popup_window_show">
+      <popup-window
+        :layer="handle_layer"
+        @callback="popup_callback"
+      ></popup-window>
+    </div>
   </q-layout>
 </template>
 
 <script>
 import ItemSelector from "../components/item_selector.vue";
 import AreaSelector from "../components/area_selector.vue";
+import PopupWindow from "../components/popup_window.vue";
 import { init_map } from "../api/map";
 import { mapStores } from "pinia";
 import { useCounterStore } from "../stores/example-store";
+import { layergroup_register, layer_mark } from "../api/layer";
+import { query_itemlayer_infolist } from "../service/base_request";
+import { switch_area_list } from "../api/common";
 export default {
   name: "IndexPage",
   data() {
-    return {};
+    return {
+      loading: false,
+      icon_list: [],
+      item_list: [],
+      popup_window_show: false,
+      handle_layer: null,
+      handle_layergroup: null,
+    };
   },
   components: {
     ItemSelector,
     AreaSelector,
+    PopupWindow,
   },
   methods: {
-    switch(area) {},
+    //返回图标数组
+    item_selector_callback(value) {
+      this.icon_list = value;
+    },
+    //查询物品类型对应的图标
+    get_itemicon(value) {
+      let icon = this.icon_list.find((item) => item.name == value.iconTag);
+      if (icon != undefined) {
+        return icon.url;
+      }
+      return "https://assets.yuanshen.site/icons/-1.png";
+    },
+    //切换点位的显隐
+    switch_layergroup(value) {
+      //添加点位组
+      if (value.type == 1) {
+        //如果没有点位缓存，则请求点位信息
+        if (!this.layergroup_map.has(value.item.itemId)) {
+          this.loading = true;
+          query_itemlayer_infolist({
+            typeIdList: [],
+            areaIdList: [],
+            itemIdList: [value.item.itemId],
+            getBeta: 0,
+          }).then((res) => {
+            let iconurl = this.get_itemicon(value.item);
+            let layergroup = layergroup_register(res.data.data, iconurl);
+            layergroup.eachLayer((layer) => {
+              layer.bindPopup(this.$refs.window);
+              layer.on({
+                popupopen: (layer) => {
+                  this.handle_layer = layer;
+                  this.popup_window_show = true;
+                  this.handle_layergroup = layergroup;
+                },
+              });
+              let arr = JSON.parse(localStorage.getItem("marked_layers"));
+              let layerid = layer.options.data.id;
+              if (arr.includes(layerid)) {
+                layer_mark(layer);
+              }
+            });
+            this.map.addLayer(layergroup);
+            this.layergroup_map.set(value.item.itemId, layergroup);
+            this.loading = false;
+          });
+          //否则使用缓存
+        } else {
+          let layergroup = this.layergroup_map.get(value.item.itemId);
+          this.map.addLayer(layergroup);
+        }
+        //移除点位组
+      } else {
+        let layergroup = this.layergroup_map.get(value.item.itemId);
+        this.map.removeLayer(layergroup);
+      }
+    },
+    //刷新点位
+    refresh_layergroup() {
+      this.loading = true;
+      this.clearall();
+      for (let i of this.layergroup_map.keys()) {
+        if (
+          this.mainStore.selected_item_list.find((item) => item.itemId == i) !=
+          undefined
+        ) {
+          this.map.addLayer(this.layergroup_map.get(i));
+        }
+      }
+      this.loading = false;
+    },
+    //清除所有点位
+    clearall() {
+      for (let i of this.layergroup_map.values()) {
+        this.map.removeLayer(i);
+      }
+    },
+    //弹窗的标记功能
+    popup_callback(layer) {
+      let marklayer = this.handle_layergroup.getLayer(layer.target._leaflet_id);
+      layer_mark(marklayer);
+      let layerid = layer.target.options.data.id;
+      let arr = JSON.parse(localStorage.getItem("marked_layers"));
+      let index = arr.findIndex((item) => item == layerid);
+      if (index == -1) {
+        arr.push(layerid);
+        localStorage.setItem("marked_layers", JSON.stringify(arr));
+      } else {
+        arr.splice(index, 1);
+        localStorage.setItem("marked_layers", JSON.stringify(arr));
+      }
+    },
   },
   mounted() {
-    this.map = init_map('渊下宫');
+    this.map = init_map();
+    this.layergroup_map = new Map();
+    if (localStorage.getItem("marked_layers") == null) {
+      localStorage.setItem("marked_layers", JSON.stringify([]));
+    }
   },
   computed: {
     //请参考pinia不使用组合式api的用法的说明文档
@@ -40,8 +161,18 @@ export default {
     ...mapStores(useCounterStore),
   },
   watch: {
-    "mainStore.selected_child_area": function (val) {
-      console.log(val);
+    "mainStore.selected_child_area": function (val, oldval) {
+      if (
+        switch_area_list.includes(val.name) ||
+        switch_area_list.includes(oldval.name)
+      ) {
+        this.map.remove();
+        this.map = init_map(val.name);
+        this.clearall();
+      }
+    },
+    "mainStore.changeitem": function (val) {
+      this.switch_layergroup(val);
     },
   },
 };

@@ -116,7 +116,7 @@ function add_map_overlay_qd(type, index) {
 }
 function init_map(area) {
     switch (area) {
-        case '群岛':
+        case '金苹果群岛':
             return create_map(
                 "qd28",
                 {
@@ -126,9 +126,19 @@ function init_map(area) {
                 [3568, 6286],
                 [8192, 8192]
             );
+
         case '渊下宫':
         case '三界路飨祭':
             return create_map('yxg2', {
+            },
+                [3568, 6286],
+                [12288, 12288],
+                [0, 0]
+            )
+        case '地下矿区':
+            return create_map('cyjy', {
+                center: [1800, -500],
+                zoom: -3
             },
                 [3568, 6286],
                 [12288, 12288],

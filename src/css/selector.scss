@@ -30,7 +30,7 @@
                 .area_switch_btn_icon {
                     width: 34px;
                     height: 34px;
-                    background: url(../assets/imgs/compass_icon.png) no-repeat;
+                    background: url(/imgs/compass_icon.png) no-repeat;
                     margin-left: 12px;
                 }
                 .area_switch_btn_text {
@@ -63,7 +63,7 @@
         .area_selector_unfold {
             width: 100%;
             height: 130px;
-            background: url(../assets/imgs/area_swicth_unfold_bg.png) no-repeat;
+            background: url(/imgs/area_swicth_unfold_bg.png) no-repeat;
             background-size: 100% 100%;
             .area_selector_icon {
                 display: block;
@@ -72,7 +72,7 @@
                 left: 50%;
                 width: 34px;
                 height: 34px;
-                background: url(../assets/imgs/compass_icon.png) no-repeat;
+                background: url(/imgs/compass_icon.png) no-repeat;
             }
             .area_type_containor {
                 width: 120px;
@@ -85,7 +85,7 @@
                     width: 420px;
                     height: 56px;
                     margin: 15px auto 0;
-                    background: url(../assets/imgs/area_name_bg.png) no-repeat;
+                    background: url(/imgs/area_name_bg.png) no-repeat;
                     span {
                         display: block;
                         width: 100%;
@@ -114,6 +114,27 @@
                     }
                 }
             }
+        }
+    }
+    .extra_btn {
+        position: absolute;
+        top: 15px;
+        left: 15px;
+        z-index: 6000;
+        .btn {
+            width: 64px;
+            height: 64px;
+            margin-right: 20px;
+            cursor: pointer;
+        }
+        .feedback {
+            background: url(/imgs/icon_feedback.png) no-repeat;
+        }
+        .discuss {
+            background: url(/imgs/icon_fankui.png) no-repeat;
+        }
+        .save {
+            background: url(/imgs/icon_cloud.png) no-repeat;
         }
     }
 }
@@ -148,7 +169,7 @@
             height: 73px;
             left: -102px;
             top: 5px;
-            background: url(../assets/imgs/fold_btn_bg.png) no-repeat;
+            background: url(/imgs/fold_btn_bg.png) no-repeat;
             cursor: pointer;
             .fold_btn_arrow {
                 position: absolute;
@@ -156,12 +177,12 @@
                 left: 46px;
                 width: 42px;
                 height: 42px;
-                background: url(../assets/imgs/fold_arrow_right.png) no-repeat;
+                background: url(/imgs/fold_arrow_right.png) no-repeat;
             }
             .fold_btn_arrow.on {
                 width: 42px;
                 height: 42px;
-                background: url(../assets/imgs/fold_arrow_left.png) no-repeat;
+                background: url(/imgs/fold_arrow_left.png) no-repeat;
             }
         }
         .item_selector_container {
@@ -170,21 +191,21 @@
             .item_selector_header {
                 width: 100%;
                 height: 88px;
-                background: url(../assets/imgs/Menu_bac_top.png) no-repeat;
+                background: url(/imgs/Menu_bac_top.png) no-repeat;
                 background-size: 100% 100%;
             }
             .item_selector_body {
                 width: 100%;
                 height: calc(85vh - 218px - 88px);
                 margin-top: -2px;
-                background: url(../assets/imgs/Menu_bac_mid.png) no-repeat;
+                background: url(/imgs/Menu_bac_mid.png) no-repeat;
                 background-size: 100% 100%;
             }
             .item_selector_footer {
                 width: 100%;
                 height: 218px;
                 margin-top: -2px;
-                background: url(../assets/imgs/Menu_bac_down.png) no-repeat;
+                background: url(/imgs/Menu_bac_down.png) no-repeat;
                 background-size: 100% 100%;
             }
         }
@@ -217,10 +238,10 @@
                     width: 20px;
                     height: 20px;
                     margin: 0 14px 5px 0;
-                    background: url(../assets/imgs/treasure_fold_down.png) no-repeat;
+                    background: url(/imgs/treasure_fold_down.png) no-repeat;
                 }
                 .item_fold_btn.on {
-                    background: url(../assets/imgs/treasure_fold_up.png) no-repeat;
+                    background: url(/imgs/treasure_fold_up.png) no-repeat;
                 }
             }
             .item_body {
@@ -280,6 +301,55 @@
     }
     animation: item_selector_on 1s forwards;
 }
+.item_selected_bar {
+    position: absolute;
+    top: 86px;
+    left: -60px;
+    z-index: 5000;
+    width: 56px;
+    height: 75vh;
+    background: rgba(0, 0, 0, 0.3);
+    border: 3px solid rgba(0, 0, 0, 0.3);
+    border-radius: 32px;
+    .close-all {
+        position: absolute;
+        top: -3px;
+        left: -3px;
+        width: 56px;
+        height: 56px;
+        background: url(/imgs/btn_close.png) no-repeat;
+        cursor: pointer;
+    }
+    .item_list {
+        width: 100%;
+        height: 100%;
+        margin-top: 60px;
+        .item {
+            position: relative;
+            width: 50px;
+            height: 50px;
+            margin: 7.5px auto;
+            background: rgba(0, 0, 0, 0.3);
+            border: 3px solid rgba(0, 0, 0, 0.3);
+            border-radius: 28px;
+            cursor: pointer;
+            .item_close {
+                position: absolute;
+                left: 29px;
+                top: -5px;
+                width: 18px;
+                height: 18px;
+                background: url(/imgs/btn_close_mini.png) no-repeat;
+                background-size: 100% 100%;
+            }
+        }
+    }
+}
 .item_selector.off {
     animation: item_selector_off 1s forwards;
+}
+//点位弹窗的样式
+#popup_window .text {
+    font-family: HYWH;
+    width: 300px;
 }
