@@ -2,20 +2,15 @@
   <div class="bg">
     <div class="infos">
       <span class="icon"></span>
-      <div class="title1">{{ $t("title1") }}</div>
+      <div class="title1">网页版地图正在施工中</div>
       <div class="row justify-center" style="margin-top: 15px">
         <div class="btn">
-          <div
-            class="btn-text"
-            @click="to_index"
-          >
-            {{ $t("btn_text3") }}
-          </div>
+          <div class="btn-text" @click="to_index">试用测试版</div>
         </div>
       </div>
       <div class="row justify-center" style="margin-top: 15px">
-        <div class="title3">{{ $t("title3") }}</div>
-        <span class="title3_hint">{{ $t("title3_hint") }}</span>
+        <div class="title3">或者，不妨来试试全新的</div>
+        <span class="title3_hint">3.0地图客户端版本</span>
       </div>
       <div class="row justify-center" style="margin-top: 15px">
         <div class="btn">
@@ -23,7 +18,7 @@
             class="btn-text"
             @click="openURL('https://yuanshen.site/docs/download-client.html')"
           >
-            {{ $t("btn_text1") }}
+            前往下载
           </div>
         </div>
         <div class="btn">
@@ -31,7 +26,7 @@
             class="btn-text"
             @click="openURL('https://yuanshen.site/index.html')"
           >
-            {{ $t("btn_text2") }}
+            浏览旧版地图
           </div>
         </div>
       </div>
@@ -45,18 +40,11 @@ export default {
   name: "ConstructionPage",
   methods: {
     openURL,
-    to_index(){
-      this.$router.push('/index');
-    }
+    to_index() {
+      this.$router.push("/index");
+    },
   },
-  mounted() {
-    this.$i18n.locale = this.$q.lang.getLocale();
-    let area = this.$i18n.locale;
-    if (area != "zh-CN" && area != "ja") {
-      this.$i18n.locale = "en-US";
-    }
-    document.title = this.$t("page_title");
-  },
+  mounted() {},
 };
 </script>
 <style lang="scss" scoped>
