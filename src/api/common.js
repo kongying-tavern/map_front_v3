@@ -27,10 +27,20 @@ function check_user_token() {
 function get_user_token() {
     return Cookies.get('_yuanshen_map_usertoken')
 }
+function data_statistics() {
+    var _hmt = _hmt || [];
+    (function () {
+        var hm = document.createElement('script')
+        hm.src = 'https://hm.baidu.com/hm.js?cd4f7eed0a6e62d83b92c5dfb9f1a20f'
+        var s = document.getElementsByTagName('script')[0]
+        s.parentNode.insertBefore(hm, s)
+    })()
+}
 export {
     create_notify,
     set_user_token,
     check_user_token,
     get_user_token,
-    switch_area_list
+    switch_area_list,
+    data_statistics
 }
