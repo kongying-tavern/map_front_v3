@@ -12,6 +12,7 @@
     top: 0;
     right: 0;
     z-index: 2000;
+    user-select: none;
     .area_selector_container {
         font-family: HYWH;
         font-weight: 400;
@@ -165,6 +166,7 @@
     top: 133px;
     right: 24px;
     z-index: 2000;
+    user-select: none;
     .item_selector_main {
         position: relative;
         .fold_btn {

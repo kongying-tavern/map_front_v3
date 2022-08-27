@@ -105,6 +105,14 @@ export default {
           //否则使用缓存
         } else {
           let layergroup = this.layergroup_map.get(value.item.itemId);
+          layergroup.eachLayer((layer) => {
+            layer_mark(layer, "on");
+            let arr = JSON.parse(localStorage.getItem("marked_layers"));
+            let layerid = layer.options.data.id;
+            if (arr.includes(layerid)) {
+              layer_mark(layer);
+            }
+          });
           this.map.addLayer(layergroup);
         }
         //移除点位组

@@ -63,8 +63,8 @@ function layergroup_register(data = [], iconurl) {
 * @param {array} layer  要标记/取消标记的点位
 * @returns {Object} 标记/取消标记后的点位
 */
-function layer_mark(layer) {
-    let type = layer.options.icon.options.type;
+function layer_mark(layer, marktype) {
+    let type = marktype == undefined ? layer.options.icon.options.type : marktype;
     let icon = ''
     if (type == 'on') {
         icon = L.icon(create_icon_options(layer.options.icon.options.iconUrl, 'off'))
