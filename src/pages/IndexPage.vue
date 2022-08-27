@@ -37,7 +37,7 @@ import { mapStores } from "pinia";
 import { useCounterStore } from "../stores/example-store";
 import { layergroup_register, layer_mark } from "../api/layer";
 import { query_itemlayer_infolist } from "../service/base_request";
-import { switch_area_list } from "../api/common";
+import { switch_area_list, data_statistics } from "../api/common";
 export default {
   name: "IndexPage",
   data() {
@@ -161,11 +161,15 @@ export default {
     if (this.$q.platform.is.mobile) {
       alert("测试版暂未开放手机端使用，请切换至电脑端以正常使用");
     }
+    //生成地图和点位组map对象
     this.map = init_map();
     this.layergroup_map = new Map();
+    //点位缓存
     if (localStorage.getItem("marked_layers") == null) {
       localStorage.setItem("marked_layers", JSON.stringify([]));
     }
+    //数据统计
+    data_statistics();
   },
   computed: {
     //请参考pinia不使用组合式api的用法的说明文档
