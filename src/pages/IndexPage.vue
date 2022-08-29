@@ -36,7 +36,7 @@ import PopupWindow from "../components/popup_window.vue";
 import { init_map } from "../api/map";
 import { mapStores } from "pinia";
 import { useCounterStore } from "../stores/example-store";
-import { layergroup_register, layer_mark } from "../api/layer";
+import { layergroup_register, layer_mark, layer_register } from "../api/layer";
 import { query_itemlayer_infolist } from "../service/base_request";
 import { switch_area_list, data_statistics } from "../api/common";
 export default {
@@ -161,6 +161,65 @@ export default {
     close_popup() {
       this.map.closePopup();
     },
+    //查询并生成该地区的传送点
+    teleport_layer_init() {
+      if (
+        !this.teleport_map.has(`${this.mainStore.selected_child_area.name}`)
+      ) {
+        this.loading = true;
+        let item_list = [];
+        let icon_list = [];
+        for (let i of this.mainStore.teleport_list) {
+          item_list.push(i.itemId);
+          icon_list.push({
+            itemId: i.itemId,
+            itemName: i.name,
+            iconurl: this.get_itemicon(i),
+          });
+        }
+        let layergroup = layergroup_register();
+        query_itemlayer_infolist({
+          typeIdList: [],
+          areaIdList: [],
+          itemIdList: item_list,
+          getBeta: 0,
+        }).then((res) => {
+          for (let i of res.data.data) {
+            let iconurl = icon_list.find(
+              (item) => item.itemId == i.itemList[0].itemId
+            ).iconurl;
+            let iconname = icon_list.find(
+              (item) => item.itemId == i.itemList[0].itemId
+            ).itemName;
+            let marker = layer_register(i, iconurl, iconname);
+            layergroup.addLayer(marker);
+          }
+          layergroup.eachLayer((layer) => {
+            layer.bindPopup(this.$refs.window);
+            layer.on({
+              popupopen: (layer) => {
+                this.handle_layer = layer;
+                this.popup_window_show = true;
+                this.handle_layergroup = layergroup;
+              },
+            });
+          });
+          this.teleport_map.set(
+            `${this.mainStore.selected_child_area.name}`,
+            layergroup
+          );
+          this.teleport_group = layergroup;
+          this.map.addLayer(this.teleport_group);
+          this.loading = false;
+        });
+      } else {
+        this.map.removeLayer(this.teleport_group);
+        this.teleport_group = this.teleport_map.get(
+          `${this.mainStore.selected_child_area.name}`
+        );
+        this.map.addLayer(this.teleport_group);
+      }
+    },
   },
   mounted() {
     if (this.$q.platform.is.mobile) {
@@ -168,7 +227,9 @@ export default {
     }
     //生成地图和点位组map对象
     this.map = init_map();
+    this.teleport_group = null;
     this.layergroup_map = new Map();
+    this.teleport_map = new Map();
     //点位缓存
     if (localStorage.getItem("marked_layers") == null) {
       localStorage.setItem("marked_layers", JSON.stringify([]));

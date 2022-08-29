@@ -13,6 +13,7 @@ import "leaflet/dist/leaflet.css";
 function create_icon_options(url, type = "off") {
     let options = {
         type: type,
+        teleport: false,
         iconUrl: url == '' ? 'https://assets.yuanshen.site/icons/-1.png' : url,
         shadowUrl: `https://assets.yuanshen.site/icons/loc_02_${type}.png`,
         iconSize: [22, 22], // size of the icon
@@ -21,15 +22,51 @@ function create_icon_options(url, type = "off") {
         shadowAnchor: [16, 35], // the same for the shadow
         popupAnchor: [0, -35], // point from which the popup should open relative to the iconAnchor
     };
-    if (type == 'none') {
+    if (type == 'off') {
+        return options
+    }
+    else {
         options = {
             ...options,
-            iconSize: [22, 22], // size of the icon
-            iconAnchor: [11, 11], // point of the icon which will correspond to marker's location
-            popupAnchor: [0, -22], // point from which the popup should open relative to the iconAnchor
+            shadowUrl: undefined,
+            teleport: true
         }
+        switch (type) {
+            case "七天神像":
+                options = {
+                    ...options,
+                    iconSize: [30, 43], // size of the icon
+                    shadowSize: [24, 24], // size of the shadow
+                    iconAnchor: [15, 21.5], // point of the icon which will correspond to marker's location
+                    shadowAnchor: [12, 24], // the same for the shadow
+                    popupAnchor: [0, -21.5], // point from which the popup should open relative to the iconAnchor
+                };
+                return options;
+            case "传送锚点":
+                options = {
+                    ...options,
+                    iconSize: [23, 33], // size of the icon
+                    shadowSize: [24, 24], // size of the shadow
+                    iconAnchor: [11.5, 16.5], // point of the icon which will correspond to marker's location
+                    shadowAnchor: [12, 24], // the same for the shadow
+                    popupAnchor: [0, -16.5], // point from which the popup should open relative to the iconAnchor
+                };
+                return options;
+            case "秘境":
+            case "征讨领域":
+                options = {
+                    ...options,
+                    iconSize: [33, 33], // size of the icon
+                    shadowSize: [24, 24], // size of the shadow
+                    iconAnchor: [16.5, 16.5], // point of the icon which will correspond to marker's location
+                    shadowAnchor: [12, 24], // the same for the shadow
+                    popupAnchor: [0, -16.5], // point from which the popup should open relative to the iconAnchor
+                };
+                return options;
+        }
+
     }
-    return options
+
 }
 /**
 * 生成点位
@@ -37,9 +74,9 @@ function create_icon_options(url, type = "off") {
 * @param {String} iconurl 点位图标链接
 * @returns {Object} marker对象
 */
-function layer_register(data, iconurl) {
+function layer_register(data, iconurl, type) {
     let marker = L.marker(data.position.split(','), {
-        icon: L.icon(create_icon_options(iconurl)),
+        icon: L.icon(create_icon_options(iconurl, type)),
         data: { ...data },
         draggable: false,
     })

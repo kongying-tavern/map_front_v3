@@ -1,6 +1,6 @@
 <!-- 物品选择器 -->
 <template>
-  <div class="item_selector gt-md"  :class="{ off: selector_type }">
+  <div class="item_selector gt-md" :class="{ off: selector_type }">
     <div class="item_selector_main">
       <!-- 折叠按钮 -->
       <div class="fold_btn" @click="selector_type = !selector_type">
@@ -158,6 +158,7 @@ export default {
       selected_item_list: [],
       item_list_map: new Map(),
       item_list: {},
+      teleport_list: [],
     };
   },
   methods: {
@@ -188,6 +189,7 @@ export default {
         current: 0,
         size: 999,
       }).then((res) => {
+        this.teleport_list = [];
         this.item_loading = false;
         for (let i of this.type_list) {
           if (i.typeId != 9) {
@@ -203,7 +205,11 @@ export default {
               this.item_list[j].push(i);
             }
           }
+          if (i.iconStyleType == 1) {
+            this.teleport_list.push(i);
+          }
         }
+        this.mainStore.teleport_list = this.teleport_list;
       });
     },
     //查询物品类型对应的图标

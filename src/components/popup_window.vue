@@ -22,7 +22,9 @@
           </div>
         </template>
       </q-img>
-      <div class="info">点位描述：{{ layer_data.content }}</div>
+      <div class="info scroll hide-scrollbar">
+        点位描述：<br />{{ layer_data.content }}
+      </div>
     </div>
     <div
       class="toggle_btn row justify-between items-center"
@@ -31,6 +33,7 @@
         off: !marked,
       }"
       @click="marklayer"
+      v-if="!teleport_type"
     >
       <div class="text_first col">未完成</div>
       <div class="text_last col">已完成</div>
@@ -71,6 +74,7 @@ export default {
       layer_data: {},
       full_img_window: false,
       marked: false,
+      teleport_type: false,
     };
   },
   methods: {
@@ -78,14 +82,15 @@ export default {
       this.marked = !this.marked;
       this.$emit("callback", this.layer);
     },
-    closelayer(){
+    closelayer() {
       this.$emit("close");
-    }
+    },
   },
   props: ["layer"],
   watch: {
     layer: function (val) {
       this.layer_data = val.target.options.data;
+      this.teleport_type=val.target.options.icon.options.teleport;
       let layerid = val.target.options.data.id;
       let arr = JSON.parse(localStorage.getItem("marked_layers"));
       let index = arr.findIndex((item) => item == layerid);
@@ -101,13 +106,16 @@ export default {
 </script>
 <style scoped>
 .title {
-  font-size: 18px;
+  font-size: 16px;
   color: #4b5368;
+  max-width: 90%;
 }
 .info {
   font-size: 14px;
   color: #4b5368;
   margin-top: 10px;
+  white-space: pre-line;
+  max-height: 300px;
 }
 .layer_img {
   display: block;
