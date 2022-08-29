@@ -8,11 +8,12 @@
 .area_selector {
     position: absolute;
     width: 100vw;
-    height: 130px;
+    height: 0;
     top: 0;
     right: 0;
     z-index: 2000;
     user-select: none;
+    
     .area_selector_container {
         font-family: HYWH;
         font-weight: 400;
@@ -354,8 +355,4 @@
 .item_selector.off {
     animation: item_selector_off 1s forwards;
 }
-//点位弹窗的样式
-#popup_window .text {
-    font-family: HYWH;
-    width: 300px;
-}
+

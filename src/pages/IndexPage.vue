@@ -23,6 +23,7 @@
       <popup-window
         :layer="handle_layer"
         @callback="popup_callback"
+        @close="close_popup"
       ></popup-window>
     </div>
   </q-layout>
@@ -155,6 +156,10 @@ export default {
         arr.splice(index, 1);
         localStorage.setItem("marked_layers", JSON.stringify(arr));
       }
+    },
+    //关闭弹窗
+    close_popup() {
+      this.map.closePopup();
     },
   },
   mounted() {

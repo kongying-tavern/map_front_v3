@@ -1,7 +1,10 @@
 <template>
-  <div id="opened_popup row">
+  <div id="opened_popup row" class="q-pa-md">
     <div class="text">
-      <p>{{ layer_data.markerTitle }} id:{{ layer_data.id }}</p>
+      <div class="title">
+        {{ layer_data.markerTitle }} id:{{ layer_data.id }}
+      </div>
+      <q-separator spaced />
       <q-img
         class="layer_img"
         :src="
@@ -19,13 +22,23 @@
           </div>
         </template>
       </q-img>
-      <p>点位描述：{{ layer_data.content }}</p>
+      <div class="info">点位描述：{{ layer_data.content }}</div>
     </div>
-    <q-checkbox
-      v-model="marked"
-      @update:model-value="marklayer"
-      label="标记点位"
-    />
+    <div
+      class="toggle_btn row justify-between items-center"
+      :class="{
+        on: marked,
+        off: !marked,
+      }"
+      @click="marklayer"
+    >
+      <div class="text_first col">未完成</div>
+      <div class="text_last col">已完成</div>
+      <div class="thumb">
+        <div class="thumb_sign"></div>
+      </div>
+    </div>
+    <div class="close_btn" @click="closelayer"></div>
     <!-- 查看大图弹窗 -->
     <q-dialog v-model="full_img_window">
       <q-card style="width: 50vw; height: 50vh">
@@ -62,8 +75,12 @@ export default {
   },
   methods: {
     marklayer() {
+      this.marked = !this.marked;
       this.$emit("callback", this.layer);
     },
+    closelayer(){
+      this.$emit("close");
+    }
   },
   props: ["layer"],
   watch: {
@@ -83,22 +100,19 @@ export default {
 };
 </script>
 <style scoped>
-p {
-  margin: 10px auto;
-  font-size: 16px;
+.title {
+  font-size: 18px;
+  color: #4b5368;
 }
-</style>
-<style>
-.leaflet-popup-content {
-  width: 100% !important;
+.info {
+  font-size: 14px;
+  color: #4b5368;
+  margin-top: 10px;
 }
 .layer_img {
   display: block;
   margin: 0 auto;
   width: 200px;
   height: 200px;
-}
-.leaflet-popup-close-button {
-  zoom: 2;
 }
 </style>

@@ -114,7 +114,7 @@ export default {
       area_list: [],
       child_area_list_map: new Map(),
       child_area_list: [],
-      area_selector_show: false,
+      area_selector_show: true,
     };
   },
   methods: {
@@ -142,6 +142,7 @@ export default {
     change_child_area(area) {
       this.selected_child_area = area;
       this.mainStore.selected_child_area = area;
+      this.area_selector_show = false;
     },
   },
   mounted() {
