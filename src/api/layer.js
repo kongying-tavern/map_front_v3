@@ -54,6 +54,7 @@ function create_icon_options(url, type = "off") {
                 return options;
             case "秘境":
             case "征讨领域":
+            default:
                 options = {
                     ...options,
                     iconSize: [33, 33], // size of the icon

@@ -26,6 +26,17 @@
         @close="close_popup"
       ></popup-window>
     </div>
+    <!-- 左下侧各种开关 -->
+    <div class="switch_list">
+      <div class="switch row items-center">
+        <div
+          class="switch_btn"
+          :class="{ on: teleport_state }"
+          @click="teleport_switch"
+        ></div>
+        <div class="text">传送点位</div>
+      </div>
+    </div>
   </q-layout>
 </template>
 
@@ -49,6 +60,7 @@ export default {
       popup_window_show: false,
       handle_layer: null,
       handle_layergroup: null,
+      teleport_state: false,
     };
   },
   components: {
@@ -163,6 +175,10 @@ export default {
     },
     //查询并生成该地区的传送点
     teleport_layer_init() {
+      console.log(this.mainStore.selected_child_area);
+      if (this.teleport_group != null) {
+        this.map.removeLayer(this.teleport_group);
+      }
       if (
         !this.teleport_map.has(`${this.mainStore.selected_child_area.name}`)
       ) {
@@ -220,6 +236,15 @@ export default {
         this.map.addLayer(this.teleport_group);
       }
     },
+    //切换传送点位显隐
+    teleport_switch() {
+      this.teleport_state = !this.teleport_state;
+      if (this.teleport_state) {
+        this.teleport_layer_init();
+      } else {
+        this.map.removeLayer(this.teleport_group);
+      }
+    },
   },
   mounted() {
     if (this.$q.platform.is.mobile) {
@@ -255,6 +280,11 @@ export default {
     },
     "mainStore.changeitem": function (val) {
       this.switch_layergroup(val);
+    },
+    "mainStore.teleport_list": function (val) {
+      if (this.teleport_state) {
+        this.teleport_layer_init();
+      }
     },
   },
 };

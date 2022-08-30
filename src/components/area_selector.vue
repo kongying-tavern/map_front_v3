@@ -136,6 +136,7 @@ export default {
       }
       this.child_area_list = this.child_area_list_map.get(area.name);
       this.selected_child_area = this.child_area_list[0];
+      
       this.mainStore.selected_child_area = this.selected_child_area;
     },
     //切换子地区的触发事件

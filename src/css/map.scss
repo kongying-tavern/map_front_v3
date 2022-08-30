@@ -97,6 +97,32 @@
         cursor: pointer;
     }
 }
+//左下开关样式
+.switch_list {
+    user-select: none;
+    position: absolute;
+    left: 32px;
+    bottom: 40px;
+    z-index: 1500;
+    .switch {
+        margin-top: 16px;
+        .switch_btn {
+            width: 75px;
+            height: 40px;
+            background: url(/imgs/Switch_OFF.png) no-repeat;
+            cursor: pointer;
+        }
+        .switch_btn.on {
+            background: url(/imgs/Switch_ON.png) no-repeat;
+        }
+        .text {
+            font-family: HYWH;
+            font-size: 28px;
+            color: #fff;
+            margin-left: 12px;
+        }
+    }
+}
 //leaflet的一些样式覆盖
 .leaflet-popup-content-wrapper {
     background: #f0e9e2;
