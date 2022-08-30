@@ -22,7 +22,7 @@ function create_icon_options(url, type = "off") {
         shadowAnchor: [16, 35], // the same for the shadow
         popupAnchor: [0, -35], // point from which the popup should open relative to the iconAnchor
     };
-    if (type == 'off') {
+    if (type == 'off' || type == 'on') {
         return options
     }
     else {
