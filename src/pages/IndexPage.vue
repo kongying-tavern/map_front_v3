@@ -259,8 +259,7 @@ export default {
     if (localStorage.getItem("marked_layers") == null) {
       localStorage.setItem("marked_layers", JSON.stringify([]));
     }
-    //数据统计
-    data_statistics();
+
   },
   computed: {
     //请参考pinia不使用组合式api的用法的说明文档
