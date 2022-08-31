@@ -6,6 +6,7 @@
       </div>
       <q-separator spaced />
       <q-img
+        v-if="!teleport_type"
         class="layer_img"
         :src="
           layer_data.picture == ''
@@ -90,7 +91,7 @@ export default {
   watch: {
     layer: function (val) {
       this.layer_data = val.target.options.data;
-      this.teleport_type=val.target.options.icon.options.teleport;
+      this.teleport_type = val.target.options.icon.options.teleport;
       let layerid = val.target.options.data.id;
       let arr = JSON.parse(localStorage.getItem("marked_layers"));
       let index = arr.findIndex((item) => item == layerid);
