@@ -123,6 +123,28 @@
         }
     }
 }
+//左上开关样式
+.extra_btn {
+    position: absolute;
+    top: 15px;
+    left: 15px;
+    z-index: 6000;
+    .btn {
+        width: 64px;
+        height: 64px;
+        margin-right: 20px;
+        cursor: pointer;
+    }
+    .feedback {
+        background: url(/imgs/icon_feedback.png) no-repeat;
+    }
+    .discuss {
+        background: url(/imgs/icon_fankui.png) no-repeat;
+    }
+    .save {
+        background: url(/imgs/icon_cloud.png) no-repeat;
+    }
+}
 //leaflet的一些样式覆盖
 .leaflet-popup-content-wrapper {
     background: #f0e9e2;

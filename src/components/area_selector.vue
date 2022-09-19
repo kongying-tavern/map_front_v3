@@ -1,5 +1,6 @@
 <!-- 地区选择器 -->
 <template>
+  <!-- 电脑版 -->
   <div class="area_selector gt-sm">
     <div class="area_selector_container">
       <!-- 右方地区信息和切换部分 -->
@@ -76,27 +77,6 @@
         </div>
       </div>
     </div>
-    <!-- 功能按钮 -->
-    <div class="extra_btn row">
-      <div
-        class="btn feedback"
-        @click="openURL('https://yuanshen.site/docs/communication-group.html')"
-      >
-        <q-tooltip> 加入讨论组 </q-tooltip>
-      </div>
-      <div
-        class="btn discuss"
-        @click="openURL('https://support.qq.com/product/321980')"
-      >
-        <q-tooltip> 反馈/建议 </q-tooltip>
-      </div>
-      <div
-        class="btn save"
-        @click="openURL('https://yuanshen.site/docs/download-client.html')"
-      >
-        <q-tooltip> 下载客户端 </q-tooltip>
-      </div>
-    </div>
   </div>
 </template>
 
@@ -136,7 +116,7 @@ export default {
       }
       this.child_area_list = this.child_area_list_map.get(area.name);
       this.selected_child_area = this.child_area_list[0];
-      
+
       this.mainStore.selected_child_area = this.selected_child_area;
     },
     //切换子地区的触发事件

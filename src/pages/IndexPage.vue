@@ -37,6 +37,8 @@
         <div class="text">传送点位</div>
       </div>
     </div>
+    <!-- 左上侧各种开关 -->
+    <extra-btn></extra-btn>
   </q-layout>
 </template>
 
@@ -44,6 +46,7 @@
 import ItemSelector from "../components/item_selector.vue";
 import AreaSelector from "../components/area_selector.vue";
 import PopupWindow from "../components/popup_window.vue";
+import ExtraBtn from "../components/extra_btn.vue"
 import { init_map } from "../api/map";
 import { mapStores } from "pinia";
 import { useCounterStore } from "../stores/example-store";
@@ -67,6 +70,7 @@ export default {
     ItemSelector,
     AreaSelector,
     PopupWindow,
+    ExtraBtn
   },
   methods: {
     //返回图标数组
@@ -259,7 +263,6 @@ export default {
     if (localStorage.getItem("marked_layers") == null) {
       localStorage.setItem("marked_layers", JSON.stringify([]));
     }
-
   },
   computed: {
     //请参考pinia不使用组合式api的用法的说明文档
