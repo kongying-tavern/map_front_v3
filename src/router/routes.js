@@ -1,6 +1,4 @@
-
-const routes = [
-  {
+const routes = [{
     path: '/',
     component: () => import('pages/construction_page.vue'),
   },

@@ -1,159 +1,258 @@
 // 地图的样式
+//以宽度为准
+@media screen and (max-width:1920px) and (min-width:720px) {
+  html {
+    font-size: calc(100vw / 1920) !important;
+  }
+}
+
+@media screen and (max-width:1080px) {
+  html {
+    font-size: calc(1080px / 1920) !important;
+  }
+}
+
+html {
+  font-size: 1px;
+  height: 100%;
+  overflow: hidden;
+  touch-action: manipulation;
+}
+
 .main {
-    overflow: hidden;
+  overflow: hidden;
+
 }
+
 #map {
-    width: 100vw;
-    height: 100vh;
-    background: transparent;
-    z-index: 1000;
-    background: radial-gradient(transparent 70%, rgba(0, 0, 0, 0.5));
+  //   width: 100vw;
+  height: 100%;
+  background: transparent;
+  //   z-index: 1000;
+  background: radial-gradient(transparent 70%, rgba(0, 0, 0, 0.5));
 }
+
+.leaflet-bottom {
+  z-index: 9999;
+}
+
+.map_containor {
+  position: absolute !important;
+  width: 100vw;
+  height: 100%;
+}
+
 .map_overlay {
-    position: absolute;
-    width: 100vw;
-    height: 100vh;
-    top: 0;
-    right: 0;
-    z-index: 1500;
-    background: radial-gradient(transparent 70%, rgba(0, 0, 0, 0.6));
-    pointer-events: none;
+  position: absolute;
+  width: 100vw;
+  height: 100%;
+  top: 0;
+  right: 0;
+  z-index: 1500;
+  background: radial-gradient(transparent 70%, rgba(0, 0, 0, 0.6));
+  pointer-events: none;
 }
+
+.map_cover {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  right: 0;
+  z-index: 1500;
+  background: rgba(0, 0, 0, 0.5);
+  pointer-events: none;
+}
+
 //地图弹窗的样式
 #popup_window {
-    font-family: HYWH;
-    .text {
-        width: 250px;
-    }
-    .toggle_btn {
-        user-select: none;
-        position: relative;
-        width: 100%;
-        height: 30px;
-        background: #f0e9e2;
-        border-radius: 50px;
-        border: 2px solid #c5b79d;
-        margin-top: 10px;
-        .thumb {
-            z-index: 1;
-            position: absolute;
-            width: 50%;
-            height: 24px;
-            border-radius: 50px;
-            .thumb_sign {
-                position: absolute;
-                left: 10px;
-                top: 5px;
-                width: 12px;
-                height: 12px;
-            }
-        }
-        .text_first,
-        .text_last {
-            z-index: 2;
-            background: rgba(0, 0, 0, 0);
-            color: #c5b79d;
-            margin: 2px 4px 0;
-            text-align: center;
-            cursor: pointer;
-        }
-    }
-    .toggle_btn.off {
-        .text_first {
-            color: #fff;
-        }
-        .thumb {
-            border: 1px solid #a69678;
-            background: #cfbfa4;
-            left: 2px;
-            .thumb_sign {
-                background: url(https://yuanshen.site/imgs/con_img/icon_not.svg) no-repeat;
-                background-size: 100% 100%;
-            }
-        }
-    }
-    .toggle_btn.on {
-        .text_last {
-            color: #fff;
-        }
-        .thumb {
-            border: 1px solid #21707f;
-            background: #30a3b9;
-            right: 2px;
-            .thumb_sign {
-                background: url(https://yuanshen.site/imgs/con_img/icon_find.svg) no-repeat;
-                background-size: 100% 100%;
-            }
-        }
-    }
-    .close_btn {
+  font-family: HYWH;
+
+  .text {
+    width: 250rem;
+  }
+
+  .q-pa-md {
+    padding: 16rem 16rem !important;
+  }
+
+  .toggle_btn {
+    user-select: none;
+    position: relative;
+    width: 100%;
+    height: 30rem;
+    background: #f0e9e2;
+    border-radius: 50rem;
+    border: 2rem solid #c5b79d;
+    margin-top: 10rem;
+
+    .thumb {
+      z-index: 1;
+      position: absolute;
+      width: 50%;
+      height: 24rem;
+      border-radius: 50rem;
+
+      .thumb_sign {
         position: absolute;
-        right: 15px;
-        top: 15px;
-        background: url(https://yuanshen.site/imgs/con_img/popClose.svg) no-repeat;
-        background-size: 100% 100%;
-        width: 20px;
-        height: 20px;
-        cursor: pointer;
+        left: 10rem;
+        top: 5rem;
+        width: 12rem;
+        height: 12rem;
+      }
     }
+
+    .text_first,
+    .text_last {
+      z-index: 2;
+      background: rgba(0, 0, 0, 0);
+      color: #c5b79d;
+      margin: 2rem 4rem 0;
+      font-size: 14rem;
+      text-align: center;
+      cursor: pointer;
+    }
+  }
+
+  .toggle_btn.off {
+    .text_first {
+      color: #fff;
+    }
+
+    .thumb {
+      border: 1rem solid #a69678;
+      background: #cfbfa4;
+      left: 2rem;
+
+      .thumb_sign {
+        background: url(https://yuanshen.site/imgs/con_img/icon_not.svg) no-repeat;
+        background-size: 100% 100%;
+      }
+    }
+  }
+
+  .toggle_btn.on {
+    .text_last {
+      color: #fff;
+    }
+
+    .thumb {
+      border: 1rem solid #21707f;
+      background: #30a3b9;
+      right: 2rem;
+
+      .thumb_sign {
+        background: url(https://yuanshen.site/imgs/con_img/icon_find.svg) no-repeat;
+        background-size: 100% 100%;
+      }
+    }
+  }
+
+  .close_btn {
+    position: absolute;
+    right: 15rem;
+    top: 15rem;
+    background: url(https://yuanshen.site/imgs/con_img/popClose.svg) no-repeat;
+    background-size: 100% 100%;
+    width: 20rem;
+    height: 20rem;
+    cursor: pointer;
+  }
 }
+
 //左下开关样式
 .switch_list {
-    user-select: none;
-    position: absolute;
-    left: 32px;
-    bottom: 40px;
-    z-index: 1500;
-    .switch {
-        margin-top: 16px;
-        .switch_btn {
-            width: 75px;
-            height: 40px;
-            background: url(/imgs/Switch_OFF.png) no-repeat;
-            cursor: pointer;
-        }
-        .switch_btn.on {
-            background: url(/imgs/Switch_ON.png) no-repeat;
-        }
-        .text {
-            font-family: HYWH;
-            font-size: 28px;
-            color: #fff;
-            margin-left: 12px;
-        }
+  user-select: none;
+  position: absolute;
+  left: 32rem;
+  bottom: 40rem;
+  z-index: 1500;
+
+  .switch {
+    margin-top: 16rem;
+
+    .switch_btn {
+      width: 75rem;
+      height: 40rem;
+      background: url(/imgs/Switch_OFF.png) no-repeat;
+      background-size: 100% 100%;
+      cursor: pointer;
     }
+
+    .switch_btn.on {
+      background: url(/imgs/Switch_ON.png) no-repeat;
+      background-size: 100% 100%;
+    }
+
+    .text {
+      font-family: HYWH;
+      font-size: 28rem;
+      color: #fff;
+      margin-left: 12rem;
+    }
+  }
 }
+
 //左上开关样式
 .extra_btn {
-    position: absolute;
-    top: 15px;
-    left: 15px;
-    z-index: 6000;
-    .btn {
-        width: 64px;
-        height: 64px;
-        margin-right: 20px;
-        cursor: pointer;
-    }
-    .feedback {
-        background: url(/imgs/icon_feedback.png) no-repeat;
-    }
-    .discuss {
-        background: url(/imgs/icon_fankui.png) no-repeat;
-    }
-    .save {
-        background: url(/imgs/icon_cloud.png) no-repeat;
-    }
+  position: absolute;
+  top: 32rem;
+  left: 32rem;
+  z-index: 6000;
+
+  @media screen and (max-width:1080px) {
+    z-index: 1600;
+  }
+
+  .btn {
+    width: 64rem;
+    height: 64rem;
+    margin-right: 40rem;
+    cursor: pointer;
+  }
+
+  .feedback {
+    background: url(/imgs/icon_feedback.png) no-repeat;
+    background-size: 100% 100%;
+  }
+
+  .discuss {
+    background: url(/imgs/icon_fankui.png) no-repeat;
+    background-size: 100% 100%;
+  }
+
+  .save {
+    background: url(/imgs/icon_cloud.png) no-repeat;
+    background-size: 100% 100%;
+  }
 }
+
 //leaflet的一些样式覆盖
 .leaflet-popup-content-wrapper {
-    background: #f0e9e2;
+  background: #f0e9e2;
 }
+
 .leaflet-popup-content {
-    width: 100% !important;
-    margin: 0;
+  width: 100% !important;
+  margin: 0;
 }
+
 .leaflet-popup-close-button {
-    display: none;
-    zoom: 2;
+  display: none;
+  zoom: 2;
+}
+
+.leaflet-popup {
+  left: -142rem !important;
+}
+
+.area_components {
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 9999;
+}
+
+.footer a {
+  color: $primary;
 }

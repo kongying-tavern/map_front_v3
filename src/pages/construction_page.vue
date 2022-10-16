@@ -10,7 +10,7 @@
       </div>
       <div class="row justify-center" style="margin-top: 15px">
         <div class="title3">或者，不妨来试试全新的</div>
-        <span class="title3_hint">3.0地图客户端版本</span>
+        <span class="title3_hint">3.1地图客户端版本</span>
       </div>
       <div class="row justify-center" style="margin-top: 15px">
         <div class="btn">
@@ -32,9 +32,20 @@
       </div>
     </div>
   </div>
+<div id="map" style="position: relative;z-index: 9999;">
+  <div class="leaflet-control-container"><div class="leaflet-bottom leaflet-left"><div class="leaflet-control-attribution leaflet-control">
+      <footer role="contentinfo" class="footer">
+        <a href="/docs/disclaimer.html" target="_blank" title="空荧酒馆免责声明">免责声明</a>
+        <a href="/join" target="_blank" title="加入我们">招募</a>
+        <a href="https://support.qq.com/products/321980/blog/505810" target="_blank" rel="noopener noreferrer" title="空荧酒馆原神地图更新日志">更新日志</a>
+        <a href="https://github.com/kongying-tavern" target="_blank" rel="noopener noreferrer" title="GitHub">GitHub</a>
+        <a href="http://beian.miit.gov.cn" target="_blank" rel="noopener noreferrer" title="工业和信息化部域名信息备案管理系统">蜀ICP备2020028219号-1</a>
+      </footer>
+		</div></div><div class="leaflet-bottom leaflet-right"></div></div></div>
 </template>
 
 <script>
+import "leaflet/dist/leaflet.css";
 import { openURL } from "quasar";
 export default {
   name: "ConstructionPage",
@@ -48,6 +59,33 @@ export default {
 };
 </script>
 <style lang="scss" scoped>
+.leaflet-control-container .leaflet-control{
+	background-color: rgba(255, 255, 255, .7);
+	backdrop-filter: blur(10px);
+	text-shadow: 0 0 20px rgb(0 0 0 / 80%);
+	transition: all .3s;
+	margin: 0;
+	}
+  .footer {
+  display: table-cell;
+  width: fit-content;
+  float: left;
+  user-select: none;
+  padding: 1px 5px;
+  font-size: 11px;
+  white-space: normal;
+  transition: all 0.3s;
+}
+
+.footer a {
+  font-weight: 500;
+  color: #0078a8;
+  overflow-wrap: break-word;
+}
+
+.footer a:not(:last-child) {
+  margin-right: 8px;
+}
 .bg {
   width: 100vw;
   height: 100vh;

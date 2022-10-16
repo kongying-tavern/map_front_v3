@@ -1,20 +1,20 @@
 import { api } from '../boot/axios'
-import { get_user_token } from "../api/common"
+import { get_Cookies } from "../api/common"
 function default_request(url, data, method = 'post') {
     return api({
         method: method,
         url: url,
         data: JSON.stringify(data),
         transformRequest: (data) => {
-            if (get_user_token() == null) {
+            if (get_Cookies('_yuanshen_map_usertoken') == null) {
                 alert('用户凭证已过期，请刷新页面')
                 window.location.reload();
-            }
+            } 
             return data
         },
         headers: {
             'Content-Type': 'application/json',
-            'Authorization': `Bearer ${get_user_token()}`
+            'Authorization': `Bearer ${get_Cookies('_yuanshen_map_usertoken')}`
         }
     })
 }

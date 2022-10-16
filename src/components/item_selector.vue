@@ -1,6 +1,6 @@
 <!-- 物品选择器 -->
 <template>
-  <div class="item_selector gt-md" :class="{ off: selector_type }">
+  <div class="item_selector " :class="{ off: selector_type }">
     <div class="item_selector_main">
       <!-- 折叠按钮 -->
       <div class="fold_btn" @click="selector_type = !selector_type">
@@ -13,15 +13,16 @@
         <div class="item_selector_footer"></div>
       </div>
       <!-- 选择器的内容 -->
+      <div class="item_selector_list_container_background"></div>
       <div class="item_selector_list_container">
         <q-scroll-area
           style="height: 100%; width: 100%"
           :thumb-style="{
-            width: '2px',
-            right: '4px',
+            width: '2rem',
+            right: '4rem',
           }"
           :bar-style="{
-            borderRadius: '1px',
+            borderRadius: '1rem',
             backgroundColor: '#DDD8D3',
           }"
         >
@@ -38,7 +39,7 @@
               <div class="row items-center">
                 <q-img
                   :src="`/imgs/itemicon_${item.name}.png`"
-                  style="width: 32px; height: 32px; margin-left: 12px"
+                  style="width: 32rem; height: 32rem; margin-left: 12rem"
                 ></q-img>
                 <span class="item_name">{{ item.name }}</span>
               </div>
@@ -53,7 +54,7 @@
                 <div class="col-12 q-pa-sm" v-if="item.name == '宝箱'">
                   <q-btn-toggle
                     dense
-                    padding="8px"
+                    padding="8rem"
                     v-model="chest_type"
                     color="toggle_btn_color"
                     toggle-color="toggle_btn_toggle_color"
@@ -83,7 +84,8 @@
                   <div class="item_option_avatar">
                     <q-img
                       :src="get_itemicon(i)"
-                      style="width: 48px; height: 48px"
+                      style="width: 40rem; height: 40rem"
+                      referrerpolicy="no-referrer"
                     ></q-img>
                   </div>
                   <div class="col" style="position: relative">
@@ -102,7 +104,7 @@
           </div>
         </q-scroll-area>
         <q-inner-loading :showing="item_loading">
-          <q-spinner-gears size="50px" color="primary" />
+          <q-spinner-gears size="50rem" color="primary" />
         </q-inner-loading>
       </div>
       <!-- 已选项 -->
@@ -110,7 +112,7 @@
         <div class="close-all" @click="closeall"></div>
         <div class="item_list">
           <q-scroll-area
-            style="height: 90%; width: 100%"
+            style="height: 100%; width: 100%"
             :thumb-style="{ background: 'none' }"
           >
             <div
@@ -122,7 +124,8 @@
               <div class="item_close"></div>
               <q-img
                 :src="get_itemicon(item)"
-                style="width: 32px; height: 32px; margin: 6px 0px 5px 6px"
+                style="width: 48rem; height: 48rem; margin: 1rem"
+                referrerpolicy="no-referrer"
               ></q-img>
               <q-tooltip>{{ item.area }}-{{ item.name }}</q-tooltip>
             </div>
@@ -216,7 +219,7 @@ export default {
     get_itemicon(value) {
       let icon = this.icon_list.find((item) => item.name == value.iconTag);
       if (icon != undefined) {
-        return icon.url;
+        return icon.url.replace("tiles.yuanshen.site/d/marker_image","download.yuanshen.site/d_5");
       }
       return "https://assets.yuanshen.site/icons/-1.png";
     },
