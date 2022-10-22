@@ -1,3 +1,5 @@
+//地图的构建函数
+
 //地图初始化
 import * as L from 'leaflet'
 import "leaflet/dist/leaflet.css";
@@ -42,7 +44,7 @@ function create_map_layer(area_idx, mapCenter, mapSize, mapTilesOffset = [0, 0])
     return tiles
 }
 /**
- * 生成地图
+ * 生成地图的实例对象
  * @param {string} area_idx 地图别名 twt29：大世界 qd28：梦想群岛 yxg2：渊下宫/三界路飨祭 qd:群岛1 qd2:群岛2 
  * @param {object} settings leaflet 地图设置
  * @param {Array} mapCenter 地图中心坐标
@@ -67,7 +69,8 @@ function create_map(area_idx, settings, mapCenter = [3568, 6286], mapSize = [140
         },
         //以像素坐标表示矩形区域
         bounds: L.bounds(L.point(0, 0), L.point(mapSize[0], mapSize[1])),
-    })
+    });
+    //地图实例的相关参数，对象属性请参考 https://leafletjs.com/reference.html#map-option
     let map_setting = {
         crs: mapCRS,
         center: [2576, 1742],
@@ -90,7 +93,7 @@ function create_map(area_idx, settings, mapCenter = [3568, 6286], mapSize = [140
     let map = L.map('map', map_setting).addLayer(tiles);
     return map
 }
-//添加地图蒙层(群岛)
+//地图蒙层(群岛)的相关参数
 const qd_postion = {
     ww: [
         [-494, -1164],
@@ -109,11 +112,13 @@ const qd_postion = {
         [2201, -1046],
     ],
 }
+//给地图添加额外的图层
 function add_map_overlay_qd(type, index) {
     let imageUrl = `https://assets.yuanshen.site/tiles_qd28/other/${type}/${index}.png`;
     let imageBounds = [qd_postion[type]]
     return L.imageOverlay(imageUrl, imageBounds)
 }
+//将地图实例对象绑定至指定的dom
 function init_map(area) {
     switch (area) {
         case '金苹果群岛':

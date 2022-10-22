@@ -1,3 +1,4 @@
+<!-- 点击地图上的点位的弹窗 -->
 <template>
   <div id="opened_popup row" class="q-pa-md">
     <div class="text">
