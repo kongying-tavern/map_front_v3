@@ -1,3 +1,4 @@
+<!-- 地图主页 -->
 <template>
   <q-layout class="main">
     <!-- 地图容器 -->
@@ -109,6 +110,7 @@ export default {
           }).then((res) => {
             let iconurl = this.get_itemicon(value.item);
             let layergroup = layergroup_register(res.data.data, iconurl);
+            //为每个点位绑定点击时弹出弹窗函数
             layergroup.eachLayer((layer) => {
               layer.bindPopup(this.$refs.window);
               layer.on({
@@ -118,6 +120,7 @@ export default {
                   this.handle_layergroup = layergroup;
                 },
               });
+              //检测点位是否已被标记，若标记则为该点位着色
               let arr = JSON.parse(localStorage.getItem("marked_layers"));
               let layerid = layer.options.data.id;
               if (arr.includes(layerid)) {
@@ -128,7 +131,7 @@ export default {
             this.layergroup_map.set(value.item.itemId, layergroup);
             this.loading = false;
           });
-          //否则使用缓存
+          //否则使用缓存，直接从点位组map对象中调取队应的点位组
         } else {
           let layergroup = this.layergroup_map.get(value.item.itemId);
           layergroup.eachLayer((layer) => {
@@ -147,7 +150,7 @@ export default {
         this.map.removeLayer(layergroup);
       }
     },
-    //刷新点位
+    //刷新点位的状态
     refresh_layergroup() {
       this.loading = true;
       this.clearall();
@@ -194,6 +197,7 @@ export default {
       if (
         !this.teleport_map.has(`${this.mainStore.selected_child_area.name}`)
       ) {
+        //若无缓存，则从传送点位列表中找到所有传送点位类，由于传送点位有不同的类型（锚点/秘境），因为需要为不同的点位类型建立不同改的对象
         this.loading = true;
         let item_list = [];
         let icon_list = [];
@@ -206,6 +210,7 @@ export default {
           });
         }
         let layergroup = layergroup_register();
+        //生成传送点位列表
         query_itemlayer_infolist({
           typeIdList: [],
           areaIdList: [],
