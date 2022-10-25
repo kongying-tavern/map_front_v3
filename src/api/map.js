@@ -6,7 +6,7 @@ import "leaflet/dist/leaflet.css";
 //初始化地图中心和地图尺寸
 /**
  * 注册地图瓦片
- * @param {string} area_idx 地图别名 twt29：大世界 qd28：梦想群岛 yxg2：渊下宫/三界路飨祭 qd:群岛1 qd2:群岛2 
+ * @param {string} area_idx 地图别名 twt31：大世界 qd28：梦想群岛 yxg2：渊下宫/三界路飨祭 qd:群岛1 qd2:群岛2
  * @param {Array} mapCenter 地图中心坐标
  * @param {Array} mapSize 地图尺寸
  * @param {Array} mapTilesOffset 地图瓦片的偏移
@@ -18,9 +18,7 @@ function create_map_layer(area_idx, mapCenter, mapSize, mapTilesOffset = [0, 0])
         imgform = 'jpg'
     }
     let tiles_preUrl = 'https://assets.yuanshen.site/tiles_'
-    // if (area_idx == 'twt29'){
-    //     tiles_preUrl = 'https://tiles.yuanshen.site/d/tiles/tiles_'
-    // }
+
     L.TileLayer.T = L.TileLayer.extend({
         getTileUrl: function (coords) {
             var x = coords.x,
@@ -52,7 +50,7 @@ function create_map_layer(area_idx, mapCenter, mapSize, mapTilesOffset = [0, 0])
  * @param {Array} mapTilesOffset 地图瓦片的偏移
  * @returns 地图对象
  */
-function create_map(area_idx, settings, mapCenter = [3568, 6286], mapSize = [14080, 15360], mapTilesOffset = [-1792, 0]) {
+function create_map(area_idx, settings, mapCenter = [3568, 6286], mapSize = [17408, 16384], mapTilesOffset = [-5120, 0]) {
     //设置地图要使用的坐标参考系（CRS），本地图使用simple类型CRS，将经度和纬度直接映射到x和y。
     let mapCRS = L.Util.extend({}, L.CRS.Simple, {
         //用给定的系数表示变换对象。
@@ -91,6 +89,20 @@ function create_map(area_idx, settings, mapCenter = [3568, 6286], mapSize = [140
 
     let tiles = create_map_layer(area_idx, mapCenter, mapSize, mapTilesOffset)
     let map = L.map('map', map_setting).addLayer(tiles);
+    L.control
+        .attribution({
+            prefix: `
+      <footer role='contentinfo' class='footer'>
+        <a href='https://yuanshen.site/docs/disclaimer.html' target='_blank' title='空荧酒馆免责声明'>免责声明</a>
+        <a href='https://yuanshen.site/docs/join.html' target='_blank' target='_blank' title='加入我们'>招募</a>
+        <a href='https://support.qq.com/products/321980/blog-archive' target='_blank' rel='noopener noreferrer' title='空荧酒馆原神地图更新日志'>更新日志</a>
+        <a href='https://github.com/kongying-tavern' target='_blank' rel='noopener noreferrer' title='GitHub'>GitHub</a>
+        <a href='http://beian.miit.gov.cn' target='_blank' rel='noopener noreferrer' title='工业和信息化部域名信息备案管理系统'>蜀ICP备2020028219号-1</a>
+      </footer>
+		`,
+            position: 'bottomright',
+        })
+        .addTo(map)
     return map
 }
 //地图蒙层(群岛)的相关参数
@@ -116,6 +128,11 @@ const qd_postion = {
 function add_map_overlay_qd(type, index) {
     let imageUrl = `https://assets.yuanshen.site/tiles_qd28/other/${type}/${index}.png`;
     let imageBounds = [qd_postion[type]]
+    return L.imageOverlay(imageUrl, imageBounds)
+}
+function add_map_overlay_XumiUnderground() {
+    let imageUrl = `/imgs/sumeru_undergroundmap_shade.png`;
+    let imageBounds = [[-6299, -2190], [-838, 1906]]
     return L.imageOverlay(imageUrl, imageBounds)
 }
 //将地图实例对象绑定至指定的dom
@@ -150,7 +167,7 @@ function init_map(area) {
                 [0, 0]
             )
         default:
-            return create_map('twt29');
+            return create_map('twt31');
 
     }
 }
@@ -158,5 +175,6 @@ export {
     create_map_layer,
     create_map,
     add_map_overlay_qd,
+    add_map_overlay_XumiUnderground,
     init_map
 }

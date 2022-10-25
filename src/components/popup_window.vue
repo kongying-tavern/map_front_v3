@@ -108,21 +108,21 @@ export default {
 </script>
 <style scoped>
 .title {
-  font-size: 16px;
+  font-size: 16rem;
   color: #4b5368;
   max-width: 90%;
 }
 .info {
-  font-size: 14px;
+  font-size: 14rem;
   color: #4b5368;
-  margin-top: 10px;
+  margin-top: 10rem;
   white-space: pre-line;
-  max-height: 300px;
+  max-height: 300rem;
 }
 .layer_img {
   display: block;
   margin: 0 auto;
-  width: 200px;
-  height: 200px;
+  width: 200rem;
+  height: 200rem;
 }
 </style>

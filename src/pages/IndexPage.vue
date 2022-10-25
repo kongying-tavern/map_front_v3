@@ -8,7 +8,7 @@
       <div class="twinkling"></div>
       <div id="map"></div>
       <q-inner-loading :showing="loading" style="z-index: 2000">
-        <q-spinner-gears size="50px" color="primary" />
+        <q-spinner-gears size="50rem" color="primary" />
       </q-inner-loading>
     </div>
     <!-- 地区选择器 -->
@@ -40,6 +40,12 @@
     </div>
     <!-- 左上侧各种开关 -->
     <extra-btn></extra-btn>
+    <div class="area_components">
+      <level-switch
+        v-if="mainStore.selected_area == '须弥'"
+        @callback="xumi_functions"
+      ></level-switch>
+    </div>
   </q-layout>
 </template>
 
@@ -47,13 +53,14 @@
 import ItemSelector from "../components/item_selector.vue";
 import AreaSelector from "../components/area_selector.vue";
 import PopupWindow from "../components/popup_window.vue";
-import ExtraBtn from "../components/extra_btn.vue"
-import { init_map } from "../api/map";
+import ExtraBtn from "../components/extra_btn.vue";
+import LevelSwitch from "../components/xumi/level_switch.vue";
+import { init_map, add_map_overlay_XumiUnderground } from "../api/map";
 import { mapStores } from "pinia";
 import { useCounterStore } from "../stores/example-store";
 import { layergroup_register, layer_mark, layer_register } from "../api/layer";
 import { query_itemlayer_infolist } from "../service/base_request";
-import { switch_area_list, data_statistics } from "../api/common";
+import { switch_area_list, set_Storage } from "../api/common";
 export default {
   name: "IndexPage",
   data() {
@@ -65,13 +72,15 @@ export default {
       handle_layer: null,
       handle_layergroup: null,
       teleport_state: false,
+      map_bg: null,
     };
   },
   components: {
     ItemSelector,
     AreaSelector,
     PopupWindow,
-    ExtraBtn
+    ExtraBtn,
+    LevelSwitch,
   },
   methods: {
     //返回图标数组
@@ -253,19 +262,41 @@ export default {
         this.map.removeLayer(this.teleport_group);
       }
     },
+    //须弥的相关函数
+    xumi_functions(val) {
+      this.loading = true;
+      if (this.xumi == undefined) {
+        this.xumi = add_map_overlay_XumiUnderground();
+      }
+      if (val) {
+        this.map_tiles.setOpacity(1);
+        this.map.removeLayer(this.xumi);
+        this.loading = false;
+      } else {
+        this.map_tiles.setOpacity(0.45);
+        this.map.addLayer(this.xumi);
+        this.loading = false;
+      }
+    },
   },
   mounted() {
-    if (this.$q.platform.is.mobile) {
-      alert("测试版暂未开放手机端使用，请切换至电脑端以正常使用");
-    }
     //生成地图和点位组map对象
     this.map = init_map();
+    //获取地图背景所属的对象
+    this.map.eachLayer((layer) => {
+      this.map_tiles = layer;
+    });
     this.teleport_group = null;
     this.layergroup_map = new Map();
     this.teleport_map = new Map();
     //点位缓存
     if (localStorage.getItem("marked_layers") == null) {
       localStorage.setItem("marked_layers", JSON.stringify([]));
+    }
+    //回调时，记录用户的code
+    if (this.$route.query.code != undefined) {
+      set_Storage("_gitee_usercode", this.$route.query.code);
+      this.$router.push("/");
     }
   },
   computed: {
@@ -300,6 +331,7 @@ export default {
 @import url("https://yuanshen.site/css/background.css");
 @import "../css/map.scss";
 @import "../css/selector.scss";
+@import "../css/area_component.scss";
 .map_containor {
   position: relative;
 }

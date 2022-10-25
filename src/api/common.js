@@ -1,6 +1,6 @@
 //一些常用的普通函数
 import { Notify, Cookies } from 'quasar'
-import { quest_request } from "../service/user_request"
+import { get_gitee_token, refresh_gitee_token, } from "../service/user_request"
 const switch_area_list = ["渊下宫", "三界路飨祭", "金苹果群岛", "地下矿区"];
 //提示框
 function create_notify(msg, type = 'positive') {
@@ -11,31 +11,51 @@ function create_notify(msg, type = 'positive') {
         timeout: 1000,
     })
 }
-function set_user_token(token, expires) {
-    Cookies.set("_yuanshen_map_usertoken", token, {
+//设置cookies
+function set_Cookies(token_name, token, expires) {
+    Cookies.set(token_name, token, {
         expires: `${expires}s`,
     });
 }
-function check_user_token() {
-    if (Cookies.get('_yuanshen_map_usertoken') == null) {
-        quest_request().then(res => {
-            set_user_token(res.data.access_token, res.data.expires_in)
-        })
+//设置localstorage
+function set_Storage(name, value) {
+    localStorage.setItem(name, value);
+}
+//获取cookies
+function get_Cookies(name) {
+    return Cookies.get(name)
+}
+//获取localstorage
+function get_Storage(name) {
+    return localStorage.getItem(name);
+}
+//检查gitee相关token状态
+function check_gitee_tokens() {
+    if (get_Storage("_gitee_usercode") != undefined) {
+        if (get_Storage("_gitee_access_token") != undefined) {
+            if (get_Cookies("_gitee_access_expires") == null) {
+                refresh_gitee_token().then((res) => {
+                    set_Storage("_gitee_access_token", res.data.access_token);
+                    set_Cookies("_gitee_access_expires", true, res.data.expires_in);
+                    set_Storage("_gitee_refresh_token", res.data.refresh_token);
+                });
+            } else {
+            }
+        } else {
+            get_gitee_token().then((res) => {
+                set_Storage("_gitee_access_token", res.data.access_token);
+                set_Cookies("_gitee_access_expires", true, res.data.expires_in);
+                set_Storage("_gitee_refresh_token", res.data.refresh_token);
+            });
+        }
     }
-    return get_user_token();
-
-}
-function get_user_token() {
-    return Cookies.get('_yuanshen_map_usertoken')
-}
-function data_statistics() {
-
 }
 export {
     create_notify,
-    set_user_token,
-    check_user_token,
-    get_user_token,
     switch_area_list,
-    data_statistics
+    set_Cookies,
+    set_Storage,
+    get_Cookies,
+    get_Storage,
+    check_gitee_tokens
 }

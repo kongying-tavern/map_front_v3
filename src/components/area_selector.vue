@@ -1,7 +1,7 @@
 <!-- 地区选择器 -->
 <template>
   <!-- 电脑版 -->
-  <div class="area_selector gt-sm">
+  <div class="area_selector">
     <div class="area_selector_container">
       <!-- 右方地区信息和切换部分 -->
       <div
@@ -11,7 +11,7 @@
       >
         <div class="row">
           <div class="area_info">
-            <div class="row justify-end" style="margin-top: 10px">
+            <div class="row justify-end" style="margin-top: 10rem">
               <div class="row items-center area_switch_btn">
                 <span class="area_switch_btn_icon"></span>
                 <span class="area_switch_btn_text">更换地区</span>
@@ -32,7 +32,9 @@
       </div>
       <!-- 地区选择器的展开部分 -->
       <div class="area_selector_unfold" v-show="area_selector_show">
-        <!-- <span class="area_selector_icon"></span> -->
+        <span class="area_selector_background"></span>
+        <span class="area_selector_line"></span>
+        <span class="area_selector_icon"></span>
         <div class="parent_selector row justify-center">
           <div class="row">
             <div
@@ -44,13 +46,13 @@
               <q-img
                 v-if="selected_area.areaId != item.areaId"
                 :src="`/imgs/${item.name}_off.png`"
-                style="height: 72px; width: 72px"
+                style="height: 72rem; width: 72rem"
                 no-spinner
               ></q-img>
               <q-img
                 v-else
                 :src="`/imgs/Light_${item.name}.png`"
-                style="height: 120x; width: 120px"
+                style="height: 128rem; width: 128rem"
                 no-spinner
               ></q-img>
             </div>
@@ -71,7 +73,9 @@
               :key="index"
               @click="change_child_area(item)"
             >
-              {{ item.name }}
+              <p>
+                {{ item.name }}
+              </p>
             </div>
           </div>
         </div>
@@ -116,7 +120,7 @@ export default {
       }
       this.child_area_list = this.child_area_list_map.get(area.name);
       this.selected_child_area = this.child_area_list[0];
-
+      this.mainStore.selected_area = this.selected_area.name;
       this.mainStore.selected_child_area = this.selected_child_area;
     },
     //切换子地区的触发事件
