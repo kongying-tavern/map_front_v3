@@ -1,9 +1,9 @@
 //点位相关
 import * as L from 'leaflet'
 import "leaflet/dist/leaflet.css";
-// import "../api/leaflet_markercluster/leaflet.markercluster-src.js";
+import "../api/leaflet_markercluster/leaflet.markercluster-src.js";
 // import "../api/leaflet_markercluster/MarkerCluster.css"
-// import "../api/leaflet_markercluster/MarkerCluster.Default.css"
+import "../api/leaflet_markercluster/MarkerCluster.Default.css"
 /**
  * 生成点位背景
  * @param {Object} data 点位数据对象
@@ -91,7 +91,7 @@ function layer_register(data, iconurl, type) {
  * @returns {Object} layerGroup对象
  */
 function layergroup_register(data = [], iconurl) {
-  let layerGroup = L.layerGroup();
+  let layerGroup = L.markerClusterGroup();
   for (let i of data) {
     layerGroup.addLayer(layer_register(i, iconurl));
   }
