@@ -25,6 +25,10 @@
       top: 18rem;
       cursor: pointer;
 
+      @media screen and (min-width:1080px) {
+        z-index: 2001;
+      }
+
       .area_switch_btn {
         min-width: 160rem;
         height: 36rem;
@@ -176,7 +180,7 @@
 //物品选择器的样式
 @keyframes item_selector_on {
   from {
-    right: -400rem;
+    right: -355rem;
   }
 
   to {
@@ -190,7 +194,7 @@
   }
 
   to {
-    right: -400rem;
+    right: -355rem;
   }
 }
 
