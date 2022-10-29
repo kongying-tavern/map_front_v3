@@ -88,9 +88,9 @@
         cluster.silentlyUpdate = function () {
           const { html } = iconCreateFunctionHandler(cluster)
           const $div = window.document.querySelector(`.cluster_${cluster._leaflet_id}`)
+          cluster._iconNeedsUpdate = true
           if($div) {
             $div.innerHTML = html
-            cluster._iconNeedsUpdate = true
           }
         }
 
