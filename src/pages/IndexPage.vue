@@ -184,6 +184,18 @@ export default {
         arr.splice(index, 1);
         localStorage.setItem("marked_layers", JSON.stringify(arr));
       }
+
+      // 使用标记功能后，更新此节点的父级聚合点cluster信息
+      this.updateClusterByMarker(layer.target)
+    },
+    // 更新父级聚合点cluster信息
+    updateClusterByMarker(marker) {
+      let parent = marker.__parent
+      while(parent) {
+        const updateForCluster = parent.silentlyUpdate
+        updateForCluster && updateForCluster()
+        parent = parent.__parent
+      }
     },
     //关闭弹窗
     close_popup() {
