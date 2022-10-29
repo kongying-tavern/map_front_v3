@@ -82,11 +82,11 @@
                   @click="insert_selected_item(i)"
                 >
                   <div class="item_option_avatar">
-                    <q-img
+                    <img
                       :src="get_itemicon(i)"
                       style="width: 40rem; height: 40rem"
                       referrerpolicy="no-referrer"
-                    ></q-img>
+                    />
                   </div>
                   <div class="col" style="position: relative">
                     <span class="item_option_title ellipsis">
