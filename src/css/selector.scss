@@ -319,13 +319,17 @@
 
       .item_body {
         border-top: 1rem solid #ddd8d3;
-        padding: 6rem 0rem 6rem 8rem;
+        padding: 0 0 0 4rem;
+
+        .q-pa-sm {
+          padding: 9rem 0 0 6rem;
+        }
 
         .item_option {
           width: 155rem;
           height: 48rem;
           background: #f6f6f6;
-          margin: 4rem 3rem;
+          margin: 8rem 0 0 6rem;
           cursor: pointer;
 
           .item_option_avatar {
@@ -367,6 +371,18 @@
               background: #00fff0;
             }
           }
+        }
+
+        .item_option:last-child {
+          margin: 8rem 0 9rem 6rem;
+        }
+
+        .item_option:first-child {
+          margin: 9rem 0 0 6rem;
+        }
+
+        .item_option:nth-child(2) {
+          margin: 9rem 0 0 6rem;
         }
 
         .item_option.on {

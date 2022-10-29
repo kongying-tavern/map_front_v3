@@ -49,7 +49,7 @@
               ></div>
             </div>
             <!-- 下拉项 -->
-            <transition name="rowexpand">
+            <q-slide-transition>
               <div class="item_body row" v-show="get_item_fold(item)">
                 <div class="col-12 q-pa-sm" v-if="item.name == '宝箱'">
                   <q-btn-toggle
@@ -100,7 +100,7 @@
                   </div>
                 </div>
               </div>
-            </transition>
+            </q-slide-transition>
           </div>
         </q-scroll-area>
         <q-inner-loading :showing="item_loading">
@@ -336,26 +336,3 @@ export default {
   },
 };
 </script>
-<style scoped>
-.rowexpand-enter-active {
-  animation: expand_ani .2s ease-in-out;
-}
-
-.rowexpand-leave-active {
-  animation: expand_ani 0s ease-in-out reverse;
-}
-
-@keyframes expand_ani {
-  from {
-    transform-origin: top center;
-    transform: scale(1, 0);
-    opacity: 0;
-  }
-
-  to {
-    transform-origin: top center;
-    transform: scale(1, 1);
-    opacity: 1;
-  }
-}
-</style>
