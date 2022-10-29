@@ -49,7 +49,7 @@
               ></div>
             </div>
             <!-- 下拉项 -->
-            <q-slide-transition>
+            <transition name="rowexpand">
               <div class="item_body row" v-show="get_item_fold(item)">
                 <div class="col-12 q-pa-sm" v-if="item.name == '宝箱'">
                   <q-btn-toggle
@@ -100,7 +100,7 @@
                   </div>
                 </div>
               </div>
-            </q-slide-transition>
+            </transition>
           </div>
         </q-scroll-area>
         <q-inner-loading :showing="item_loading">
@@ -151,6 +151,7 @@ export default {
   data() {
     return {
       icon_list: [],
+      icon_list_map: new Map(),
       test: false,
       selector_type: false,
       selected_type: 0,
@@ -217,11 +218,7 @@ export default {
     },
     //查询物品类型对应的图标
     get_itemicon(value) {
-      let icon = this.icon_list.find((item) => item.name == value.iconTag);
-      if (icon != undefined) {
-        return icon.url.replace("tiles.yuanshen.site/d/marker_image","download.yuanshen.site/d_5");
-      }
-      return "https://assets.yuanshen.site/icons/-1.png";
+      return this.icon_list_map.get(value.iconTag) || "https://assets.yuanshen.site/icons/-1.png";
     },
     //添加物品选项
     insert_selected_item(value) {
@@ -271,6 +268,22 @@ export default {
       this.selected_item_list = [];
       this.$emit("clear");
     },
+    // 图片加载缓存
+    icon_list_cache() {
+      this.icon_list.forEach(({ name, url }) => {
+        const newUrl = url.replace("tiles.yuanshen.site/d/marker_image", "download.yuanshen.site/d_5")
+        this.icon_list_map.set(name, newUrl);
+        // download.yuanshen.site/d_5 域名下没有配置跨域，缓存模块会报错
+        if (newUrl === url) {
+          this.image_cache(newUrl);
+        }
+      })
+    },
+    // 图片加载缓存
+    image_cache(url) {
+      const img = new Image();
+      img.src = url;
+    }
   },
   mounted() {
     this.item_loading = true;
@@ -304,6 +317,7 @@ export default {
             }
           }
           this.item_loading = false;
+          this.icon_list_cache();
         })
       );
   },
@@ -323,4 +337,25 @@ export default {
 };
 </script>
 <style scoped>
+.rowexpand-enter-active {
+  animation: expand_ani .2s ease-in-out;
+}
+
+.rowexpand-leave-active {
+  animation: expand_ani 0s ease-in-out reverse;
+}
+
+@keyframes expand_ani {
+  from {
+    transform-origin: top center;
+    transform: scale(1, 0);
+    opacity: 0;
+  }
+
+  to {
+    transform-origin: top center;
+    transform: scale(1, 1);
+    opacity: 1;
+  }
+}
 </style>
