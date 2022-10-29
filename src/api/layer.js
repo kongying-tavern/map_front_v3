@@ -2,7 +2,7 @@
 import * as L from 'leaflet'
 import "leaflet/dist/leaflet.css";
 import "../api/leaflet_markercluster/leaflet.markercluster-src.js";
-// import "../api/leaflet_markercluster/MarkerCluster.css"
+import "leaflet.markercluster/dist/MarkerCluster.css"
 import "../api/leaflet_markercluster/MarkerCluster.Default.css"
 /**
  * 生成点位背景
