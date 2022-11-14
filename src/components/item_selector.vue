@@ -51,7 +51,7 @@
             </div>
             <!-- 下拉项 -->
             <q-slide-transition>
-              <div class="item_body row" v-show="get_item_fold(item)">
+              <div class="item_body row" v-if="get_item_fold(item)">
                 <div class="col-12 q-pa-sm" v-if="item.name == '宝箱'">
                   <q-btn-toggle
                     dense
@@ -87,6 +87,7 @@
                       :src="get_itemicon(i)"
                       style="width: 40rem; height: 40rem"
                       referrerpolicy="no-referrer"
+                      @error="handle_item_icon_error(i)"
                     />
                   </div>
                   <div class="col" style="height: 100%; position: relative">
@@ -125,11 +126,12 @@
               @click="insert_selected_item(item)"
             >
               <div class="item_close"></div>
-              <q-img
+              <img
                 :src="get_itemicon(item)"
                 style="width: 48rem; height: 48rem; margin: 1rem"
                 referrerpolicy="no-referrer"
-              ></q-img>
+                @error="handle_item_icon_error(item)"
+              />
               <q-tooltip>{{ item.area }}-{{ item.name }}</q-tooltip>
             </div>
           </q-scroll-area>
@@ -223,12 +225,10 @@ export default {
     },
     //查询物品类型对应的图标
     get_itemicon(value) {
-      let icon = this.icon_list.find((item) => item.name == value.iconTag);
-      if (icon != undefined) {
-        return icon.url;
+      if (!this.icon_list_map.has(value.iconTag)) {
+        this.icon_list_map.set(value.iconTag, "https://assets.yuanshen.site/icons/-1.png");
       }
-      return "https://assets.yuanshen.site/icons/-1.png";
-      // return this.icon_list_map.get(value.iconTag) || "https://assets.yuanshen.site/icons/-1.png";
+      return this.icon_list_map.get(value.iconTag);
     },
     //添加物品选项
     insert_selected_item(value) {
@@ -278,7 +278,7 @@ export default {
       this.selected_item_list = [];
       this.$emit("clear");
     },
-    // 图片加载缓存
+    // 图片路径映射表
     icon_list_cache() {
       this.icon_list.forEach(({ name, url }) => {
         const newUrl = url.replace(
@@ -286,16 +286,11 @@ export default {
           "download.yuanshen.site/d_5"
         );
         this.icon_list_map.set(name, newUrl);
-        // download.yuanshen.site/d_5 域名下没有配置跨域，缓存模块会报错
-        if (newUrl === url) {
-          this.image_cache(newUrl);
-        }
       });
     },
-    // 图片加载缓存
-    image_cache(url) {
-      const img = new Image();
-      img.src = url;
+    // 图片加载异常处理
+    handle_item_icon_error(value) {
+      this.icon_list_map.set(value.iconTag, "https://assets.yuanshen.site/icons/-1.png");
     },
     check_item_length(item) {
       if (item.typeId != 9) {
@@ -341,7 +336,7 @@ export default {
             }
           }
           this.item_loading = false;
-          // this.icon_list_cache();
+          this.icon_list_cache();
         })
       );
   },
