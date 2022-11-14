@@ -30,6 +30,7 @@
             class="item_selector_item"
             v-for="(item, index) in type_list"
             :key="index"
+            v-show="check_item_length(item)"
           >
             <!-- 标题项 -->
             <div
@@ -163,7 +164,7 @@ export default {
       item_loading: false,
       selected_item_list: [],
       item_list_map: new Map(),
-      item_list: {},
+      item_list: [],
       teleport_list: [],
     };
   },
@@ -295,6 +296,17 @@ export default {
     image_cache(url) {
       const img = new Image();
       img.src = url;
+    },
+    check_item_length(item) {
+      if (item.typeId != 9) {
+        if (
+          this.item_list[item.typeId] == undefined ||
+          this.item_list[item.typeId].length == 0
+        ) {
+          return false;
+        }
+      }
+      return true;
     },
   },
   mounted() {
