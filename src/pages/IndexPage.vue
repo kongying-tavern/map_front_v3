@@ -231,7 +231,7 @@ export default {
             iconurl: this.get_itemicon(i),
           });
         }
-        let layergroup = layergroup_register();
+        let layergroup = layergroup_register(false);
         //生成传送点位列表
         query_itemlayer_infolist({
           typeIdList: [],

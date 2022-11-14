@@ -1,9 +1,10 @@
-const routes = [{
-    path: '/',
-    component: () => import('pages/construction_page.vue'),
-  },
+const routes = [
+  // {
+  //   path: '/',
+  //   component: () => import('pages/construction_page.vue'),
+  // },
   {
-    path: '/index',
+    path: '/',
     component: () => import('pages/IndexPage.vue')
   }
 ]

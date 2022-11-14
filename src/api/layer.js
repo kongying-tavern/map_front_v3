@@ -90,8 +90,8 @@ function layer_register(data, iconurl, type) {
  * @param {String} iconurl 点位图标链接
  * @returns {Object} layerGroup对象
  */
-function layergroup_register(data = [], iconurl) {
-  let layerGroup = L.markerClusterGroup();
+function layergroup_register(gather = true, data = [], iconurl) {
+  let layerGroup = gather ? L.markerClusterGroup() : L.layerGroup();
   for (let i of data) {
     layerGroup.addLayer(layer_register(i, iconurl));
   }
