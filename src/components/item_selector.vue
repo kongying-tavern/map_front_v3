@@ -281,11 +281,7 @@ export default {
     // 图片路径映射表
     icon_list_cache() {
       this.icon_list.forEach(({ name, url }) => {
-        const newUrl = url.replace(
-          "tiles.yuanshen.site/d/marker_image",
-          "download.yuanshen.site/d_5"
-        );
-        this.icon_list_map.set(name, newUrl);
+        this.icon_list_map.set(name, url);
       });
     },
     // 图片加载异常处理
