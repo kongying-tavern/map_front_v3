@@ -21,6 +21,7 @@ function create_icon_options(url, type = "off") {
     iconAnchor: [11, 30], // point of the icon which will correspond to marker's location
     shadowAnchor: [16, 35.5], // the same for the shadow
     popupAnchor: [0, -35], // point from which the popup should open relative to the iconAnchor
+    className: type == 'on' ? 'opacity_on' : 'opactiy_off'
   };
   if (type == 'off' || type == 'on') {
     return options

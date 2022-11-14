@@ -34,6 +34,14 @@
         ></div>
         <div class="text">传送点位</div>
       </div>
+      <div class="switch row items-center">
+        <div
+          class="switch_btn"
+          :class="{ on: opacity_state }"
+          @click="opacity_switch"
+        ></div>
+        <div class="text">标记点位</div>
+      </div>
     </div>
     <!-- 左上侧各种开关 -->
     <extra-btn @load="load_savedata" @loading="toggle_loading"></extra-btn>
@@ -72,6 +80,7 @@ export default {
       handle_layer: null,
       handle_layergroup: null,
       teleport_state: false,
+      opacity_state: true,
       map_bg: null,
     };
   },
@@ -172,7 +181,6 @@ export default {
         }
       }
       this.loading = false;
-      this.loading = false;
     },
     //清除所有点位
     clearall() {
@@ -194,7 +202,6 @@ export default {
         arr.splice(index, 1);
         localStorage.setItem("marked_layers", JSON.stringify(arr));
       }
-
       // 使用标记功能后，更新此节点的父级聚合点cluster信息
       this.updateClusterByMarker(layer.target);
     },
@@ -319,6 +326,16 @@ export default {
     toggle_loading() {
       this.loading = !this.loading;
     },
+    //切换点位的显隐状态
+    opacity_switch() {
+      this.opacity_state = !this.opacity_state;
+      let layers = document.getElementsByClassName("leaflet-shadow-pane");
+      if (this.opacity_state) {
+        layers[0].className = "leaflet-pane leaflet-shadow-pane opacity_on";
+      } else {
+        layers[0].className = "leaflet-pane leaflet-shadow-pane";
+      }
+    },
   },
   mounted() {
     //生成地图和点位组map对象
@@ -342,6 +359,8 @@ export default {
       set_Storage("_gitee_usercode", this.$route.query.code);
       this.$router.push("/");
     }
+    let layers = document.getElementsByClassName("leaflet-shadow-pane");
+    layers[0].className = "leaflet-pane leaflet-shadow-pane opacity_on";
   },
   computed: {
     //请参考pinia不使用组合式api的用法的说明文档

@@ -1,12 +1,12 @@
 // 地图的样式
 //以宽度为准
-@media screen and (max-width:1920px) and (min-width:720px) {
+@media screen and (max-width: 1920px) and (min-width: 720px) {
   html {
     font-size: calc(100vw / 1920) !important;
   }
 }
 
-@media screen and (max-width:1080px) {
+@media screen and (max-width: 1080px) {
   html {
     font-size: calc(1080px / 1920) !important;
   }
@@ -21,7 +21,6 @@ html {
 
 .main {
   overflow: hidden;
-
 }
 
 #map {
@@ -200,7 +199,7 @@ html {
   left: 32rem;
   z-index: 6000;
 
-  @media screen and (max-width:1080px) {
+  @media screen and (max-width: 1080px) {
     z-index: 1600;
   }
 
@@ -255,4 +254,9 @@ html {
 
 .footer a {
   color: $primary;
+}
+.leaflet-shadow-pane.opacity_on {
+  .opacity_on {
+    opacity: 0.2;
+  }
 }
