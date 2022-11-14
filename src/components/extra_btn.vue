@@ -1,4 +1,3 @@
-<!-- 左上方的功能按钮，页面的脚注和存档相关的功能页面 -->
 <template>
   <div>
     <div class="extra_btn row">
@@ -20,7 +19,7 @@
       >
         <q-tooltip> 下载客户端 </q-tooltip>
       </div>
-      <div class="btn" v-show="false" @click="check_log_state">
+      <div class="btn" @click="check_log_state">
         <q-avatar
           square
           size="64rem"
@@ -29,6 +28,7 @@
           icon="mdi-content-save"
         >
         </q-avatar>
+        <q-tooltip> 存档 </q-tooltip>
       </div>
     </div>
     <q-dialog v-model="save_window">
@@ -38,7 +38,8 @@
             title="存档列表"
             :rows="save_data"
             :columns="save_columns"
-            row-key="name"
+            row-key="id"
+            :rows-per-page-options="[0]"
             style="min-width: 70vh"
           >
             <!-- 表格头插槽 -->
@@ -46,19 +47,32 @@
               <div class="row">
                 <q-btn
                   color="primary"
-                  label="新增存档"
+                  label="新建存档"
+                  @click="add_save"
                   style="margin-right: 15rem"
                 />
-                <q-btn color="primary" label="同步" />
+                <q-btn color="primary" label="保存" @click="add_save" />
+                <q-btn color="red" label="注销" @click="log_out" />
               </div>
             </template>
+            <template v-slot:body-cell-state="props">
+              <q-td class="text-center handles">
+                <q-radio v-model="saveid" :val="props.row.id" :disable="true" />
+              </q-td>
+            </template>
             <template v-slot:body-cell-handle="props">
-              <q-td class="text-center">
-                <a href="javascript:;" @click="edit_save(props.row)"
-                  >修改存档名称</a
+              <q-td class="text-center handles">
+                <a
+                  href="javascript:;"
+                  @click="edit_save(props.row)"
+                  style="margin-right: 10px"
+                  >重命名</a
                 >
-                <a href="javascript:;" @click="load_save(props.row)"
-                  >读取存档</a
+                <a
+                  href="javascript:;"
+                  @click="load_save(props.row)"
+                  style="margin-right: 10px"
+                  >读档</a
                 >
                 <a href="javascript:;" @click="delete_save(props.row)"
                   >删除存档</a
@@ -67,6 +81,9 @@
             </template>
           </q-table>
         </q-card-section>
+        <q-inner-loading :showing="loading">
+          <q-spinner-gears size="50rem" color="primary" />
+        </q-inner-loading>
       </q-card>
     </q-dialog>
   </div>
@@ -80,20 +97,31 @@ import {
   get_gitee_token,
   refresh_gitee_token,
   get_gitee_gist,
+  add_gitee_gist,
+  delete_gitee_gist,
+  edit_gitee_gist,
 } from "../service/user_request";
 import {
   set_Cookies,
   set_Storage,
   get_Cookies,
   get_Storage,
+  create_notify,
 } from "../api/common";
 export default {
   name: "ExtraBtn",
   data() {
     return {
       save_window: false,
+      save_hint_window: false,
       save_data: [],
       save_columns: [
+        {
+          name: "state",
+          align: "center",
+          label: "状态",
+          field: "state",
+        },
         {
           name: "description",
           align: "center",
@@ -105,14 +133,14 @@ export default {
           align: "center",
           label: "创建时间",
           field: "created_at",
-          format: (val) => `${date.formatDate(val, "YYYY-MM-DD HH:mm:ss")}%`,
+          format: (val) => `${date.formatDate(val, "YYYY-MM-DD HH:mm:ss")}`,
         },
         {
           name: "updated_at",
           align: "center",
           label: "最后修改时间",
           field: "updated_at",
-          format: (val) => `${date.formatDate(val, "YYYY-MM-DD HH:mm:ss")}%`,
+          format: (val) => `${date.formatDate(val, "YYYY-MM-DD HH:mm:ss")}`,
         },
         {
           name: "handle",
@@ -121,6 +149,12 @@ export default {
           field: "handle",
         },
       ],
+      save_arr: [],
+      local_arr: [],
+      selected: [],
+      saveid: null,
+      loading: false,
+      add_item: null,
     };
   },
   methods: {
@@ -168,24 +202,161 @@ export default {
         this.log_to_gitee();
       }
     },
+    //获取存档
+    get_saves() {
+      this.loading = true;
+      this.save_data = [];
+      get_gitee_gist().then((res) => {
+        this.loading = false;
+        for (let i of res.data) {
+          if (i.files.Data_KYJG != undefined) {
+            this.save_data.push(i);
+          }
+        }
+      });
+    },
     //打开存档弹窗，获取存档
-    open_save_window() {
-      if (this.save_data.length == 0) {
+    open_save_window(refresh = true) {
+      if (this.save_data.length == 0 && refresh) {
+        this.loading = true;
         get_gitee_gist().then((res) => {
-          this.save_data = res.data;
+          console.log(res);
+          this.loading = false;
+          for (let i of res.data) {
+            if (i.files.Data_KYJG != undefined) {
+              this.save_data.push(i);
+            }
+          }
           this.save_window = true;
         });
+      } else {
+        this.save_window = true;
       }
     },
+    //新增存档
+    async add_save(event, savename = "新的存档", hint = true) {
+      this.loading = true;
+      let data = {
+        files: {
+          Data_KYJG: { content: "[]" },
+          Time_KYJG: { content: "{}" },
+        },
+        description: savename,
+      };
+      await add_gitee_gist(data)
+        .then((res) => {
+          this.loading = false;
+          if (res.status == 201) {
+            create_notify("创建成功！");
+            this.get_saves();
+          }
+          this.add_item = res;
+        })
+        .catch((error) => {
+          create_notify(`创建失败！${error.response.data.message}`, "negative");
+        });
+    },
     //编辑存档名称
-    edit_save() {},
+    edit_save(save) {
+      this.$q
+        .dialog({
+          message: "请输入新的存档名称",
+          prompt: {
+            model: "",
+            isValid: (val) => val.length > 0,
+            type: "text", // optional
+          },
+          cancel: true,
+        })
+        .onOk((data) => {
+          this.loading = true;
+          let update_data = {
+            id: save.id,
+            description: data,
+          };
+          edit_gitee_gist(update_data)
+            .then((res) => {
+              this.loading = false;
+              if (res.status == 200) {
+                create_notify("修改成功！");
+              }
+              this.get_saves();
+            })
+            .catch((error) => {
+              create_notify(
+                `修改失败！${error.response.data.message}`,
+                "negative"
+              );
+            });
+        });
+    },
+    //检验存档同步性
+    save_sync_check(data) {
+      localStorage.setItem("_yuanshenmap_saveid", data);
+    },
     //读取存档
-    load_save() {},
+    load_save(data, hint = true) {
+      this.saveid = data.id;
+      localStorage.setItem("_yuanshenmap_saveid", this.saveid);
+      if (hint) {
+        create_notify("读取成功");
+      }
+      this.save_window = false;
+      this.$emit("load", data);
+    },
     //删除存档
-    delete_save() {},
+    delete_save(data) {
+      delete_gitee_gist(data).then((res) => {
+        if (res.status == 204) {
+          create_notify("删除成功！");
+          this.get_saves();
+        }
+      });
+    },
+    //上传存档
+    update_save(data) {},
+    log_out() {
+      if (confirm("你确定要登出吗？")) {
+        localStorage.removeItem("_gitee_usercode");
+        window.location.reload();
+      }
+    },
+  },
+  mounted() {
+    this.saveid = localStorage.getItem("_yuanshenmap_saveid");
+    //如果登录了，检测是否有存档的逻辑
+    if (
+      get_Storage("_gitee_access_token") != undefined &&
+      get_Cookies("_gitee_access_expires") != null
+    ) {
+      if (this.saveid == null) {
+        let arr = JSON.parse(localStorage.getItem("marked_layers"));
+        if (arr.length != 0) {
+          alert("检测到你有本地存档未上传至云端，已自动为您新建存档");
+          this.add_save().then((v) => {
+            this.open_save_window(false);
+            this.saveid = this.add_item.data.id;
+            localStorage.setItem("_yuanshenmap_saveid", this.add_item.data.id);
+          });
+        }
+      } else {
+        this.$emit("loading");
+        get_gitee_gist().then((res) => {
+          console.log(res);
+          this.$emit("loading");
+          for (let i of res.data) {
+            if (i.files.Data_KYJG != undefined) {
+              this.save_data.push(i);
+            }
+          }
+          let data = this.save_data.find((item) => item.id == this.saveid);
+          this.load_save(data, false);
+        });
+      }
+    }
   },
 };
 </script>
 
-<style>
+<style scoped>
 </style>

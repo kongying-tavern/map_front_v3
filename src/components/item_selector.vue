@@ -1,6 +1,6 @@
 <!-- 物品选择器 -->
 <template>
-  <div class="item_selector " :class="{ off: selector_type }">
+  <div class="item_selector" :class="{ off: selector_type }">
     <div class="item_selector_main">
       <!-- 折叠按钮 -->
       <div class="fold_btn" @click="selector_type = !selector_type">
@@ -37,10 +37,10 @@
               @click="switch_item_fold(item)"
             >
               <div class="row items-center">
-                <q-img
+                <img
                   :src="`/imgs/itemicon_${item.name}.png`"
                   style="width: 32rem; height: 32rem; margin-left: 12rem"
-                ></q-img>
+                />
                 <span class="item_name">{{ item.name }}</span>
               </div>
               <div
@@ -218,7 +218,12 @@ export default {
     },
     //查询物品类型对应的图标
     get_itemicon(value) {
-      return this.icon_list_map.get(value.iconTag) || "https://assets.yuanshen.site/icons/-1.png";
+      let icon = this.icon_list.find((item) => item.name == value.iconTag);
+      if (icon != undefined) {
+        return icon.url;
+      }
+      return "https://assets.yuanshen.site/icons/-1.png";
+      // return this.icon_list_map.get(value.iconTag) || "https://assets.yuanshen.site/icons/-1.png";
     },
     //添加物品选项
     insert_selected_item(value) {
@@ -271,19 +276,22 @@ export default {
     // 图片加载缓存
     icon_list_cache() {
       this.icon_list.forEach(({ name, url }) => {
-        const newUrl = url.replace("tiles.yuanshen.site/d/marker_image", "download.yuanshen.site/d_5")
+        const newUrl = url.replace(
+          "tiles.yuanshen.site/d/marker_image",
+          "download.yuanshen.site/d_5"
+        );
         this.icon_list_map.set(name, newUrl);
         // download.yuanshen.site/d_5 域名下没有配置跨域，缓存模块会报错
         if (newUrl === url) {
           this.image_cache(newUrl);
         }
-      })
+      });
     },
     // 图片加载缓存
     image_cache(url) {
       const img = new Image();
       img.src = url;
-    }
+    },
   },
   mounted() {
     this.item_loading = true;
@@ -317,7 +325,7 @@ export default {
             }
           }
           this.item_loading = false;
-          this.icon_list_cache();
+          // this.icon_list_cache();
         })
       );
   },

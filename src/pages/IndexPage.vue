@@ -7,9 +7,6 @@
       <div class="stars"></div>
       <div class="twinkling"></div>
       <div id="map"></div>
-      <q-inner-loading :showing="loading" style="z-index: 2000">
-        <q-spinner-gears size="50rem" color="primary" />
-      </q-inner-loading>
     </div>
     <!-- 地区选择器 -->
     <area-selector></area-selector>
@@ -39,13 +36,16 @@
       </div>
     </div>
     <!-- 左上侧各种开关 -->
-    <extra-btn></extra-btn>
+    <extra-btn @load="load_savedata" @loading="toggle_loading"></extra-btn>
     <div class="area_components">
       <level-switch
         v-if="mainStore.selected_area == '须弥'"
         @callback="xumi_functions"
       ></level-switch>
     </div>
+    <q-inner-loading :showing="loading" style="z-index: 2000">
+      <q-spinner-gears size="50rem" color="primary" />
+    </q-inner-loading>
   </q-layout>
 </template>
 
@@ -159,9 +159,19 @@ export default {
           this.mainStore.selected_item_list.find((item) => item.itemId == i) !=
           undefined
         ) {
+          let layergroup = this.layergroup_map.get(i);
+          let arr = JSON.parse(localStorage.getItem("marked_layers"));
+          layergroup.eachLayer((layer) => {
+            layer_mark(layer, "on");
+            let layerid = layer.options.data.id;
+            if (arr.includes(layerid)) {
+              layer_mark(layer);
+            }
+          });
           this.map.addLayer(this.layergroup_map.get(i));
         }
       }
+      this.loading = false;
       this.loading = false;
     },
     //清除所有点位
@@ -186,15 +196,15 @@ export default {
       }
 
       // 使用标记功能后，更新此节点的父级聚合点cluster信息
-      this.updateClusterByMarker(layer.target)
+      this.updateClusterByMarker(layer.target);
     },
     // 更新父级聚合点cluster信息
     updateClusterByMarker(marker) {
-      let parent = marker.__parent
-      while(parent) {
-        const updateForCluster = parent.silentlyUpdate
-        updateForCluster && updateForCluster()
-        parent = parent.__parent
+      let parent = marker.__parent;
+      while (parent) {
+        const updateForCluster = parent.silentlyUpdate;
+        updateForCluster && updateForCluster();
+        parent = parent.__parent;
       }
     },
     //关闭弹窗
@@ -290,6 +300,25 @@ export default {
         this.loading = false;
       }
     },
+    //读取存档数据
+    load_savedata(data) {
+      localStorage.setItem("marked_layers", JSON.stringify([]));
+      let local_data = new Set(
+        JSON.parse(localStorage.getItem("marked_layers"))
+      );
+      let save_data = JSON.parse(data.files.Data_KYJG.content);
+      for (let i in save_data) {
+        save_data[i] = parseInt(save_data[i]);
+      }
+      save_data = new Set(save_data);
+      let new_data = Array.from(new Set([...local_data, ...save_data]));
+      localStorage.setItem("marked_layers", JSON.stringify(new_data));
+      this.refresh_layergroup();
+    },
+    //切换地图的加载状态
+    toggle_loading() {
+      this.loading = !this.loading;
+    },
   },
   mounted() {
     //生成地图和点位组map对象
@@ -304,6 +333,9 @@ export default {
     //点位缓存
     if (localStorage.getItem("marked_layers") == null) {
       localStorage.setItem("marked_layers", JSON.stringify([]));
+    }
+    if (localStorage.getItem("marked_timelayers") == null) {
+      localStorage.setItem("marked_timelayers", JSON.stringify([]));
     }
     //回调时，记录用户的code
     if (this.$route.query.code != undefined) {
