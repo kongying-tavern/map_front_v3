@@ -80,7 +80,7 @@ export default {
       handle_layer: null,
       handle_layergroup: null,
       teleport_state: false,
-      opacity_state: true,
+      opacity_state: false,
       map_bg: null,
     };
   },
@@ -330,10 +330,13 @@ export default {
     opacity_switch() {
       this.opacity_state = !this.opacity_state;
       let layers = document.getElementsByClassName("leaflet-shadow-pane");
+      let imgs = document.getElementsByClassName("leaflet-marker-pane");
       if (this.opacity_state) {
         layers[0].className = "leaflet-pane leaflet-shadow-pane opacity_on";
+        imgs[0].className = "leaflet-pane leaflet-marker-pane opacity_on";
       } else {
         layers[0].className = "leaflet-pane leaflet-shadow-pane";
+        imgs[0].className = "leaflet-pane leaflet-marker-pane";
       }
     },
   },
@@ -359,8 +362,7 @@ export default {
       set_Storage("_gitee_usercode", this.$route.query.code);
       this.$router.push("/");
     }
-    let layers = document.getElementsByClassName("leaflet-shadow-pane");
-    layers[0].className = "leaflet-pane leaflet-shadow-pane opacity_on";
+    this.opacity_switch();
   },
   computed: {
     //请参考pinia不使用组合式api的用法的说明文档

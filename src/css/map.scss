@@ -255,8 +255,8 @@ html {
 .footer a {
   color: $primary;
 }
-.leaflet-shadow-pane.opacity_on {
+.leaflet-shadow-pane.opacity_on,.leaflet-marker-pane.opacity_on {
   .opacity_on {
-    opacity: 0.2;
+    opacity: 0.3;
   }
 }
