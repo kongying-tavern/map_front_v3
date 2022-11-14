@@ -88,12 +88,14 @@
                       referrerpolicy="no-referrer"
                     />
                   </div>
-                  <div class="col" style="position: relative">
+                  <div class="col" style="height: 100%; position: relative">
                     <span class="item_option_title ellipsis">
                       {{ i.name }}
                     </span>
-                    <!-- <span class="item_option_count ellipsis">12/30</span>
-                    <span class="item_option_progress">
+                    <span class="item_option_count ellipsis">{{
+                      i.count
+                    }}</span>
+                    <!-- <span class="item_option_progress">
                       <span class="item_option_progress_bar" style="width: 10%">
                       </span>
                     </span> -->
@@ -204,13 +206,15 @@ export default {
           }
         }
         for (let i of res.data.data.record) {
-          for (let j of i.typeIdList) {
-            if (i.hiddenFlag == 0 && i.name.indexOf("测试") == -1) {
-              this.item_list[j].push(i);
+          if (i.count > 0) {
+            for (let j of i.typeIdList) {
+              if (i.hiddenFlag == 0 && i.name.indexOf("测试") == -1) {
+                this.item_list[j].push(i);
+              }
             }
-          }
-          if (i.iconStyleType == 1) {
-            this.teleport_list.push(i);
+            if (i.iconStyleType == 1) {
+              this.teleport_list.push(i);
+            }
           }
         }
         this.mainStore.teleport_list = this.teleport_list;

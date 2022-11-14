@@ -109,7 +109,7 @@ export default {
             getBeta: 0,
           }).then((res) => {
             let iconurl = this.get_itemicon(value.item);
-            let layergroup = layergroup_register(res.data.data, iconurl);
+            let layergroup = layergroup_register(true, res.data.data, iconurl);
             //为每个点位绑定点击时弹出弹窗函数
             layergroup.eachLayer((layer) => {
               layer.bindPopup(this.$refs.window);
