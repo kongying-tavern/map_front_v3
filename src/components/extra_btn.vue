@@ -51,7 +51,12 @@
                   @click="add_save"
                   style="margin-right: 15rem"
                 />
-                <q-btn color="primary" label="保存" @click="add_save" />
+                <q-btn
+                  color="primary"
+                  label="保存"
+                  style="margin-right: 15rem"
+                  @click="update_save"
+                />
                 <q-btn color="red" label="注销" @click="log_out" />
               </div>
             </template>
@@ -166,7 +171,7 @@ export default {
           title: "跳转提示",
           html: true,
           message: `<div class="text-bold">你即将跳转至gitee进行登录授权</div>
-          <div class="text-red text-bold">请记住，空荧酒馆所属产品不会以*任何理由*要求用户使用米哈游通行证登录</div>
+          <div class="text-red text-bold">空荧酒馆所属产品不会以*任何理由*要求用户使用米哈游通行证登录或授权，也无法以*任何方式*获取您的米哈游通行证的用户信息，敬请知晓</div>
           `,
           cancel: true,
           persistent: true,
@@ -192,6 +197,7 @@ export default {
           }
         } else {
           get_gitee_token().then((res) => {
+            console.log(res);
             set_Storage("_gitee_access_token", res.data.access_token);
             set_Cookies("_gitee_access_expires", true, res.data.expires_in);
             set_Storage("_gitee_refresh_token", res.data.refresh_token);
@@ -314,7 +320,34 @@ export default {
       });
     },
     //上传存档
-    update_save(data) {},
+    update_save() {
+      let savedata = this.save_data.find((item) => item.id == this.saveid);
+      let marked_layers = JSON.parse(localStorage.getItem("marked_layers"));
+      let marked_timelayers = JSON.parse(
+        localStorage.getItem("marked_timelayers")
+      );
+      for (let i in marked_layers) {
+        marked_layers[i] = marked_layers[i].toString();
+      }
+      let update_data = {
+        id: savedata.id,
+        files: {
+          Data_KYJG: { content: JSON.stringify(marked_layers) },
+          Time_KYJG: { content: JSON.stringify(marked_timelayers) },
+        },
+      };
+      edit_gitee_gist(update_data)
+        .then((res) => {
+          this.loading = false;
+          if (res.status == 200) {
+            create_notify("保存成功！");
+          }
+          this.get_saves();
+        })
+        .catch((error) => {
+          create_notify(`保存失败！${error.response.data.message}`, "negative");
+        });
+    },
     log_out() {
       if (confirm("你确定要登出吗？")) {
         localStorage.removeItem("_gitee_usercode");
@@ -342,7 +375,6 @@ export default {
       } else {
         this.$emit("loading");
         get_gitee_gist().then((res) => {
-          console.log(res);
           this.$emit("loading");
           for (let i of res.data) {
             if (i.files.Data_KYJG != undefined) {

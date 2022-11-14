@@ -335,7 +335,7 @@ export default {
       localStorage.setItem("marked_layers", JSON.stringify([]));
     }
     if (localStorage.getItem("marked_timelayers") == null) {
-      localStorage.setItem("marked_timelayers", JSON.stringify([]));
+      localStorage.setItem("marked_timelayers", JSON.stringify({}));
     }
     //回调时，记录用户的code
     if (this.$route.query.code != undefined) {

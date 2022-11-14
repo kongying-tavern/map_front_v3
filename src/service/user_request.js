@@ -74,12 +74,13 @@ function add_gitee_gist(data) {
 }
 //编辑存档信息
 function edit_gitee_gist(data) {
+    data = {
+        ...data,
+        access_token: get_Storage('_gitee_access_token'),
+    }
     return axios({
         method: 'patch',
-        url: 'https://gitee.com/api/v5/gists',
-        params: {
-            id: data.id
-        },
+        url: `https://gitee.com/api/v5/gists/${data.id}`,
         headers: {
             'Content-Type': 'application/json',
         },
