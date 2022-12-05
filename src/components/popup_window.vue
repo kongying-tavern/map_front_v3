@@ -25,7 +25,7 @@
         </template>
       </q-img>
       <div class="info scroll hide-scrollbar">
-        点位描述：<br />{{ layer_data.content }}
+        {{ layer_data.content }}
       </div>
     </div>
     <div

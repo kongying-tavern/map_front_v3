@@ -101,6 +101,7 @@ function create_icon_options(url, type = "off") {
   } else {
     options = {
       ...options,
+      // html: '',
       shadowUrl: undefined,
       teleport: true
     }
@@ -148,9 +149,10 @@ function create_icon_options(url, type = "off") {
  * @param {String} iconurl 点位图标链接
  * @returns {Object} marker对象
  */
-function layer_register(data, iconurl, type) {
+function layer_register(data, iconurl, type = 'off') {
+  // console.log(type);
   let marker = L.marker(data.position.split(','), {
-    icon: L.divIcon(create_icon_options(iconurl, type)),
+    icon: (type == 'off' || type == 'on') ? L.divIcon(create_icon_options(iconurl, type)) : L.icon(create_icon_options(iconurl, type)),
     data: {
       ...data
     },
@@ -182,8 +184,10 @@ function layer_mark(layer, marktype) {
   let icon = ''
   if (type == 'on') {
     icon = L.divIcon(create_icon_options(layer.options.icon.options.iconUrl, 'off'))
-  } else {
+  } else if (type == 'off') {
     icon = L.divIcon(create_icon_options(layer.options.icon.options.iconUrl, 'on'))
+  } else {
+    icon = L.icon(create_icon_options(layer.options.icon.options.iconUrl, 'none'))
   }
   layer = layer.setIcon(icon);
   return layer

@@ -105,7 +105,7 @@
         res.length = childMarkers.length;
         for (i = childMarkers.length - 1; i >= 0; i--) {
           //console.log(childMarkers[i]._latlng);
-          console.log(this);
+          // console.log(this);
           let childCenter = map.latLngToLayerPoint(childMarkers[i]._latlng);
           res[i] = new L.Point(childCenter.x, childCenter.y);
         }

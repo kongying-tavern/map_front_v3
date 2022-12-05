@@ -12,11 +12,11 @@
   }
 }
 
-:root{
-  --opacity:1
+:root {
+  --opacity: 1
 }
 
-._doneCluster{
+._doneCluster {
   opacity: var(--opacity);
 }
 
@@ -25,13 +25,15 @@ html {
   height: 100%;
   overflow: hidden;
   touch-action: manipulation;
-  cursor: url('../../public/imgs/UI_Img_Cursor_PC.png'), auto;
-  cursor: url('../../public/imgs/UI_Img_Cursor_PC.png'), pointer;
-  cursor: url('../../public/imgs/UI_Img_Cursor_PC.png'), grab;
+  cursor: url('/imgs/UI_Img_Cursor_PC.png'), auto;
 }
 
-.leaflet-grab {
-  cursor: url('../../public/imgs/UI_Img_Cursor_PC.png'), grab !important;
+.leaflet-popup-pane,
+.leaflet-control,
+.leaflet-interactive,
+.leaflet-grab,
+img {
+  cursor: url('/imgs/UI_Img_Cursor_PC.png'), auto !important;
 }
 
 .main {
@@ -258,6 +260,11 @@ html {
 
 .leaflet-popup {
   left: -142rem !important;
+
+  .leaflet-popup-tip {
+    background: #f0e9e2 !important;
+    bottom: -19px;
+  }
 }
 
 .area_components {
@@ -270,7 +277,9 @@ html {
 .footer a {
   color: $primary;
 }
-.leaflet-shadow-pane.opacity_on,.leaflet-marker-pane.opacity_on {
+
+.leaflet-shadow-pane.opacity_on,
+.leaflet-marker-pane.opacity_on {
   .opacity_on {
     opacity: 0.3;
   }

@@ -113,7 +113,14 @@
       </div>
       <!-- 已选项 -->
       <div class="item_selected_bar" v-show="selected_item_list.length != 0">
-        <div class="close-all" @click="closeall"></div>
+        <div class="close-all" @click="closeall">
+          <q-tooltip 
+            anchor="center left" self="center right" :offset="[10, 10]" 
+            transition-show="jump-left"
+            transition-hide="jump-right">
+            清除所有
+          </q-tooltip>
+        </div>
         <div class="item_list">
           <q-scroll-area
             style="height: 100%; width: 100%"
@@ -132,7 +139,12 @@
                 referrerpolicy="no-referrer"
                 @error="handle_item_icon_error(item)"
               />
-              <q-tooltip>{{ item.area }}-{{ item.name }}</q-tooltip>
+              <q-tooltip 
+                anchor="center left" self="center right" :offset="[10, 10]" 
+                transition-show="jump-left"
+                transition-hide="jump-right">
+                {{ item.area }}-{{ item.name }}
+              </q-tooltip>
             </div>
           </q-scroll-area>
         </div>

@@ -80,7 +80,7 @@ export default {
       handle_layer: null,
       handle_layergroup: null,
       teleport_state: false,
-      opacity_state: false,
+      opacity_state: true,
       map_bg: null,
     };
   },
@@ -329,10 +329,10 @@ export default {
     //切换点位的显隐状态
     opacity_switch() {
       this.opacity_state = !this.opacity_state;
-      document.documentElement.style.setProperty("--opacity",this.opacity_state?0.3:1);
+      document.documentElement.style.setProperty("--opacity",!this.opacity_state?0.3:1);
       let layers = document.getElementsByClassName("leaflet-shadow-pane");
       let imgs = document.getElementsByClassName("leaflet-marker-pane");
-      if (this.opacity_state) {
+      if (!this.opacity_state) {
         layers[0].className = "leaflet-pane leaflet-shadow-pane opacity_on";
         imgs[0].className = "leaflet-pane leaflet-marker-pane opacity_on";
       } else {
