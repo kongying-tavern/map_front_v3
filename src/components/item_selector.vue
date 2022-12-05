@@ -38,7 +38,7 @@
               @click="switch_item_fold(item)"
             >
               <div class="row items-center">
-                <img
+                <q-img
                   :src="`/imgs/itemicon_${item.name}.png`"
                   style="width: 32rem; height: 32rem; margin-left: 12rem"
                 />
@@ -83,7 +83,7 @@
                   @click="insert_selected_item(i)"
                 >
                   <div class="item_option_avatar">
-                    <img
+                    <q-img
                       :src="get_itemicon(i)"
                       style="width: 40rem; height: 40rem"
                       referrerpolicy="no-referrer"
@@ -133,7 +133,7 @@
               @click="insert_selected_item(item)"
             >
               <div class="item_close"></div>
-              <img
+              <q-img
                 :src="get_itemicon(item)"
                 style="width: 48rem; height: 48rem; margin: 1rem"
                 referrerpolicy="no-referrer"
