@@ -25,6 +25,13 @@ html {
   height: 100%;
   overflow: hidden;
   touch-action: manipulation;
+  cursor: url('../../public/imgs/UI_Img_Cursor_PC.png'), auto;
+  cursor: url('../../public/imgs/UI_Img_Cursor_PC.png'), pointer;
+  cursor: url('../../public/imgs/UI_Img_Cursor_PC.png'), grab;
+}
+
+.leaflet-grab {
+  cursor: url('../../public/imgs/UI_Img_Cursor_PC.png'), grab !important;
 }
 
 .main {
@@ -117,7 +124,7 @@ html {
       margin: 2rem 4rem 0;
       font-size: 14rem;
       text-align: center;
-      cursor: pointer;
+      // cursor: pointer;
     }
   }
 
@@ -163,7 +170,7 @@ html {
     background-size: 100% 100%;
     width: 20rem;
     height: 20rem;
-    cursor: pointer;
+    // cursor: pointer;
   }
 }
 
@@ -183,7 +190,7 @@ html {
       height: 40rem;
       background: url(/imgs/Switch_OFF.png) no-repeat;
       background-size: 100% 100%;
-      cursor: pointer;
+      // cursor: pointer;
     }
 
     .switch_btn.on {
@@ -215,7 +222,7 @@ html {
     width: 64rem;
     height: 64rem;
     margin-right: 40rem;
-    cursor: pointer;
+    // cursor: pointer;
   }
 
   .feedback {
