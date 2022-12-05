@@ -7,13 +7,15 @@
 (function (global, factory) {
   typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports) :
     typeof define === 'function' && define.amd ? define(['exports'], factory) :
-	(global = global || self, factory((global.Leaflet = global.Leaflet || {}, global.Leaflet.markercluster = {})));
-}(this, function (exports) { 'use strict';
+    (global = global || self, factory((global.Leaflet = global.Leaflet || {}, global.Leaflet.markercluster = {})));
+}(this, function (exports) {
+  'use strict';
 
   /*
    * L.MarkerClusterGroup extends L.FeatureGroup by clustering the markers contained within
    */
   const iconCreateFunctionHandler = function (cluster) {
+    cluster.options.riseOnHover = true;
     let childMarkers = cluster.getAllChildMarkers();
     // let childClassNameTemp = childMarkers[0].options.icon.options.className.split("_");
     // let childClassName = childClassNameTemp[0].split("-");
@@ -21,19 +23,47 @@
     let doneNum = 0;
     for (let i = 0; i < cluster.getChildCount(); i++) {
       let key = childMarkers[i].options.data.id;
-      let data = JSON.parse (localStorage.getItem('marked_layers'))
+      let data = JSON.parse(localStorage.getItem('marked_layers'))
       if (data.findIndex(item => item == key) != -1) {
         doneNum++;
       }
     }
     let childCount = cluster.getChildCount();
-    let svgTipFill = (doneNum / childCount == 1) ? "00EBF4" : "E6E6E6";
+    let svgTipFill = (doneNum / childCount == 1) ? "#00EBF4" : "#E6E6E6";
     let doneIcon = (doneNum / childCount == 1) ? "_done" : "";
-    let doneclass= (doneNum / childCount == 1) ? " _doneCluster" : "";
+    let doneclass = (doneNum / childCount == 1) ? " _doneCluster" : "";
     const id = ` cluster_${cluster._leaflet_id}`
     return {
       // html的最后有图标url
-      html: '<svg class="clusterSvg" width="100%" height="100%" viewBox="0 0 602 602" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><title>loc_empty</title><defs><filter x="-2.9%" y="-7.3%" width="105.8%" height="114.6%" filterUnits="objectBoundingBox" id="filter-1"><feGaussianBlur stdDeviation="2" in="SourceGraphic"></feGaussianBlur></filter></defs><g transform="translate(50.000000, 0.000000)" id="页面-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd"><ellipse id="椭圆形备份-28" fill-opacity="0.304797" fill="#000000" filter="url(#filter-1)" cx="250" cy="561" rx="104" ry="41"></ellipse><g id="聚合loc_empty" transform="translate(0.000000, -192.000000)"><path d="M80.4892622,272.514212 C126.897924,226.081047 192.094372,198.4578 263.339979,202.366075 C326.687754,205.840896 383.495162,233.893848 424.393579,277.164433 C465.061024,320.19065 490,378.259293 490,442.15716 C490,497.895388 471.02198,549.196422 439.18382,589.948036 C407.31516,630.738689 362.555651,660.952757 311.042132,674.470903 L311.042132,674.470903 L261.313072,733.818659 C260.73242,734.512516 260.090182,735.152415 259.394211,735.730531 C256.207951,738.377233 252.250546,739.481886 248.42803,739.128297 C244.605514,738.774709 240.917888,736.96288 238.271185,733.77662 L238.271185,733.77662 L189.074183,674.550301 C139.72648,661.571612 96.5965129,633.334801 65.0383548,595.188251 C33.2951275,556.817995 13.256946,508.427261 10.3637613,455.467941 C6.46924546,384.176835 34.0834423,318.944534 80.4892622,272.514212 Z" id="Stroke-1备份-2" stroke-opacity="0.403190559" stroke="#000000" stroke-width="20" fill="#FFFFFF"></path><path class="svgTip" d="M250,237 C363.770658,237 456,329.285289 456,443.124962 C456,542.227366 386.10434,624.994861 292.948613,644.763565 L250,696 L207.053382,644.763988 C113.896658,624.996042 44,542.228073 44,443.124962 C44,329.285289 136.229342,237 250,237 Z M250,259.013345 C148.379606,259.013345 66,341.442924 66,443.124962 C66,544.807 148.379606,627.236578 250,627.236578 C351.620394,627.236578 434,544.807 434,443.124962 C434,341.442924 351.620394,259.013345 250,259.013345 Z" id="形状结合备份-3" fill=#' + svgTipFill + '></path><circle id="donut-graph" class="svgCircle" transform="translate(693,194)rotate(90)" r="195" cy="443" cx="250" stroke-width="20" stroke="#00EBF4" stroke-linejoin="round" stroke-linecap="round" fill="none" stroke-dasharray="1230" stroke-dashoffset="' + (1230 - ((doneNum / childCount) * 1230)) + '" /></g></g></svg>' + '<b>' + doneNum + '/' + childCount + '</b>' + "<img class='clusterImg' src='" + childMarkers[0].options.icon.options.iconUrl + "'/>",
+      html: `
+      <svg class="clusterSvg" width="100%" height="100%" viewBox="0 0 602 602" version="1.1"
+          xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+          <title>loc_empty</title>
+          <defs>
+              <filter x="-2.9%" y="-7.3%" width="105.8%" height="114.6%" filterUnits="objectBoundingBox" id="filter-1">
+                  <feGaussianBlur stdDeviation="2" in="SourceGraphic"></feGaussianBlur>
+              </filter>
+          </defs>
+          <g transform="translate(50.000000, 0.000000)" id="页面-1" stroke="none" stroke-width="1" fill="none"
+              fill-rule="evenodd">
+              <ellipse id="椭圆形备份-28" fill-opacity="0.304797" fill="#000000" filter="url(#filter-1)" cx="250" cy="561" rx="104"
+                  ry="41"></ellipse>
+              <g id="聚合loc_empty" transform="translate(0.000000, -192.000000)">
+                  <path
+                      d="M80.4892622,272.514212 C126.897924,226.081047 192.094372,198.4578 263.339979,202.366075 C326.687754,205.840896 383.495162,233.893848 424.393579,277.164433 C465.061024,320.19065 490,378.259293 490,442.15716 C490,497.895388 471.02198,549.196422 439.18382,589.948036 C407.31516,630.738689 362.555651,660.952757 311.042132,674.470903 L311.042132,674.470903 L261.313072,733.818659 C260.73242,734.512516 260.090182,735.152415 259.394211,735.730531 C256.207951,738.377233 252.250546,739.481886 248.42803,739.128297 C244.605514,738.774709 240.917888,736.96288 238.271185,733.77662 L238.271185,733.77662 L189.074183,674.550301 C139.72648,661.571612 96.5965129,633.334801 65.0383548,595.188251 C33.2951275,556.817995 13.256946,508.427261 10.3637613,455.467941 C6.46924546,384.176835 34.0834423,318.944534 80.4892622,272.514212 Z"
+                      id="Stroke-1备份-2" stroke-opacity="0.403190559" stroke="#000000" stroke-width="20" fill="#FFFFFF"></path>
+                  <path class="svgTip"
+                      d="M250,237 C363.770658,237 456,329.285289 456,443.124962 C456,542.227366 386.10434,624.994861 292.948613,644.763565 L250,696 L207.053382,644.763988 C113.896658,624.996042 44,542.228073 44,443.124962 C44,329.285289 136.229342,237 250,237 Z M250,259.013345 C148.379606,259.013345 66,341.442924 66,443.124962 C66,544.807 148.379606,627.236578 250,627.236578 C351.620394,627.236578 434,544.807 434,443.124962 C434,341.442924 351.620394,259.013345 250,259.013345 Z"
+                      id="形状结合备份-3" fill=${svgTipFill}></path>
+                  <circle id="donut-graph" class="svgCircle" transform="translate(693,194)rotate(90)" r="195" cy="443"
+                      cx="250" stroke-width="20" stroke="#00EBF4" stroke-linejoin="round" stroke-linecap="round" fill="none"
+                      stroke-dasharray="1230" stroke-dashoffset="${(1230 - ((doneNum / childCount) * 1230))}" />
+              </g>
+          </g>
+      </svg>
+      <b>${doneNum}/${childCount}</b>
+      <img class='clusterImg' src='${childMarkers[0].options.icon.options.iconUrl}' onerror="javascript:this.src='https://assets.yuanshen.site/icons/-1.png';"/>
+  `,
       className: "clusterIcon " + doneclass + id,
       iconSize: [36 + childCount / 3, 36 + childCount / 3], // size of the icon
       iconAnchor: [(36 + childCount / 3) / 2, 36 + childCount / 3 * 0.95]
@@ -68,9 +98,9 @@
       // If you are adding individual markers set to true, if adding bulk markers leave false for massive performance gains.
       animateAddingMarkers: false,
 
-			// Make it possible to provide custom function to calculate spiderfy shape positions
+      // Make it possible to provide custom function to calculate spiderfy shape positions
       spiderfyShapePositions: function (map, childMarkers) {
-         var res = [],
+        var res = [],
           i;
         res.length = childMarkers.length;
         for (i = childMarkers.length - 1; i >= 0; i--) {
@@ -81,15 +111,22 @@
         }
         return res;
       },
-      iconCreateFunction: function(cluster){
-        const { html,className,iconSize,iconAnchor } = iconCreateFunctionHandler(cluster)
+      iconCreateFunction: function (cluster) {
+        const {
+          html,
+          className,
+          iconSize,
+          iconAnchor
+        } = iconCreateFunctionHandler(cluster)
 
         // 静默更新显示信息
         cluster.silentlyUpdate = function () {
-          const { html } = iconCreateFunctionHandler(cluster)
+          const {
+            html
+          } = iconCreateFunctionHandler(cluster)
           const $div = window.document.querySelector(`.cluster_${cluster._leaflet_id}`)
           cluster._iconNeedsUpdate = true
-          if($div) {
+          if ($div) {
             $div.innerHTML = html
           }
         }
@@ -106,7 +143,11 @@
       spiderfyDistanceMultiplier: 1,
 
       // Make it possible to specify a polyline options on a spider leg
-			spiderLegPolylineOptions: { weight: 1.5, color: '#222', opacity: 0.5 },
+      spiderLegPolylineOptions: {
+        weight: 1.5,
+        color: '#222',
+        opacity: 0.5
+      },
 
       // When bulk adding layers, adds markers in chunks. Means addLayers may not add all the layers in the call, others will be loaded during setTimeouts
       chunkedLoading: true,
@@ -160,13 +201,17 @@
       //Don't cluster non point data
       if (!layer.getLatLng) {
         this._nonPointGroup.addLayer(layer);
-				this.fire('layeradd', { layer: layer });
+        this.fire('layeradd', {
+          layer: layer
+        });
         return this;
       }
 
       if (!this._map) {
         this._needsClustering.push(layer);
-				this.fire('layeradd', { layer: layer });
+        this.fire('layeradd', {
+          layer: layer
+        });
         return this;
       }
 
@@ -182,7 +227,9 @@
       }
 
       this._addLayer(layer, this._maxZoom);
-			this.fire('layeradd', { layer: layer });
+      this.fire('layeradd', {
+        layer: layer
+      });
 
       // Refresh bounds and weighted positions.
       this._topClusterLevel._recalculateBounds();
@@ -217,15 +264,22 @@
       //Non point layers
       if (!layer.getLatLng) {
         this._nonPointGroup.removeLayer(layer);
-				this.fire('layerremove', { layer: layer });
+        this.fire('layerremove', {
+          layer: layer
+        });
         return this;
       }
 
       if (!this._map) {
         if (!this._arraySplice(this._needsClustering, layer) && this.hasLayer(layer)) {
-					this._needsRemoving.push({ layer: layer, latlng: layer._latlng });
+          this._needsRemoving.push({
+            layer: layer,
+            latlng: layer._latlng
+          });
         }
-				this.fire('layerremove', { layer: layer });
+        this.fire('layerremove', {
+          layer: layer
+        });
         return this;
       }
 
@@ -240,7 +294,9 @@
 
       //Remove the marker from clusters
       this._removeLayer(layer, true);
-			this.fire('layerremove', { layer: layer });
+      this.fire('layerremove', {
+        layer: layer
+      });
 
       // Refresh bounds and weighted positions.
       this._topClusterLevel._recalculateBounds();
@@ -310,7 +366,9 @@
             if (!m.getLatLng) {
               npg.addLayer(m);
               if (!skipLayerAddEvent) {
-								this.fire('layeradd', { layer: m });
+                this.fire('layeradd', {
+                  layer: m
+                });
               }
               continue;
             }
@@ -321,7 +379,9 @@
 
             this._addLayer(m, this._maxZoom);
             if (!skipLayerAddEvent) {
-							this.fire('layeradd', { layer: m });
+              this.fire('layeradd', {
+                layer: m
+              });
             }
 
             //If we just made a cluster of size 2 then we need to remove the other marker from the map (if it is) or we never will
@@ -413,9 +473,14 @@
           this._arraySplice(this._needsClustering, m);
           npg.removeLayer(m);
           if (this.hasLayer(m)) {
-						this._needsRemoving.push({ layer: m, latlng: m._latlng });
+            this._needsRemoving.push({
+              layer: m,
+              latlng: m._latlng
+            });
           }
-					this.fire('layerremove', { layer: m });
+          this.fire('layerremove', {
+            layer: m
+          });
         }
         return this;
       }
@@ -456,12 +521,16 @@
 
         if (!m.__parent) {
           npg.removeLayer(m);
-					this.fire('layerremove', { layer: m });
+          this.fire('layerremove', {
+            layer: m
+          });
           continue;
         }
 
         this._removeLayer(m, true, true);
-				this.fire('layerremove', { layer: m });
+        this.fire('layerremove', {
+          layer: m
+        });
 
         if (fg.hasLayer(m)) {
           fg.removeLayer(m);
@@ -889,7 +958,11 @@
         c += 'large';
       }
 
-			return new L.DivIcon({ html: '<div><span>' + childCount + '</span></div>', className: 'marker-cluster' + c, iconSize: new L.Point(40, 40) });
+      return new L.DivIcon({
+        html: '<div><span>' + childCount + '</span></div>',
+        className: 'marker-cluster' + c,
+        iconSize: new L.Point(40, 40)
+      });
     },
 
     _bindEvents: function () {
@@ -1013,7 +1086,9 @@
       //a simple function to return that number. Otherwise, we just have to
       //use the function we've passed in.
       if (typeof radius !== "function") {
-				radiusFn = function () { return radius; };
+        radiusFn = function () {
+          return radius;
+        };
       }
 
       if (this.options.disableClusteringAtZoom !== null) {
@@ -1296,7 +1371,7 @@
         //Add all children of current clusters to map and remove those clusters from map
         this._topClusterLevel._recursively(bounds, previousZoomLevel, minZoom, function (c) {
           var startPos = c._latlng,
-					    markers  = c._markers,
+            markers = c._markers,
             m;
 
           if (!bounds.contains(startPos)) {
@@ -1458,8 +1533,10 @@
 
     initialize: function (group, zoom, a, b) {
 
-			L.Marker.prototype.initialize.call(this, a ? (a._cLatLng || a.getLatLng()) : new L.LatLng(0, 0),
-	            { icon: this, pane: group.options.clusterPane });
+      L.Marker.prototype.initialize.call(this, a ? (a._cLatLng || a.getLatLng()) : new L.LatLng(0, 0), {
+        icon: this,
+        pane: group.options.clusterPane
+      });
 
       this._group = group;
       this._zoom = zoom;
@@ -1884,7 +1961,7 @@
     this._cellSize = cellSize;
     this._sqCellSize = cellSize * cellSize;
     this._grid = {};
-		this._objectPoint = { };
+    this._objectPoint = {};
   };
 
   L.DistanceGrid.prototype = {
@@ -2068,7 +2145,10 @@
           }
         }
 
-				return { maxPoint: maxPt, newPoints: newPoints };
+        return {
+          maxPoint: maxPt,
+          newPoints: newPoints
+        };
       },
 
 
@@ -2093,7 +2173,7 @@
               this.buildConvexHull([t.maxPoint, baseLine[1]], t.newPoints)
             );
           return convexHullBaseLines;
-        } else {  // if there is no more point "outside" the base line, the current base line is part of the convex hull
+        } else { // if there is no more point "outside" the base line, the current base line is part of the convex hull
           return [baseLine[0]];
         }
       },
@@ -2107,11 +2187,16 @@
        */
       getConvexHull: function (latLngs) {
         // find first baseline
-				var maxLat = false, minLat = false,
-					maxLng = false, minLng = false,
-					maxLatPt = null, minLatPt = null,
-					maxLngPt = null, minLngPt = null,
-					maxPt = null, minPt = null,
+        var maxLat = false,
+          minLat = false,
+          maxLng = false,
+          minLng = false,
+          maxLatPt = null,
+          minLatPt = null,
+          maxLngPt = null,
+          minLngPt = null,
+          maxPt = null,
+          minPt = null,
           i;
 
         for (i = latLngs.length - 1; i >= 0; i--) {
@@ -2173,7 +2258,7 @@
     _circleFootSeparation: 25, //related to circumference of circle
     _circleStartAngle: 0,
 
-		_spiralFootSeparation:  28, //related to size of spiral (experiment!)
+    _spiralFootSeparation: 28, //related to size of spiral (experiment!)
     _spiralLengthStart: 11,
     _spiralLengthFactor: 5,
 
@@ -2220,7 +2305,7 @@
 
     _generatePointsCircle: function (count, centerPt) {
       var circumference = this._group.options.spiderfyDistanceMultiplier * this._circleFootSeparation * (2 + count),
-        legLength = circumference / this._2PI,  //radius from circumference
+        legLength = circumference / this._2PI, //radius from circumference
         angleStep = this._2PI / count,
         res = [],
         i, angle;
@@ -2440,7 +2525,9 @@
           legPath = leg._path;
           legPath.style.strokeDashoffset = 0;
           //legPath.style.strokeOpacity = finalLegOpacity;
-					leg.setStyle({opacity: finalLegOpacity});
+          leg.setStyle({
+            opacity: finalLegOpacity
+          });
         }
       }
       // this.setOpacity(0.3);
@@ -2510,7 +2597,9 @@
           legPath = leg._path;
           legLength = legPath.getTotalLength() + 0.1;
           legPath.style.strokeDashoffset = legLength;
-					leg.setStyle({opacity: 0});
+          leg.setStyle({
+            opacity: 0
+          });
         }
       }
 
@@ -2765,7 +2854,9 @@
   exports.MarkerClusterGroup = MarkerClusterGroup;
   exports.MarkerCluster = MarkerCluster;
 
-	Object.defineProperty(exports, '__esModule', { value: true });
+  Object.defineProperty(exports, '__esModule', {
+    value: true
+  });
 
 }));
 //# sourceMappingURL=leaflet.markercluster-src.js.map

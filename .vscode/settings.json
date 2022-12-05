@@ -11,5 +11,14 @@
     "javascriptreact",
     "typescript",
     "vue"
-  ]
+  ],
+  "[javascript]": {
+    "editor.defaultFormatter": "HookyQR.beautify"
+  },
+  "[xml]": {
+    "editor.defaultFormatter": "DotJoshJohnson.xml"
+  },
+  "[html]": {
+    "editor.defaultFormatter": "HookyQR.beautify"
+  }
 }

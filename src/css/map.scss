@@ -12,6 +12,14 @@
   }
 }
 
+:root{
+  --opacity:1
+}
+
+._doneCluster{
+  opacity: var(--opacity);
+}
+
 html {
   font-size: 1px;
   height: 100%;

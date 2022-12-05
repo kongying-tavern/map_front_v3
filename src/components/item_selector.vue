@@ -97,10 +97,10 @@
                     <span class="item_option_count ellipsis">{{
                       i.count
                     }}</span>
-                    <!-- <span class="item_option_progress">
-                      <span class="item_option_progress_bar" style="width: 10%">
+                    <span class="item_option_progress">
+                      <span class="item_option_progress_bar" style="width: 0%">
                       </span>
-                    </span> -->
+                    </span>
                   </div>
                 </div>
               </div>
