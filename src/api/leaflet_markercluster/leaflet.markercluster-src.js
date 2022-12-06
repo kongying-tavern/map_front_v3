@@ -38,15 +38,14 @@
       html: `
       <svg class="clusterSvg" width="100%" height="100%" viewBox="0 0 602 602" version="1.1"
           xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
-          <title>loc_empty</title>
           <defs>
-              <filter x="-2.9%" y="-7.3%" width="105.8%" height="114.6%" filterUnits="objectBoundingBox" id="filter-1">
+              <filter x="-2.9%" y="-7.3%" width="105.8%" height="114.6%" filterUnits="objectBoundingBox" id="filter-11">
                   <feGaussianBlur stdDeviation="2" in="SourceGraphic"></feGaussianBlur>
               </filter>
           </defs>
           <g transform="translate(50.000000, 0.000000)" id="页面-1" stroke="none" stroke-width="1" fill="none"
               fill-rule="evenodd">
-              <ellipse id="椭圆形备份-28" fill-opacity="0.304797" fill="#000000" filter="url(#filter-1)" cx="250" cy="561" rx="104"
+              <ellipse id="椭圆形备份-28" fill-opacity="0.304797" fill="#000000" filter="url(#filter-11)" cx="250" cy="561" rx="104"
                   ry="41"></ellipse>
               <g id="聚合loc_empty" transform="translate(0.000000, -192.000000)">
                   <path
@@ -62,7 +61,7 @@
           </g>
       </svg>
       <b>${doneNum}/${childCount}</b>
-      <img class='clusterImg' src='${childMarkers[0].options.icon.options.iconUrl}' onerror="javascript:this.src='https://assets.yuanshen.site/icons/-1.png';"/>
+      <img class='clusterImg' src='${cluster._group.options.iconUrl}' onerror="javascript:this.src='https://assets.yuanshen.site/icons/-1.png';"/>
   `,
       className: "clusterIcon " + doneclass + id,
       iconSize: [36 + childCount / 3, 36 + childCount / 3], // size of the icon
@@ -164,7 +163,6 @@
       if (!this.options.iconCreateFunction) {
         this.options.iconCreateFunction = this._defaultIconCreateFunction;
       }
-
       this._featureGroup = L.featureGroup();
       this._featureGroup.addEventParent(this);
 
@@ -415,7 +413,9 @@
 
         process();
       } else {
-        var needsClustering = this._needsClustering;
+        // var needsClustering = this._needsClustering;
+        var needsClustering = new Array(l - offset); // improve performance by preallocating the maximum size of our array
+        var tail = 0;
 
         for (; offset < l; offset++) {
           m = layersArray[offset];
@@ -441,8 +441,12 @@
             continue;
           }
 
-          needsClustering.push(m);
+          // needsClustering.push(m);
+          needsClustering[tail++] = m;
         }
+
+        needsClustering = needsClustering.slice(0, tail); // truncate empty elements
+        this._needsClustering = this._needsClustering.concat(needsClustering);
       }
       return this;
     },
@@ -1229,10 +1233,10 @@
       if (!this.options.removeOutsideVisibleBounds) {
         return this._mapBoundsInfinite;
       } else if (L.Browser.mobile) {
-        return this._checkBoundsMaxLat(this._map.getBounds());
+        return this._checkBoundsMaxLat(this._map.getBounds().pad(0.1));
       }
 
-      return this._checkBoundsMaxLat(this._map.getBounds().pad(1)); // Padding expands the bounds by its own dimensions but scaled with the given factor.
+      return this._checkBoundsMaxLat(this._map.getBounds().pad(0.1)); // Padding expands the bounds by its own dimensions but scaled with the given factor.
     },
 
     /**

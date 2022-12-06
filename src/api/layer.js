@@ -4,6 +4,7 @@ import "leaflet/dist/leaflet.css";
 import "../api/leaflet_markercluster/leaflet.markercluster-src.js";
 import "leaflet.markercluster/dist/MarkerCluster.css"
 import "../api/leaflet_markercluster/MarkerCluster.Default.css"
+import "leaflet.featuregroup.subgroup";
 /**
  * 生成点位背景
  * @param {Object} data 点位数据对象
@@ -168,11 +169,30 @@ function layer_register(data, iconurl, type = 'off') {
  * @returns {Object} layerGroup对象
  */
 function layergroup_register(gather = true, data = [], iconurl) {
-  let layerGroup = gather ? L.markerClusterGroup() : L.layerGroup();
+  let layerGroup = L.markerClusterGroup({
+    iconUrl: iconurl,
+    maxClusterRadius: gather ? 24 : 0,
+  });
+  let markers = [];
   for (let i of data) {
-    layerGroup.addLayer(layer_register(i, iconurl));
+    markers.push(layer_register(i, iconurl));
   }
+  layerGroup.addLayers(markers);
   return layerGroup
+}
+/**
+ * 生成点位子组
+ * @param {array} data  要生成点位的点位数据数组
+ * @param {String} iconurl 点位图标链接
+ * @returns {Object} subGroup对象
+ */
+function subgroup_register(parentGroup, data = [], iconurl) {
+  let markers = [];
+  for (let i of data) {
+    markers.push(layer_register(i, iconurl));
+  }
+  let subGroup = L.featureGroup.subGroup(parentGroup, markers);
+  return subGroup
 }
 /**
  * 标记/取消标记点位
@@ -207,5 +227,6 @@ export {
   create_icon_options,
   layer_register,
   layergroup_register,
+  subgroup_register,
   layer_mark
 }

@@ -66,7 +66,7 @@ import LevelSwitch from "../components/xumi/level_switch.vue";
 import { init_map, add_map_overlay_XumiUnderground } from "../api/map";
 import { mapStores } from "pinia";
 import { useCounterStore } from "../stores/example-store";
-import { layergroup_register, layer_mark, layer_register } from "../api/layer";
+import { layergroup_register, subgroup_register, layer_mark, layer_register } from "../api/layer";
 import { query_itemlayer_infolist } from "../service/base_request";
 import { switch_area_list, set_Storage } from "../api/common";
 export default {
@@ -106,6 +106,7 @@ export default {
     },
     //切换点位的显隐
     switch_layergroup(value) {
+      // console.log(value);
       //添加点位组
       if (value.type == 1) {
         //如果没有点位缓存，则请求点位信息
@@ -118,7 +119,13 @@ export default {
             getBeta: 0,
           }).then((res) => {
             let iconurl = this.get_itemicon(value.item);
-            let layergroup = layergroup_register(true, res.data.data, iconurl);
+            let layergroup;
+            if(value.item.typeIdList.indexOf(10) != -1 || value.item.typeIdList.indexOf(11) != -1){
+              layergroup=subgroup_register(this.BXGroup, res.data.data, iconurl);
+            }
+            else{
+              layergroup = layergroup_register(true, res.data.data, iconurl);
+            }
             //为每个点位绑定点击时弹出弹窗函数
             layergroup.eachLayer((layer) => {
               layer.bindPopup(this.$refs.window);
@@ -351,6 +358,18 @@ export default {
     this.teleport_group = null;
     this.layergroup_map = new Map();
     this.teleport_map = new Map();
+    this.BXGroup = L.markerClusterGroup({
+      maxClusterRadius: function (e) {
+        let radius = 80
+        if (e == 4) radius = 100
+        else if (e == 5) radius = 80
+        else if (e == 6) radius = 55
+        else if (e == 7) radius = 25
+        //console.log(radius);
+        return radius
+      },
+      iconUrl:'https://assets.yuanshen.site/icons/26.png'
+    }).addTo(this.map);
     //点位缓存
     if (localStorage.getItem("marked_layers") == null) {
       localStorage.setItem("marked_layers", JSON.stringify([]));
