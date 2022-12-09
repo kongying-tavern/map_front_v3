@@ -81,7 +81,7 @@
 }
 
 .clusterIcon {
-	display: flex;
+	display: flex !important;
 	justify-content: center;
 	/* 水平居中 */
 	align-items: flex-end;

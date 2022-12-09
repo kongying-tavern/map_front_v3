@@ -354,9 +354,12 @@ export default {
     ...mapStores(useCounterStore),
   },
   watch: {
-    "mainStore.selected_child_area": function (val) {
+    "mainStore.selected_child_area": function (val, oldval) {
       this.get_itemlist(val.areaId);
-      if (switch_area_list.includes(val.name)) {
+      if (
+        switch_area_list.includes(val.name) ||
+        switch_area_list.includes(oldval.name)
+      ){
         this.closeall();
       }
     },

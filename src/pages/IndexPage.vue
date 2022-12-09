@@ -395,9 +395,10 @@ export default {
         switch_area_list.includes(val.name) ||
         switch_area_list.includes(oldval.name)
       ) {
+        this.clearall();
         this.map.remove();
         this.map = init_map(val.name);
-        this.clearall();
+        this.BXGroup.addTo(this.map);
       }
     },
     "mainStore.changeitem": function (val) {
