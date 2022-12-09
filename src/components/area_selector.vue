@@ -59,7 +59,7 @@
         </div>
         <!-- 展开部分的子地区部分 -->
         <div class="child_selector row justify-center"
-        :class="{'off':!child_area_show}"
+        :class="{'onshow':area_selector_show,'on':child_area_show,'off':child_area_hide}"
         >
           <div class="col-12 row justify-center">
             <div class="area_name">
@@ -101,6 +101,7 @@ export default {
       child_area_list: [],
       area_selector_show: false,
       child_area_show : true,
+      child_area_hide : false,
     };
   },
   methods: {
@@ -108,6 +109,8 @@ export default {
     //切换地区选择器的显隐
     switch_area_show() {
       this.area_selector_show = !this.area_selector_show;
+      this.child_area_show=false;
+      this.child_area_hide=false;
     },
     //切换主地区的触发事件
     async change_area(area) {
@@ -124,6 +127,8 @@ export default {
       this.selected_child_area = this.child_area_list[0];
       this.mainStore.selected_area = this.selected_area.name;
       this.mainStore.selected_child_area = this.selected_child_area;
+      this.child_area_show=true;
+      this.child_area_hide=false;
     },
     //切换子地区的触发事件
     change_child_area(area) {
@@ -131,8 +136,10 @@ export default {
       this.mainStore.selected_child_area = area;
       this.area_selector_show = false;
     },
+    //子地区的显示隐藏
     check_chile_area(e){
         this.child_area_show = e;
+        this.child_area_hide = !e;
     }
   },
   mounted() {

@@ -98,16 +98,16 @@
         transition: all .25s;
         transition-timing-function: cubic-bezier(0.075, 0.82, 0.165, 1);
 
-        .child_selector {
-          opacity: 1;
-          transform: scaleX(1);
-          -webkit-transition: all .45s;
-          -moz-transition: all .45s;
-          -ms-transition: all .45s;
-          -o-transition: all .45s;
-          transition: all .45s;
-          transition-timing-function: cubic-bezier(1, 0, 0, 1);
-        }
+        // .child_selector {
+        //   opacity: 1;
+        //   transform: scaleX(1);
+        //   -webkit-transition: all .45s;
+        //   -moz-transition: all .45s;
+        //   -ms-transition: all .45s;
+        //   -o-transition: all .45s;
+        //   transition: all .45s;
+        //   transition-timing-function: cubic-bezier(1, 0, 0, 1);
+        // }
       }
 
       .area_selector_background {
@@ -326,6 +326,28 @@
         transition: all .45s;
         transition-timing-function: cubic-bezier(0.075, 0.82, 0.165, 1);
 
+        &.onshow {
+          opacity: 1;
+          transform: scaleX(1);
+          -webkit-transition: all .45s;
+          -moz-transition: all .45s;
+          -ms-transition: all .45s;
+          -o-transition: all .45s;
+          transition: all .45s;
+          transition-timing-function: cubic-bezier(1, 0, 0, 1);
+        }
+
+        &.on {
+          opacity: 1;
+          transform: scaleX(1);
+          -webkit-transition: all .45s;
+          -moz-transition: all .45s;
+          -ms-transition: all .45s;
+          -o-transition: all .45s;
+          transition: all .45s;
+          transition-timing-function: cubic-bezier(0, 1, 0, 1);
+        }
+
         &.off {
           opacity: 0;
           transform: scaleX(0);
@@ -334,7 +356,7 @@
           -ms-transition: all .45s;
           -o-transition: all .45s;
           transition: all .45s;
-          transition-timing-function: cubic-bezier(1, 0, 0, 1);
+          transition-timing-function: cubic-bezier(0.075, 0.82, 0.165, 1);
         }
 
         .area_name {
@@ -359,6 +381,11 @@
           margin-top: 8rem;
 
           .child_area {
+            -webkit-transition: all .15s;
+            -moz-transition: all .15s;
+            -ms-transition: all .15s;
+            -o-transition: all .15s;
+            transition: all .15s;
             padding: 0rem 24rem 0rem;
             background: rgba(0, 0, 0, 0.5);
             // border: 4rem solid transparent;
@@ -371,14 +398,23 @@
             height: 38rem;
             line-height: 40rem;
             pointer-events: all;
+            outline: 2rem solid transparent;
 
             p {
               margin: 0;
             }
-          }
 
-          .child_area.on {
-            outline: 4rem solid #fffaed;
+            &:hover {
+              outline: 2rem solid #fffaed;
+            }
+
+            &:active {
+              outline: 3rem solid #fffaed;
+            }
+
+            &.on {
+              outline: 4rem solid #fffaed;
+            }
           }
         }
       }
