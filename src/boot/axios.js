@@ -1,6 +1,10 @@
-import { boot } from 'quasar/wrappers'
+import {
+  boot
+} from 'quasar/wrappers'
 import axios from 'axios'
-import { create_notify } from "../api/common"
+import {
+  create_notify
+} from "../api/common"
 // Be careful when using SSR for cross-request state pollution
 // due to creating a Singleton instance here;
 // If any client changes this (global) instance, it might be a
@@ -8,13 +12,11 @@ import { create_notify } from "../api/common"
 // "export default () => {}" function below (which runs individually
 // for each client)
 
-const api = axios.create(
-  {
-    baseURL: 'https://cloud.yuanshen.site/api',
-  }
-)
+const api = axios.create({
+  baseURL: 'https://cloud.yuanshen.site/api',
+})
 api.interceptors.response.use(res => {
-  if (res.data.code != 200) {
+  if (res.data.errorStatus != 200) {
     create_notify(`${res.data.code} ${res.data.message}`, 'negative');
     return Promise.reject(new Error(`${res.data.message}`));
   }
@@ -29,7 +31,9 @@ api.interceptors.response.use(res => {
   }
 });
 
-export default boot(({ app }) => {
+export default boot(({
+  app
+}) => {
   // for use inside Vue files (Options API) through this.$axios and this.$api
 
   app.config.globalProperties.$axios = axios
@@ -42,4 +46,6 @@ export default boot(({ app }) => {
 
 })
 
-export { api }
+export {
+  api
+}

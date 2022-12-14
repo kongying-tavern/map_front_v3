@@ -1,22 +1,27 @@
-import { api } from '../boot/axios'
-import { get_Cookies } from "../api/common"
+import {
+  api
+} from '../boot/axios'
+import {
+  get_Cookies
+} from "../api/common"
+
 function default_request(url, data, method = 'post') {
-    return api({
-        method: method,
-        url: url,
-        data: JSON.stringify(data),
-        transformRequest: (data) => {
-            if (get_Cookies('_yuanshen_map_usertoken') == null) {
-                alert('用户凭证已过期，请刷新页面')
-                window.location.reload();
-            } 
-            return data
-        },
-        headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${get_Cookies('_yuanshen_map_usertoken')}`
-        }
-    })
+  return api({
+    method: method,
+    url: url,
+    data: JSON.stringify(data),
+    transformRequest: (data) => {
+      if (get_Cookies('_yuanshen_map_usertoken') == null) {
+        alert('用户凭证已过期，请刷新页面')
+        window.location.reload();
+      }
+      return data
+    },
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${get_Cookies('_yuanshen_map_usertoken')}`
+    }
+  })
 }
 /**
  * 列出地区
@@ -25,7 +30,7 @@ function default_request(url, data, method = 'post') {
  * @returns 地区信息
  */
 function query_area(data) {
-    return default_request('/area/get/list', data);
+  return default_request('/area/get/list', data);
 }
 /**
  * 列出物品类型
@@ -36,7 +41,7 @@ function query_area(data) {
  * @returns 物品类型信息
  */
 function query_type(self, data) {
-    return default_request(`/item/get/type/${self}`, data);
+  return default_request(`/item_type/get/list/${self}`, data);
 }
 /**
  * 列出物品列表
@@ -47,7 +52,7 @@ function query_type(self, data) {
  * @returns 物品列表信息
  */
 function query_itemlist(data) {
-    return default_request(`/item/get/list`, data);
+  return default_request(`/item/get/list`, data);
 }
 /**
  * 列出物品信息列表
@@ -58,7 +63,7 @@ function query_itemlist(data) {
  * @returns 物品点位id信息
  */
 function query_itemlayer_infolist(data) {
-    return default_request(`/marker/get/list_byinfo`, data);
+  return default_request(`/marker/get/list_byinfo`, data);
 }
 /**
  * 列出所有图标
@@ -67,12 +72,12 @@ function query_itemlayer_infolist(data) {
  * @returns 物品点位图标信息
  */
 function query_iconlist(data) {
-    return default_request(`/icon/get/list`, data);
+  return default_request(`/icon/get/list`, data);
 }
 export {
-    query_area,
-    query_type,
-    query_itemlist,
-    query_itemlayer_infolist,
-    query_iconlist,
+  query_area,
+  query_type,
+  query_itemlist,
+  query_itemlayer_infolist,
+  query_iconlist,
 }
