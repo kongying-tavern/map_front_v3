@@ -24,6 +24,16 @@
           </div>
         </template>
       </q-img>
+      <q-avatar
+        v-if="layer_data.videoPath != ''"
+        class="video_btn"
+        icon="mdi-play-speed"
+        font-size="50rem"
+        text-color="white"
+        @click="openURL(layer_data.videoPath)"
+      >
+        <q-tooltip> 点击播放视频 </q-tooltip>
+      </q-avatar>
       <div class="info scroll hide-scrollbar">
         {{ layer_data.content }}
       </div>
@@ -63,16 +73,6 @@
             </div>
           </template>
         </q-img>
-        <q-avatar
-          v-if="layer_data.videoPath != ''"
-          class="video_btn"
-          icon="mdi-play-speed"
-          font-size="52px"
-          text-color="white"
-          @click="openURL(layer_data.videoPath)"
-        >
-          <q-tooltip> 点击播放视频 </q-tooltip>
-        </q-avatar>
       </q-card>
     </q-dialog>
   </div>
@@ -139,8 +139,8 @@ export default {
 }
 .video_btn {
   position: absolute;
-  left: 46%;
-  top: 45%;
+  left: 68%;
+  top: 60%;
   cursor: pointer;
 }
 </style>
