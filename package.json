@@ -14,6 +14,7 @@
     "@quasar/extras": "^1.0.0",
     "axios": "^0.21.1",
     "leaflet": "^1.7.1",
+    "leaflet.featuregroup.subgroup": "^1.0.2",
     "leaflet.markercluster": "^1.5.3",
     "pinia": "^2.0.11",
     "quasar": "^2.6.0",

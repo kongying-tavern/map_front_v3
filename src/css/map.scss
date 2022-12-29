@@ -12,11 +12,28 @@
   }
 }
 
+:root {
+  --opacity: 1
+}
+
+._doneCluster {
+  opacity: var(--opacity);
+}
+
 html {
   font-size: 1px;
   height: 100%;
   overflow: hidden;
   touch-action: manipulation;
+  cursor: url('/imgs/UI_Img_Cursor_PC.png'), auto;
+}
+
+.leaflet-popup-pane,
+.leaflet-control,
+.leaflet-interactive,
+.leaflet-grab,
+img {
+  cursor: url('/imgs/UI_Img_Cursor_PC.png'), auto !important;
 }
 
 .main {
@@ -109,7 +126,7 @@ html {
       margin: 2rem 4rem 0;
       font-size: 14rem;
       text-align: center;
-      cursor: pointer;
+      // cursor: pointer;
     }
   }
 
@@ -155,7 +172,7 @@ html {
     background-size: 100% 100%;
     width: 20rem;
     height: 20rem;
-    cursor: pointer;
+    // cursor: pointer;
   }
 }
 
@@ -175,7 +192,7 @@ html {
       height: 40rem;
       background: url(/imgs/Switch_OFF.png) no-repeat;
       background-size: 100% 100%;
-      cursor: pointer;
+      // cursor: pointer;
     }
 
     .switch_btn.on {
@@ -207,7 +224,7 @@ html {
     width: 64rem;
     height: 64rem;
     margin-right: 40rem;
-    cursor: pointer;
+    // cursor: pointer;
   }
 
   .feedback {
@@ -243,6 +260,11 @@ html {
 
 .leaflet-popup {
   left: -142rem !important;
+
+  .leaflet-popup-tip {
+    background: #f0e9e2 !important;
+    bottom: -19px;
+  }
 }
 
 .area_components {
@@ -255,7 +277,9 @@ html {
 .footer a {
   color: $primary;
 }
-.leaflet-shadow-pane.opacity_on,.leaflet-marker-pane.opacity_on {
+
+.leaflet-shadow-pane.opacity_on,
+.leaflet-marker-pane.opacity_on {
   .opacity_on {
     opacity: 0.3;
   }

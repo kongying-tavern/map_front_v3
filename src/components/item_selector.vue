@@ -38,7 +38,7 @@
               @click="switch_item_fold(item)"
             >
               <div class="row items-center">
-                <img
+                <q-img
                   :src="`/imgs/itemicon_${item.name}.png`"
                   style="width: 32rem; height: 32rem; margin-left: 12rem"
                 />
@@ -83,7 +83,7 @@
                   @click="insert_selected_item(i)"
                 >
                   <div class="item_option_avatar">
-                    <img
+                    <q-img
                       :src="get_itemicon(i)"
                       style="width: 40rem; height: 40rem"
                       referrerpolicy="no-referrer"
@@ -97,10 +97,10 @@
                     <span class="item_option_count ellipsis">{{
                       i.count
                     }}</span>
-                    <!-- <span class="item_option_progress">
-                      <span class="item_option_progress_bar" style="width: 10%">
+                    <span class="item_option_progress">
+                      <span class="item_option_progress_bar" style="width: 0%">
                       </span>
-                    </span> -->
+                    </span>
                   </div>
                 </div>
               </div>
@@ -113,7 +113,14 @@
       </div>
       <!-- 已选项 -->
       <div class="item_selected_bar" v-show="selected_item_list.length != 0">
-        <div class="close-all" @click="closeall"></div>
+        <div class="close-all" @click="closeall">
+          <q-tooltip 
+            anchor="center left" self="center right" :offset="[10, 10]" 
+            transition-show="jump-left"
+            transition-hide="jump-right">
+            清除所有
+          </q-tooltip>
+        </div>
         <div class="item_list">
           <q-scroll-area
             style="height: 100%; width: 100%"
@@ -126,13 +133,18 @@
               @click="insert_selected_item(item)"
             >
               <div class="item_close"></div>
-              <img
+              <q-img
                 :src="get_itemicon(item)"
                 style="width: 48rem; height: 48rem; margin: 1rem"
                 referrerpolicy="no-referrer"
                 @error="handle_item_icon_error(item)"
               />
-              <q-tooltip>{{ item.area }}-{{ item.name }}</q-tooltip>
+              <q-tooltip 
+                anchor="center left" self="center right" :offset="[10, 10]" 
+                transition-show="jump-left"
+                transition-hide="jump-right">
+                {{ item.area }}-{{ item.name }}
+              </q-tooltip>
             </div>
           </q-scroll-area>
         </div>
@@ -342,9 +354,12 @@ export default {
     ...mapStores(useCounterStore),
   },
   watch: {
-    "mainStore.selected_child_area": function (val) {
+    "mainStore.selected_child_area": function (val, oldval) {
       this.get_itemlist(val.areaId);
-      if (switch_area_list.includes(val.name)) {
+      if (
+        switch_area_list.includes(val.name) ||
+        switch_area_list.includes(oldval.name)
+      ){
         this.closeall();
       }
     },
