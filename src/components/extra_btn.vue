@@ -113,6 +113,7 @@ import {
   get_Storage,
   create_notify,
 } from "../api/common";
+import { client_list } from "../api/client";
 export default {
   name: "ExtraBtn",
   data() {
@@ -177,8 +178,10 @@ export default {
           persistent: true,
         })
         .onOk(() => {
-          window.location.href =
-            "https://gitee.com/oauth/authorize?client_id=277ea02bae5fce96d432b7609ba03266482c00ef2d99639c71f5d3389ff01228&redirect_uri=http://localhost:9000/&response_type=code";
+          let randomnum = Math.floor(Math.random() * 200);
+          let client_id = client_list[randomnum][0];
+          localStorage.setItem("_yuanshenmap_client_id", randomnum);
+          window.location.href = `https://gitee.com/oauth/authorize?client_id=${client_id}&redirect_uri=https://yuanshen.site/login.html&response_type=code`;
         });
     },
     //检查登录状态：如果无code便请求code，如果有code则检查有无access_token，如果有access_token则检查其是否过期
