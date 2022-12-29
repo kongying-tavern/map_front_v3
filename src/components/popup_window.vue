@@ -63,12 +63,23 @@
             </div>
           </template>
         </q-img>
+        <q-avatar
+          v-if="layer_data.videoPath != ''"
+          class="video_btn"
+          icon="mdi-play-speed"
+          font-size="52px"
+          text-color="white"
+          @click="openURL(layer_data.videoPath)"
+        >
+          <q-tooltip> 点击播放视频 </q-tooltip>
+        </q-avatar>
       </q-card>
     </q-dialog>
   </div>
 </template>
 
 <script>
+import { openURL } from "quasar";
 export default {
   name: "PopupWindow",
   data() {
@@ -80,6 +91,7 @@ export default {
     };
   },
   methods: {
+    openURL,
     marklayer() {
       this.marked = !this.marked;
       this.$emit("callback", this.layer);
@@ -124,5 +136,11 @@ export default {
   margin: 0 auto;
   width: 200rem;
   height: 200rem;
+}
+.video_btn {
+  position: absolute;
+  left: 46%;
+  top: 45%;
+  cursor: pointer;
 }
 </style>
