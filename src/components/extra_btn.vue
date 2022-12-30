@@ -14,7 +14,7 @@
         <q-tooltip> 反馈/建议 </q-tooltip>
       </div>
       <div
-        class="btn save"
+        class="btn save desktop-only"
         @click="openURL('https://yuanshen.site/docs/download-client.html')"
       >
         <q-tooltip> 下载客户端 </q-tooltip>
@@ -22,8 +22,8 @@
       <div class="btn" @click="check_log_state">
         <q-avatar
           square
-          size="64rem"
-          font-size="64rem"
+          size="50rem"
+          font-size="50rem"
           text-color="white"
           icon="mdi-content-save"
         >
