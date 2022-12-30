@@ -419,36 +419,49 @@ export default {
     },
   },
   mounted() {
+    //回调时，记录用户的code
+    if (this.$route.query.code != undefined) {
+      set_Storage("_gitee_usercode", this.$route.query.code);
+      this.$router.push("/");
+    }
     this.saveid = localStorage.getItem("_yuanshenmap_saveid");
     //如果登录了，检测是否有存档的逻辑
     if (
-      get_Storage("_gitee_access_token") != undefined &&
-      get_Cookies("_gitee_access_expires") != null
+      get_Storage("_gitee_usercode") != undefined &&
+      get_Storage("_gitee_access_token") == null
     ) {
-      if (this.saveid == null) {
-        let arr = JSON.parse(localStorage.getItem("marked_layers"));
-        if (arr.length != 0) {
-          alert("检测到你有本地存档未上传至云端，已自动为您新建存档");
-          this.add_save().then(() => {
-            this.open_save_window(false);
-            this.saveid = this.add_item.data.id;
-            localStorage.setItem("_yuanshenmap_saveid", this.add_item.data.id);
+      get_gitee_token().then((res) => {
+        set_Storage("_gitee_access_token", res.data.access_token);
+        set_Cookies("_gitee_access_expires", true, res.data.expires_in);
+        set_Storage("_gitee_refresh_token", res.data.refresh_token);
+        if (this.saveid == null) {
+          let arr = JSON.parse(localStorage.getItem("marked_layers"));
+          if (arr.length != 0) {
+            alert("检测到你有本地存档未上传至云端，已自动为您新建存档");
+            this.add_save().then(() => {
+              this.open_save_window(false);
+              this.saveid = this.add_item.data.id;
+              localStorage.setItem(
+                "_yuanshenmap_saveid",
+                this.add_item.data.id
+              );
+            });
+          }
+        } else {
+          this.$emit("loading");
+          get_gitee_gist().then((res) => {
+            this.$emit("loading");
+            for (let i of res.data) {
+              if (i.files.Data_KYJG != undefined) {
+                this.save_data.push(i);
+              }
+            }
+            let data = this.save_data.find((item) => item.id == this.saveid);
+            this.load_save(data, false);
           });
         }
-      } else {
-        this.$emit("loading");
-        get_gitee_gist().then((res) => {
-          this.$emit("loading");
-          for (let i of res.data) {
-            if (i.files.Data_KYJG != undefined) {
-              this.save_data.push(i);
-            }
-          }
-          let data = this.save_data.find((item) => item.id == this.saveid);
-          this.load_save(data, false);
-        });
-      }
-      this.auto_save();
+        this.auto_save();
+      });
     }
   },
   computed: {
