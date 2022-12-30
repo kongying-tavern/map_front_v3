@@ -7,5 +7,6 @@ export const useCounterStore = defineStore('main', {
     changeitem: null,
     selected_item_list: [],
     teleport_list: [],
+    change_mark: false,
   }),
 });

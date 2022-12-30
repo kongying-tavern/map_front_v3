@@ -27,8 +27,10 @@
           text-color="white"
           icon="mdi-content-save"
         >
+          <q-badge v-if="save_marked" color="red" rounded floating />
         </q-avatar>
-        <q-tooltip> 存档 </q-tooltip>
+        <q-tooltip v-if="!save_marked"> 存档 </q-tooltip>
+        <q-tooltip v-else> 存档(有改动尚未保存) </q-tooltip>
       </div>
     </div>
     <q-dialog v-model="save_window">
@@ -56,7 +58,10 @@
                   label="保存"
                   style="margin-right: 15rem"
                   @click="update_save"
-                />
+                >
+                  <q-badge v-if="save_marked" color="red" rounded floating />
+                  <q-tooltip v-if="save_marked"> 有改动尚未保存 </q-tooltip>
+                </q-btn>
                 <q-btn color="red" label="注销" @click="log_out" />
               </div>
             </template>
@@ -100,6 +105,8 @@
 </template>
 
 <script>
+import { mapStores } from "pinia";
+import { useCounterStore } from "../stores/example-store";
 import { date } from "quasar";
 import { openURL } from "quasar";
 import {
@@ -165,6 +172,7 @@ export default {
       saveid: null,
       loading: false,
       add_item: null,
+      save_marked: false,
     };
   },
   methods: {
@@ -331,6 +339,7 @@ export default {
     //上传存档
     update_save() {
       this.loading = true;
+      this.mainStore.change_mark = false;
       this.$emit("loading");
       let savedata = this.save_data.find((item) => item.id == this.saveid);
       let marked_layers = JSON.parse(localStorage.getItem("marked_layers"));
@@ -407,6 +416,16 @@ export default {
       }
       this.auto_save();
     }
+  },
+  computed: {
+    //请参考pinia不使用组合式api的用法的说明文档
+    //https://pinia.web3doc.top/cookbook/options-api.html
+    ...mapStores(useCounterStore),
+  },
+  watch: {
+    "mainStore.change_mark": function (val) {
+      this.save_marked = val;
+    },
   },
 };
 </script>

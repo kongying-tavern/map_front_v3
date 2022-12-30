@@ -79,6 +79,8 @@
 </template>
 
 <script>
+import { mapStores } from "pinia";
+import { useCounterStore } from "../stores/example-store";
 import { openURL } from "quasar";
 export default {
   name: "PopupWindow",
@@ -95,6 +97,7 @@ export default {
     marklayer() {
       this.marked = !this.marked;
       this.$emit("callback", this.layer);
+      this.mainStore.change_mark = true;
     },
     closelayer() {
       this.$emit("close");
@@ -116,6 +119,11 @@ export default {
     },
   },
   mounted() {},
+  computed: {
+    //请参考pinia不使用组合式api的用法的说明文档
+    //https://pinia.web3doc.top/cookbook/options-api.html
+    ...mapStores(useCounterStore),
+  },
 };
 </script>
 <style scoped>
