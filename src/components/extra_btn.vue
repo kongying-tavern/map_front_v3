@@ -326,6 +326,7 @@ export default {
           }
           this.save_window = false;
           this.$emit("load", data);
+          this.mainStore.change_mark = false;
         }
       }
     },
