@@ -317,13 +317,17 @@ export default {
     },
     //读取存档
     load_save(data, hint = true) {
-      this.saveid = data.id;
-      localStorage.setItem("_yuanshenmap_saveid", this.saveid);
-      if (hint) {
-        create_notify("读取成功");
+      if (this.saveid != data.id) {
+        if (confirm("建议您在切换存档前保存当前存档，是否继续切换？")) {
+          this.saveid = data.id;
+          localStorage.setItem("_yuanshenmap_saveid", this.saveid);
+          if (hint) {
+            create_notify("读取成功");
+          }
+          this.save_window = false;
+          this.$emit("load", data);
+        }
       }
-      this.save_window = false;
-      this.$emit("load", data);
     },
     //删除存档
     delete_save(data) {
