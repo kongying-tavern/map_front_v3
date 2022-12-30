@@ -1,6 +1,6 @@
 import axios from 'axios'
 import { create_notify, get_Storage } from "../api/common"
-import { client_list } from "../api/client";
+import { client_list } from "../api/client"
 //游客权限认证
 function quest_request() {
     return axios({
@@ -31,10 +31,17 @@ function get_gitee_token() {
         params: {
             grant_type: 'authorization_code',
             code: get_Storage('_gitee_usercode'),
-            client_id: client_list[localStorage.getItem('_yuanshenmap_client_id')][0],
-            redirect_uri: 'https://yuanshen.site/login.html',
-            client_secret: client_list[localStorage.getItem('_yuanshenmap_client_id')][1]
+            client_id: '277ea02bae5fce96d432b7609ba03266482c00ef2d99639c71f5d3389ff01228',
+            redirect_uri: 'http://localhost:9000/',
+            client_secret: 'bf49d65a1a9e66878a29ff71756d599243206959d24cc1dc623de3d8dfcfb049'
         }
+        // params: {
+        //     grant_type: 'authorization_code',
+        //     code: get_Storage('_gitee_usercode'),
+        //     client_id: client_list[localStorage.getItem('_yuanshenmap_client_id')][0],
+        //     redirect_uri: 'https://yuanshen.site/login.html',
+        //     client_secret: client_list[localStorage.getItem('_yuanshenmap_client_id')][1]
+        // }
     })
 }
 //刷新token
@@ -70,31 +77,32 @@ function add_gitee_gist(data) {
         headers: {
             'Content-Type': 'application/json',
         },
-        data: JSON.stringify(data),
+        data: {
+            ...data,
+            access_token: get_Storage('_gitee_access_token')
+        }
     })
 }
 //编辑存档信息
 function edit_gitee_gist(data) {
-    data = {
-        ...data,
-        access_token: get_Storage('_gitee_access_token'),
-    }
     return axios({
         method: 'patch',
         url: `https://gitee.com/api/v5/gists/${data.id}`,
         headers: {
             'Content-Type': 'application/json',
         },
-        data: JSON.stringify(data),
+        data: {
+            ...data,
+            access_token: get_Storage('_gitee_access_token')
+        },
     })
 }
 //删除存档
-function delete_gitee_gist() {
+function delete_gitee_gist(data) {
     return axios({
         method: 'delete',
-        url: 'https://gitee.com/api/v5/gists',
+        url: `https://gitee.com/api/v5/gists/${data.id}`,
         params: {
-            id: data.id,
             access_token: get_Storage('_gitee_access_token'),
         },
     })

@@ -66,7 +66,12 @@ import LevelSwitch from "../components/xumi/level_switch.vue";
 import { init_map, add_map_overlay_XumiUnderground } from "../api/map";
 import { mapStores } from "pinia";
 import { useCounterStore } from "../stores/example-store";
-import { layergroup_register, subgroup_register, layer_mark, layer_register } from "../api/layer";
+import {
+  layergroup_register,
+  subgroup_register,
+  layer_mark,
+  layer_register,
+} from "../api/layer";
 import { query_itemlayer_infolist } from "../service/base_request";
 import { switch_area_list, set_Storage } from "../api/common";
 export default {
@@ -120,10 +125,16 @@ export default {
           }).then((res) => {
             let iconurl = this.get_itemicon(value.item);
             let layergroup;
-            if(value.item.typeIdList.indexOf(10) != -1 || value.item.typeIdList.indexOf(11) != -1){
-              layergroup=subgroup_register(this.BXGroup, res.data.data, iconurl);
-            }
-            else{
+            if (
+              value.item.typeIdList.indexOf(10) != -1 ||
+              value.item.typeIdList.indexOf(11) != -1
+            ) {
+              layergroup = subgroup_register(
+                this.BXGroup,
+                res.data.data,
+                iconurl
+              );
+            } else {
               layergroup = layergroup_register(true, res.data.data, iconurl);
             }
             //为每个点位绑定点击时弹出弹窗函数
@@ -336,7 +347,10 @@ export default {
     //切换点位的显隐状态
     opacity_switch() {
       this.opacity_state = !this.opacity_state;
-      document.documentElement.style.setProperty("--opacity",!this.opacity_state?0.3:1);
+      document.documentElement.style.setProperty(
+        "--opacity",
+        !this.opacity_state ? 0.3 : 1
+      );
       let layers = document.getElementsByClassName("leaflet-shadow-pane");
       let imgs = document.getElementsByClassName("leaflet-marker-pane");
       if (!this.opacity_state) {
@@ -360,15 +374,15 @@ export default {
     this.teleport_map = new Map();
     this.BXGroup = L.markerClusterGroup({
       maxClusterRadius: function (e) {
-        let radius = 80
-        if (e == 4) radius = 100
-        else if (e == 5) radius = 80
-        else if (e == 6) radius = 55
-        else if (e == 7) radius = 25
+        let radius = 80;
+        if (e == 4) radius = 100;
+        else if (e == 5) radius = 80;
+        else if (e == 6) radius = 55;
+        else if (e == 7) radius = 25;
         //console.log(radius);
-        return radius
+        return radius;
       },
-      iconUrl:'https://assets.yuanshen.site/icons/26.png'
+      iconUrl: "https://assets.yuanshen.site/icons/26.png",
     }).addTo(this.map);
     //点位缓存
     if (localStorage.getItem("marked_layers") == null) {

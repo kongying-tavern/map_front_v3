@@ -62,7 +62,11 @@
             </template>
             <template v-slot:body-cell-state="props">
               <q-td class="text-center handles">
-                <q-radio v-model="saveid" :val="props.row.id" :disable="true" />
+                <div v-if="saveid == props.row.id" class="text-red text-bold">
+                  激活中
+                </div>
+                <div v-else class="text-grey">未激活</div>
+                <!-- <q-radio v-model="saveid" :val="props.row.id" :disable="true" /> -->
               </q-td>
             </template>
             <template v-slot:body-cell-handle="props">
@@ -178,10 +182,12 @@ export default {
           persistent: true,
         })
         .onOk(() => {
-          let randomnum = Math.floor(Math.random() * 200);
-          let client_id = client_list[randomnum][0];
-          localStorage.setItem("_yuanshenmap_client_id", randomnum);
-          window.location.href = `https://gitee.com/oauth/authorize?client_id=${client_id}&redirect_uri=https://yuanshen.site/login.html&response_type=code`;
+          // let randomnum = Math.floor(Math.random() * 200);
+          // let client_id = client_list[randomnum][0];
+          // localStorage.setItem("_yuanshenmap_client_id", randomnum);
+          // window.location.href = `https://gitee.com/oauth/authorize?client_id=${client_id}&redirect_uri=https://yuanshen.site/login.html&response_type=code`;
+          window.location.href =
+            "https://gitee.com/oauth/authorize?client_id=277ea02bae5fce96d432b7609ba03266482c00ef2d99639c71f5d3389ff01228&redirect_uri=http://localhost:9000/&response_type=code";
         });
     },
     //检查登录状态：如果无code便请求code，如果有code则检查有无access_token，如果有access_token则检查其是否过期
@@ -200,7 +206,6 @@ export default {
           }
         } else {
           get_gitee_token().then((res) => {
-            console.log(res);
             set_Storage("_gitee_access_token", res.data.access_token);
             set_Cookies("_gitee_access_expires", true, res.data.expires_in);
             set_Storage("_gitee_refresh_token", res.data.refresh_token);
@@ -229,7 +234,6 @@ export default {
       if (this.save_data.length == 0 && refresh) {
         this.loading = true;
         get_gitee_gist().then((res) => {
-          console.log(res);
           this.loading = false;
           for (let i of res.data) {
             if (i.files.Data_KYJG != undefined) {
@@ -324,6 +328,8 @@ export default {
     },
     //上传存档
     update_save() {
+      this.loading=true;
+      this.$emit("loading");
       let savedata = this.save_data.find((item) => item.id == this.saveid);
       let marked_layers = JSON.parse(localStorage.getItem("marked_layers"));
       let marked_timelayers = JSON.parse(
@@ -341,7 +347,8 @@ export default {
       };
       edit_gitee_gist(update_data)
         .then((res) => {
-          this.loading = false;
+          this.$emit("loading");
+          this.loading=false;
           if (res.status == 200) {
             create_notify("保存成功！");
           }
@@ -351,11 +358,19 @@ export default {
           create_notify(`保存失败！${error.response.data.message}`, "negative");
         });
     },
+    //登出
     log_out() {
       if (confirm("你确定要登出吗？")) {
         localStorage.removeItem("_gitee_usercode");
         window.location.reload();
       }
+    },
+    //自动保存
+    auto_save() {
+      setInterval(() => {
+        create_notify("自动存档中，请稍后", "ongoing");
+        this.update_save();
+      }, 300000);
     },
   },
   mounted() {
@@ -369,7 +384,7 @@ export default {
         let arr = JSON.parse(localStorage.getItem("marked_layers"));
         if (arr.length != 0) {
           alert("检测到你有本地存档未上传至云端，已自动为您新建存档");
-          this.add_save().then((v) => {
+          this.add_save().then(() => {
             this.open_save_window(false);
             this.saveid = this.add_item.data.id;
             localStorage.setItem("_yuanshenmap_saveid", this.add_item.data.id);
@@ -388,6 +403,7 @@ export default {
           this.load_save(data, false);
         });
       }
+      this.auto_save()
     }
   },
 };
