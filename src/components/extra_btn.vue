@@ -397,6 +397,7 @@ export default {
       setInterval(() => {
         this.loading = true;
         get_gitee_gist().then((res) => {
+          this.save_data = [];
           this.loading = false;
           for (let i of res.data) {
             if (i.files.Data_KYJG != undefined) {
@@ -406,6 +407,12 @@ export default {
           if (this.save_marked) {
             create_notify("自动存档中，请稍后", "ongoing");
             this.update_save();
+          } else {
+            create_notify("同步数据中，请稍后", "ongoing");
+            let savedata = this.save_data.find(
+              (item) => item.id == this.saveid
+            );
+            this.load_save(savedata, false);
           }
         });
       }, 300000);
