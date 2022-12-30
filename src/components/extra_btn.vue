@@ -319,16 +319,18 @@ export default {
     },
     //删除存档
     delete_save(data) {
-      delete_gitee_gist(data).then((res) => {
-        if (res.status == 204) {
-          create_notify("删除成功！");
-          this.get_saves();
-        }
-      });
+      if (confirm("你确定要删除存档吗?")) {
+        delete_gitee_gist(data).then((res) => {
+          if (res.status == 204) {
+            create_notify("删除成功！");
+            this.get_saves();
+          }
+        });
+      }
     },
     //上传存档
     update_save() {
-      this.loading=true;
+      this.loading = true;
       this.$emit("loading");
       let savedata = this.save_data.find((item) => item.id == this.saveid);
       let marked_layers = JSON.parse(localStorage.getItem("marked_layers"));
@@ -348,7 +350,7 @@ export default {
       edit_gitee_gist(update_data)
         .then((res) => {
           this.$emit("loading");
-          this.loading=false;
+          this.loading = false;
           if (res.status == 200) {
             create_notify("保存成功！");
           }
@@ -403,7 +405,7 @@ export default {
           this.load_save(data, false);
         });
       }
-      this.auto_save()
+      this.auto_save();
     }
   },
 };
