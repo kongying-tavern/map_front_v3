@@ -6,9 +6,9 @@
   }
 }
 
-@media screen and (max-width: 1080px) {
+@media screen and (max-width: 850px) {
   html {
-    font-size: calc(1080px / 1920) !important;
+    font-size: calc(850px / 1920) !important;
   }
 }
 
@@ -216,14 +216,14 @@ img {
   left: 32rem;
   z-index: 6000;
 
-  @media screen and (max-width: 1080px) {
+  @media screen and (max-width: 850px) {
     z-index: 1600;
   }
 
   .btn {
-    width: 50rem;
-    height: 50rem;
-    margin-right: 30rem;
+    width: 64rem;
+    height: 64rem;
+    margin-right: 40rem;
     // cursor: pointer;
   }
 

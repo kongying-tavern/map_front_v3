@@ -85,7 +85,7 @@
                   <div class="item_option_avatar">
                     <q-img
                       :src="get_itemicon(i)"
-                      style="width: 40rem; height: 40rem"
+                      style="width: 40rem; height: 40rem; vertical-align: initial;"
                       referrerpolicy="no-referrer"
                       @error="handle_item_icon_error(i)"
                     />

@@ -22,8 +22,8 @@
       <div class="btn" @click="check_log_state">
         <q-avatar
           square
-          size="50rem"
-          font-size="50rem"
+          size="64rem"
+          font-size="64rem"
           text-color="white"
           icon="mdi-content-save"
         >

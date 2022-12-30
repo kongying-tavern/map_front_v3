@@ -118,6 +118,7 @@ function create_icon_options(url, type = "off") {
         };
         return options;
       case "传送锚点":
+      case "浪船锚点":
         options = {
           ...options,
           iconSize: [23, 33], // size of the icon
