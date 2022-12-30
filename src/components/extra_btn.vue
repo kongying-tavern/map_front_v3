@@ -317,7 +317,7 @@ export default {
     },
     //读取存档
     load_save(data, hint = true) {
-      if (this.saveid != data.id) {
+      if (this.saveid != data.id && this.save_marked) {
         if (confirm("建议您在切换存档前保存当前存档，是否继续切换？")) {
           this.saveid = data.id;
           localStorage.setItem("_yuanshenmap_saveid", this.saveid);
@@ -384,8 +384,19 @@ export default {
     //自动保存
     auto_save() {
       setInterval(() => {
-        create_notify("自动存档中，请稍后", "ongoing");
-        this.update_save();
+        this.loading = true;
+        get_gitee_gist().then((res) => {
+          this.loading = false;
+          for (let i of res.data) {
+            if (i.files.Data_KYJG != undefined) {
+              this.save_data.push(i);
+            }
+          }
+          if (this.save_marked) {
+            create_notify("自动存档中，请稍后", "ongoing");
+            this.update_save();
+          }
+        });
       }, 300000);
     },
   },
