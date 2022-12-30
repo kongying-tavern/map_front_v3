@@ -88,7 +88,7 @@
                   style="margin-right: 10px"
                   >读档</a
                 >
-                <a href="javascript:;" @click="delete_save(props.row)"
+                <a href="javascript:;" v-if="saveid != props.row.id" @click="delete_save(props.row)"
                   >删除存档</a
                 >
               </q-td>
