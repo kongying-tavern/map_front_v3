@@ -25,23 +25,29 @@ function quest_request() {
 }
 //gitee请求access_token
 function get_gitee_token() {
-    return axios({
-        method: 'post',
-        url: 'https://gitee.com/oauth/token',
-        params: {
+    let params = {};
+    if (process.env.DEV) {
+        params = {
             grant_type: 'authorization_code',
             code: get_Storage('_gitee_usercode'),
             client_id: '277ea02bae5fce96d432b7609ba03266482c00ef2d99639c71f5d3389ff01228',
             redirect_uri: 'http://localhost:9000/',
             client_secret: 'bf49d65a1a9e66878a29ff71756d599243206959d24cc1dc623de3d8dfcfb049'
         }
-        // params: {
-        //     grant_type: 'authorization_code',
-        //     code: get_Storage('_gitee_usercode'),
-        //     client_id: client_list[localStorage.getItem('_yuanshenmap_client_id')][0],
-        //     redirect_uri: 'https://yuanshen.site/login.html',
-        //     client_secret: client_list[localStorage.getItem('_yuanshenmap_client_id')][1]
-        // }
+    }
+    else {
+        params = {
+            grant_type: 'authorization_code',
+            code: get_Storage('_gitee_usercode'),
+            client_id: client_list[localStorage.getItem('_yuanshenmap_client_id')][0],
+            redirect_uri: 'https://yuanshen.site/login.html',
+            client_secret: client_list[localStorage.getItem('_yuanshenmap_client_id')][1]
+        }
+    }
+    return axios({
+        method: 'post',
+        url: 'https://gitee.com/oauth/token',
+        params: params
     })
 }
 //刷新token

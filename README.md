@@ -21,10 +21,9 @@ quasar build
 ```
 
 ## 地图相关功能
+gitee相关的接口说明，请参考[Gitee Api文档](https://gitee.com/api/v5/swagger)
 ### 鉴权
 在页面登录前，鉴定是否有gitee的oauth2相关的token，若没有的话，则以游客方式登录
-
-[Gitee Api文档](https://gitee.com/api/v5/swagger)
 
 **游客登录请求是本项目的接口，并非gitee api**
 
