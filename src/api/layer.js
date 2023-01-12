@@ -48,8 +48,8 @@ function create_icon_options(url, type = "off") {
         <g id="展开/包含切图" transform="translate(-1103.000000, -336.000000)">
             <g id="loc_02_on" transform="translate(1093.000000, 326.000000)">
                 <g id="形状结合" transform="translate(42.000000, 42.000000) rotate(-315.000000) translate(-42.000000, -42.000000) ">
-                    <use fill="black" fill-opacity="1" filter="url(${type == 'on' ?'#filter-1':'#filter-2'})" xlink:href="#path-1"></use>
-                    <use fill="${type == 'on' ?'#00FFFD':'#E0E0E0'}" fill-rule="evenodd" xlink:href="#path-1"></use>
+                    <use fill="black" fill-opacity="1" filter="url(${type == 'on' ? '#filter-1' : '#filter-2'})" xlink:href="#path-1"></use>
+                    <use fill="${type == 'on' ? '#00FFFD' : '#E0E0E0'}" fill-rule="evenodd" xlink:href="#path-1"></use>
                 </g>
             </g>
         </g>
@@ -78,8 +78,8 @@ function create_icon_options(url, type = "off") {
                <polygon id="矩形备份" fill-opacity="0.298595935" fill="#000000" transform="translate(12.020815, 12.020815) rotate(-225.000000) translate(-12.020815, -12.020815) " points="3.52081528 3.52081528 20.5208153 3.52081528 20.5208153 20.5208153 3.52081528 20.5208153"></polygon>
                 <polygon id="矩形备份-2" fill="#FFFFFF" transform="translate(12.020815, 12.020815) rotate(-225.000000) translate(-12.020815, -12.020815) " points="6.52081528 6.52081528 17.5208153 6.52081528 17.5208153 17.5208153 6.52081528 17.5208153"></polygon>
                 <g id="矩形备份-3" transform="translate(12.020815, 8.485281) rotate(-225.000000) translate(-12.020815, -8.485281) ">
-                    <use fill="black" fill-opacity="1" filter="url(${type == 'on' ?'#filter-3':'#filter-4'})" xlink:href="#path-2"></use>
-                    <use fill="${type == 'on' ?'#00FFFD':'#E0E0E0'}" fill-rule="evenodd" xlink:href="#path-2"></use>
+                    <use fill="black" fill-opacity="1" filter="url(${type == 'on' ? '#filter-3' : '#filter-4'})" xlink:href="#path-2"></use>
+                    <use fill="${type == 'on' ? '#00FFFD' : '#E0E0E0'}" fill-rule="evenodd" xlink:href="#path-2"></use>
                 </g>
             </g>
         </g>
@@ -118,7 +118,6 @@ function create_icon_options(url, type = "off") {
         };
         return options;
       case "传送锚点":
-      case "浪船锚点":
         options = {
           ...options,
           iconSize: [23, 33], // size of the icon
@@ -130,6 +129,7 @@ function create_icon_options(url, type = "off") {
         return options;
       case "秘境":
       case "征讨领域":
+      case "浪船锚点":
       default:
         options = {
           ...options,

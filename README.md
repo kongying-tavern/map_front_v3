@@ -3,7 +3,9 @@
 本项目基于[quasar-vite](https://quasar.dev/start/quasar-cli)构建
 
 ## 项目相关
+
 ### 安装依赖
+
 ```bash
 yarn
 # or
@@ -11,21 +13,26 @@ npm install
 ```
 
 ### 进入开发模式
+
 ```bash
 quasar dev
 ```
 
 ### 构建
+
 ```bash
 quasar build
 ```
 
 ## 地图相关功能
-gitee相关的接口说明，请参考[Gitee Api文档](https://gitee.com/api/v5/swagger)
+
 ### 鉴权
+
 在页面登录前，鉴定是否有gitee的oauth2相关的token，若没有的话，则以游客方式登录
 
-**游客登录请求是本项目的接口，并非gitee api**
+[Gitee Api文档](https://gitee.com/api/v5/swagger)
+
+（**游客登录请求是本项目的接口，并非gitee api**)
 
 鉴权实现在 router/index.js文件内
 
@@ -43,6 +50,7 @@ Router.beforeEach((to, from, next) => {
     }
   })
 ```
+
 ### 地图构建
 
 地图构建相关函数在api/map.js文件内
@@ -59,7 +67,9 @@ Router.beforeEach((to, from, next) => {
     <div id="map"></div>
 </div>
 ```
+
 然后在mounted时，生成地图
+
 ```javascript
 import { init_map } from "../api/map";
 ......
@@ -68,6 +78,7 @@ mounted() {
     this.map = init_map();
   },
 ```
+
 地图容器需要定义其高度和宽度，地图蒙层容器需要样式，可直接引用旧版样式文件
 
 ```css
@@ -81,6 +92,7 @@ mounted() {
     background: radial-gradient(transparent 70%, rgba(0, 0, 0, 0.5));
 }
 ```
+
 ### 点位选择
 
 #### 概述

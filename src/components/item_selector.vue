@@ -85,7 +85,11 @@
                   <div class="item_option_avatar">
                     <q-img
                       :src="get_itemicon(i)"
-                      style="width: 40rem; height: 40rem; vertical-align: initial;"
+                      style="
+                        width: 40rem;
+                        height: 40rem;
+                        vertical-align: initial;
+                      "
                       referrerpolicy="no-referrer"
                       @error="handle_item_icon_error(i)"
                     />
@@ -114,10 +118,13 @@
       <!-- 已选项 -->
       <div class="item_selected_bar" v-show="selected_item_list.length != 0">
         <div class="close-all" @click="closeall">
-          <q-tooltip 
-            anchor="center left" self="center right" :offset="[10, 10]" 
+          <q-tooltip
+            anchor="center left"
+            self="center right"
+            :offset="[10, 10]"
             transition-show="jump-left"
-            transition-hide="jump-right">
+            transition-hide="jump-right"
+          >
             清除所有
           </q-tooltip>
         </div>
@@ -139,10 +146,13 @@
                 referrerpolicy="no-referrer"
                 @error="handle_item_icon_error(item)"
               />
-              <q-tooltip 
-                anchor="center left" self="center right" :offset="[10, 10]" 
+              <q-tooltip
+                anchor="center left"
+                self="center right"
+                :offset="[10, 10]"
                 transition-show="jump-left"
-                transition-hide="jump-right">
+                transition-hide="jump-right"
+              >
                 {{ item.area }}-{{ item.name }}
               </q-tooltip>
             </div>
@@ -223,11 +233,11 @@ export default {
         for (let i of res.data.data.record) {
           if (i.count > 0) {
             for (let j of i.typeIdList) {
-              if (i.hiddenFlag == 0 && i.name.indexOf("测试") == -1) {
+              if (i.specialFlag != 1) {
                 this.item_list[j].push(i);
               }
             }
-            if (i.iconStyleType == 1) {
+            if (i.specialFlag == 1) {
               this.teleport_list.push(i);
             }
           }
@@ -238,7 +248,10 @@ export default {
     //查询物品类型对应的图标
     get_itemicon(value) {
       if (!this.icon_list_map.has(value.iconTag)) {
-        this.icon_list_map.set(value.iconTag, "https://assets.yuanshen.site/icons/-1.png");
+        this.icon_list_map.set(
+          value.iconTag,
+          "https://assets.yuanshen.site/icons/-1.png"
+        );
       }
       return this.icon_list_map.get(value.iconTag);
     },
@@ -298,7 +311,10 @@ export default {
     },
     // 图片加载异常处理
     handle_item_icon_error(value) {
-      this.icon_list_map.set(value.iconTag, "https://assets.yuanshen.site/icons/-1.png");
+      this.icon_list_map.set(
+        value.iconTag,
+        "https://assets.yuanshen.site/icons/-1.png"
+      );
     },
     check_item_length(item) {
       if (item.typeId != 9) {
@@ -335,7 +351,7 @@ export default {
           this.icon_list = res1.data.data.record;
           this.$emit("callback", this.icon_list);
           for (let i of res2.data.data.record) {
-            if (i.hiddenFlag != 1) {
+            if (i.specialFlag != 1) {
               this.type_list.push(i);
               this.type_list_map.set(i.name, {
                 ...i,
@@ -359,7 +375,7 @@ export default {
       if (
         switch_area_list.includes(val.name) ||
         switch_area_list.includes(oldval.name)
-      ){
+      ) {
         this.closeall();
       }
     },

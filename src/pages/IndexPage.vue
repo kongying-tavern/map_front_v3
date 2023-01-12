@@ -404,6 +404,11 @@ export default {
     ...mapStores(useCounterStore),
   },
   watch: {
+    "mainStore.selected_area": function (val) {
+      if (val != "须弥" && this.xumi != undefined) {
+        this.xumi_functions(true);
+      }
+    },
     "mainStore.selected_child_area": function (val, oldval) {
       if (
         switch_area_list.includes(val.name) ||
