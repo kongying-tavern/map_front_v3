@@ -124,16 +124,29 @@ const qd_postion = {
         [2201, -1046],
     ],
 }
-//给地图添加额外的图层
+//添加群岛的额外部分
 function add_map_overlay_qd(type, index) {
     let imageUrl = `https://assets.yuanshen.site/tiles_qd28/other/${type}/${index}.png`;
     let imageBounds = [qd_postion[type]]
     return L.imageOverlay(imageUrl, imageBounds)
 }
+//添加须弥的地下部分 
 function add_map_overlay_XumiUnderground() {
-    let imageUrl = `/imgs/sumeru_undergroundmap_shade.png`;
-    let imageBounds = [[-6299, -2190], [-838, 1906]]
-    return L.imageOverlay(imageUrl, imageBounds)
+    let xumi_underground_map = new Map([
+        ['诸法丛林', {
+            imageUrl: `https://v3.yuanshen.site/imgs/sumeru_undergroundmap_shade.png`,
+            imageBounds: [[-6299, -2190], [-838, 1906]]
+        }],
+        ['大赤沙海', {
+            imageUrl: `https://v3.yuanshen.site/imgs/固定底图.png`,
+            imageBounds: [[-7664, 540], [-3568, 4636]]
+        }],
+    ])
+    let xumi_map_overlay = [];
+    for (let i of xumi_underground_map.keys()) {
+        xumi_map_overlay.push(L.imageOverlay(xumi_underground_map.get(i).imageUrl, xumi_underground_map.get(i).imageBounds))
+    }
+    return xumi_map_overlay
 }
 //将地图实例对象绑定至指定的dom
 function init_map(area) {

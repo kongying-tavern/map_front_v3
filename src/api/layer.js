@@ -7,11 +7,12 @@ import "../api/leaflet_markercluster/MarkerCluster.Default.css"
 import "leaflet.featuregroup.subgroup";
 /**
  * 生成点位背景
- * @param {Object} data 点位数据对象
+ * @param {Object} url 点点位图标地址
  * @param {string} type 点位背景的类型 off：默认；on：选中态；none：无背景
+ * @param {string} extra 额外字段
  * @returns {Object} icon对象
  */
-function create_icon_options(url, type = "off") {
+function create_icon_options(url, type = "off", extra) {
   let options = {
     html: `
     <svg width="32" height="32" viewBox="0 0 64 64" fill="none"
@@ -95,8 +96,16 @@ function create_icon_options(url, type = "off") {
     iconAnchor: [16, 35], // point of the icon which will correspond to marker's location
     // shadowAnchor: [16, 35.5], // the same for the shadow
     popupAnchor: [0, -35], // point from which the popup should open relative to the iconAnchor
-    className: type == 'on' ? 'opacity_on' : 'opactiy_off'
+    // className: type == 'on' ? `opacity_on` : 'opactiy_off'
+    className: `${sessionStorage.getItem('area')} ${type == 'on' ? 'opacity_on' : 'opactiy_off'}`
   };
+  if (extra != null) {
+    let className = options.className;
+    extra = JSON.parse(extra);
+    if (extra.sumeru_underground) {
+      options.className = `${className} sumeru_underground`
+    }
+  }
   if (type == 'off' || type == 'on') {
     return options
   } else {
@@ -152,14 +161,18 @@ function create_icon_options(url, type = "off") {
  * @returns {Object} marker对象
  */
 function layer_register(data, iconurl, type = 'off') {
-  // console.log(type);
+  console.log(data);
+  let extra = data.markerExtraContent
   let marker = L.marker(data.position.split(','), {
-    icon: (type == 'off' || type == 'on') ? L.divIcon(create_icon_options(iconurl, type)) : L.icon(create_icon_options(iconurl, type)),
+    icon:
+      (type == 'off' || type == 'on')
+        ? L.divIcon(create_icon_options(iconurl, type, extra))
+        : L.icon(create_icon_options(iconurl, type, extra)),
     data: {
       ...data
     },
     draggable: false,
-    riseOnHover: true
+    riseOnHover: true,
   })
   return marker
 }
@@ -203,12 +216,13 @@ function subgroup_register(parentGroup, data = [], iconurl) {
 function layer_mark(layer, marktype) {
   let type = marktype == undefined ? layer.options.icon.options.type : marktype;
   let icon = ''
+  let extra = layer.options.data.markerExtraContent
   if (type == 'on') {
-    icon = L.divIcon(create_icon_options(layer.options.icon.options.iconUrl, 'off'))
+    icon = L.divIcon(create_icon_options(layer.options.icon.options.iconUrl, 'off', extra))
   } else if (type == 'off') {
-    icon = L.divIcon(create_icon_options(layer.options.icon.options.iconUrl, 'on'))
+    icon = L.divIcon(create_icon_options(layer.options.icon.options.iconUrl, 'on', extra))
   } else {
-    icon = L.icon(create_icon_options(layer.options.icon.options.iconUrl, 'none'))
+    icon = L.icon(create_icon_options(layer.options.icon.options.iconUrl, 'none', extra))
   }
   layer = layer.setIcon(icon);
   return layer

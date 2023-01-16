@@ -42,14 +42,26 @@
         ></div>
         <div class="text">标记点位</div>
       </div>
+      <div class="xumi">
+        <!-- <div class="switch row items-center">
+        <div
+          class="switch_btn"
+          :class="{ on: xumi_opacity_state }"
+          @click="xumi_underground_opacity_switch"
+        ></div>
+        <div class="text">仅显示须弥地下点位</div>
+      </div> -->
+      </div>
     </div>
     <!-- 左上侧各种开关 -->
     <extra-btn @load="load_savedata" @loading="toggle_loading"></extra-btn>
     <div class="area_components">
-      <level-switch
-        v-if="mainStore.selected_area == '须弥'"
-        @callback="xumi_functions"
-      ></level-switch>
+      <div class="xumi">
+        <level-switch
+          v-if="mainStore.selected_area == '须弥'"
+          @callback="xumi_functions"
+        ></level-switch>
+      </div>
     </div>
     <q-inner-loading :showing="loading" style="z-index: 2000">
       <q-spinner-gears size="50rem" color="primary" />
@@ -85,8 +97,9 @@ export default {
       handle_layer: null,
       handle_layergroup: null,
       teleport_state: false,
-      opacity_state: true,
+      opacity_state: false,
       map_bg: null,
+      xumi_opacity_state: false,
     };
   },
   components: {
@@ -312,16 +325,20 @@ export default {
     //须弥的相关函数
     xumi_functions(val) {
       this.loading = true;
-      if (this.xumi == undefined) {
-        this.xumi = add_map_overlay_XumiUnderground();
+      if (this.xumi_map_overlay == undefined) {
+        this.xumi_map_overlay = add_map_overlay_XumiUnderground();
       }
       if (val) {
         this.map_tiles.setOpacity(1);
-        this.map.removeLayer(this.xumi);
+        for (let i of this.xumi_map_overlay) {
+          this.map.removeLayer(i);
+        }
         this.loading = false;
       } else {
         this.map_tiles.setOpacity(0.45);
-        this.map.addLayer(this.xumi);
+        for (let i of this.xumi_map_overlay) {
+          this.map.addLayer(i);
+        }
         this.loading = false;
       }
     },
@@ -347,18 +364,27 @@ export default {
     //切换点位的显隐状态
     opacity_switch() {
       this.opacity_state = !this.opacity_state;
-      document.documentElement.style.setProperty(
-        "--opacity",
-        !this.opacity_state ? 0.3 : 1
-      );
       let layers = document.getElementsByClassName("leaflet-shadow-pane");
       let imgs = document.getElementsByClassName("leaflet-marker-pane");
-      if (!this.opacity_state) {
-        layers[0].className = "leaflet-pane leaflet-shadow-pane opacity_on";
-        imgs[0].className = "leaflet-pane leaflet-marker-pane opacity_on";
+      if (this.opacity_state) {
+        layers[0].className = `${layers[0].className} opacity_on`;
+        imgs[0].className = `${imgs[0].className} opacity_on`;
       } else {
-        layers[0].className = "leaflet-pane leaflet-shadow-pane";
-        imgs[0].className = "leaflet-pane leaflet-marker-pane";
+        layers[0].className = layers[0].className.replace(/opacity_on/, "");
+        imgs[0].className = imgs[0].className.replace(/opacity_on/, "");
+      }
+    },
+    //切换须弥的地上地下显示
+    xumi_underground_opacity_switch() {
+      this.xumi_opacity_state = !this.xumi_opacity_state;
+      let layers = document.getElementsByClassName("leaflet-shadow-pane");
+      let imgs = document.getElementsByClassName("leaflet-marker-pane");
+      if (this.xumi_opacity_state) {
+        layers[0].className = `${layers[0].className} underground_on`;
+        imgs[0].className = `${imgs[0].className} underground_on`;
+      } else {
+        layers[0].className = layers[0].className.replace(/underground_on/, "");
+        imgs[0].className = imgs[0].className.replace(/underground_on/, "");
       }
     },
   },
@@ -375,11 +401,11 @@ export default {
     this.BXGroup = L.markerClusterGroup({
       maxClusterRadius: function (e) {
         let radius = 80;
-        if (e == 4) radius = 100;
-        else if (e == 5) radius = 80;
-        else if (e == 6) radius = 55;
-        else if (e == 7) radius = 25;
-        //console.log(radius);
+        let radius_map = new Map([[4, 100], [(5, 80)], [(6, 55)], [(7, 25)]]);
+        if (radius_map.has(e)) {
+          radius = radius_map.get(e);
+          return radius;
+        }
         return radius;
       },
       iconUrl: "https://assets.yuanshen.site/icons/26.png",
@@ -396,7 +422,6 @@ export default {
       set_Storage("_gitee_usercode", this.$route.query.code);
       this.$router.push("/");
     }
-    this.opacity_switch();
   },
   computed: {
     //请参考pinia不使用组合式api的用法的说明文档
@@ -405,6 +430,7 @@ export default {
   },
   watch: {
     "mainStore.selected_area": function (val) {
+      sessionStorage.setItem("area", val);
       if (val != "须弥" && this.xumi != undefined) {
         this.xumi_functions(true);
       }

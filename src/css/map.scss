@@ -12,20 +12,12 @@
   }
 }
 
-:root {
-  --opacity: 1
-}
-
-._doneCluster {
-  opacity: var(--opacity);
-}
-
 html {
   font-size: 1px;
   height: 100%;
   overflow: hidden;
   touch-action: manipulation;
-  cursor: url('/imgs/UI_Img_Cursor_PC.png'), auto;
+  cursor: url("/imgs/UI_Img_Cursor_PC.png"), auto;
 }
 
 .leaflet-popup-pane,
@@ -33,7 +25,7 @@ html {
 .leaflet-interactive,
 .leaflet-grab,
 img {
-  cursor: url('/imgs/UI_Img_Cursor_PC.png'), auto !important;
+  cursor: url("/imgs/UI_Img_Cursor_PC.png"), auto !important;
 }
 
 .main {
@@ -281,6 +273,12 @@ img {
 .leaflet-shadow-pane.opacity_on,
 .leaflet-marker-pane.opacity_on {
   .opacity_on {
+    opacity: 0.3;
+  }
+}
+.leaflet-shadow-pane.underground_on,
+.leaflet-marker-pane.underground_on {
+  .须弥.leaflet-marker-icon:not(.sumeru_underground, .clusterIcon) {
     opacity: 0.3;
   }
 }
