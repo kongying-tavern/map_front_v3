@@ -263,17 +263,10 @@ export default {
     //新增存档
     async add_save(event, savename = "新的存档", hint = true) {
       this.loading = true;
-      let marked_layers = JSON.parse(localStorage.getItem("marked_layers"));
-      let marked_timelayers = JSON.parse(
-        localStorage.getItem("marked_timelayers")
-      );
-      for (let i in marked_layers) {
-        marked_layers[i] = marked_layers[i].toString();
-      }
       let data = {
         files: {
-          Data_KYJG: { content: JSON.stringify(marked_layers) },
-          Time_KYJG: { content: JSON.stringify(marked_timelayers) },
+          Data_KYJG: { content: "[]" },
+          Time_KYJG: { content: "{}" },
         },
         description: savename,
       };
@@ -458,6 +451,7 @@ export default {
                 "_yuanshenmap_saveid",
                 this.add_item.data.id
               );
+              this.update_save();
             });
           }
         } else {
