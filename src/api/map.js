@@ -180,7 +180,7 @@ function init_map(area) {
                 [0, 0]
             )
         default:
-            return create_map('twt31');
+            return create_map('twt34');
 
     }
 }

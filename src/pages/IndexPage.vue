@@ -42,16 +42,16 @@
         ></div>
         <div class="text">标记点位</div>
       </div>
-      <div class="xumi">
-        <!-- <div class="switch row items-center">
-        <div
-          class="switch_btn"
-          :class="{ on: xumi_opacity_state }"
-          @click="xumi_underground_opacity_switch"
-        ></div>
-        <div class="text">仅显示须弥地下点位</div>
+      <!-- <div class="xumi">
+        <div class="switch row items-center">
+          <div
+            class="switch_btn"
+            :class="{ on: xumi_opacity_state }"
+            @click="xumi_underground_opacity_switch"
+          ></div>
+          <div class="text">仅显示地下点位</div>
+        </div>
       </div> -->
-      </div>
     </div>
     <!-- 左上侧各种开关 -->
     <extra-btn @load="load_savedata" @loading="toggle_loading"></extra-btn>
