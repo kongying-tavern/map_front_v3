@@ -194,6 +194,9 @@ function layergroup_register(gather = true, data = [], iconurl) {
   layerGroup.addLayers(markers);
   return layerGroup
 }
+function layergroup_register_prototype() {
+  return L.layerGroup();
+}
 /**
  * 生成点位子组
  * @param {array} data  要生成点位的点位数据数组
@@ -242,6 +245,7 @@ export {
   create_icon_options,
   layer_register,
   layergroup_register,
+  layergroup_register_prototype,
   subgroup_register,
   layer_mark
 }

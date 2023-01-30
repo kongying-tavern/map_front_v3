@@ -105,49 +105,6 @@ function create_map(area_idx, settings, mapCenter = [3568, 6286], mapSize = [174
         .addTo(map)
     return map
 }
-//地图蒙层(群岛)的相关参数
-const qd_postion = {
-    ww: [
-        [-494, -1164],
-        [1554, -140],
-    ],
-    pp: [
-        [-581, -3214],
-        [443, -2190],
-    ],
-    ss: [
-        [528, -4237],
-        [2576, -2189],
-    ],
-    bd: [
-        [1433, -1814],
-        [2201, -1046],
-    ],
-}
-//添加群岛的额外部分
-function add_map_overlay_qd(type, index) {
-    let imageUrl = `https://assets.yuanshen.site/tiles_qd28/other/${type}/${index}.png`;
-    let imageBounds = [qd_postion[type]]
-    return L.imageOverlay(imageUrl, imageBounds)
-}
-//添加须弥的地下部分 
-function add_map_overlay_XumiUnderground() {
-    let xumi_underground_map = new Map([
-        ['诸法丛林', {
-            imageUrl: `https://v3.yuanshen.site/imgs/sumeru_undergroundmap_shade.png`,
-            imageBounds: [[-6299, -2190], [-838, 1906]]
-        }],
-        ['大赤沙海', {
-            imageUrl: `https://v3.yuanshen.site/imgs/固定底图.png`,
-            imageBounds: [[-7664, 540], [-3568, 4636]]
-        }],
-    ])
-    let xumi_map_overlay = [];
-    for (let i of xumi_underground_map.keys()) {
-        xumi_map_overlay.push(L.imageOverlay(xumi_underground_map.get(i).imageUrl, xumi_underground_map.get(i).imageBounds))
-    }
-    return xumi_map_overlay
-}
 //将地图实例对象绑定至指定的dom
 function init_map(area) {
     switch (area) {
@@ -184,10 +141,114 @@ function init_map(area) {
 
     }
 }
+//地图蒙层(群岛)的相关参数
+const qd_postion = {
+    ww: [
+        [-494, -1164],
+        [1554, -140],
+    ],
+    pp: [
+        [-581, -3214],
+        [443, -2190],
+    ],
+    ss: [
+        [528, -4237],
+        [2576, -2189],
+    ],
+    bd: [
+        [1433, -1814],
+        [2201, -1046],
+    ],
+}
+//添加群岛的额外部分
+function add_map_overlay_qd(type, index) {
+    let imageUrl = `https://assets.yuanshen.site/tiles_qd28/other/${type}/${index}.png`;
+    let imageBounds = [qd_postion[type]]
+    return L.imageOverlay(imageUrl, imageBounds)
+}
+//添加须弥的地下部分 
+function add_map_overlay_XumiUnderground() {
+    let xumi_underground_map = new Map([
+        ['诸法丛林', {
+            imageUrl: `https://v3.yuanshen.site/imgs/sumeru_undergroundmap_shade.png`,
+            imageBounds: [[-6299, -2190], [-838, 1906]]
+        }],
+        ['大赤沙海', {
+            imageUrl: `https://v3.yuanshen.site/imgs/固定底图.png`,
+            imageBounds: [[-7664, 540], [-3568, 4636]]
+        }],
+        // ['千壑沙地', {
+        //     imageUrl: `https://assets.yuanshen.site/overlay/赤王的水晶杯-阴影.png`,
+        //     imageBounds: [[-7043, -284], [-6274, 618]]
+        // }]
+    ])
+    let xumi_map_overlay = [];
+    for (let i of xumi_underground_map.keys()) {
+        xumi_map_overlay.push(L.imageOverlay(xumi_underground_map.get(i).imageUrl, xumi_underground_map.get(i).imageBounds))
+    }
+    return xumi_map_overlay
+}
+function add_map_overlay_XumiArea2() {
+    let key_list = ['秘仪', '王陵', '舍身', '圣显'];
+    let key_index = [1, 2, 3];
+    let overlay_array = []
+    for (let i of key_list) {
+        let arr = [];
+        for (let j of key_index) {
+            let overlay = L.imageOverlay(`https://assets.yuanshen.site/overlay/SM/${i}${j}.png`, [[-7664, 540], [-3568, 4636]]);
+            arr.push(overlay)
+        }
+        overlay_array.push(arr);
+    }
+    return overlay_array
+
+};
+function add_map_overlay_XumiArea3() {
+    let overlay_list = [[], [], [], [], []];
+    let XumiArea3_list = [
+        [
+            ['酣乐之殿1', [[-6972, -455], [-6972 + 270, -455 + 354]]],
+            ['酣乐之殿2', [[-6882, -548], [-6882 + 505, -548 + 514]]],
+            ['酣乐之殿3', [[-6997, -496], [-6997 + 347, -496 + 178]]],
+            ['酣乐之殿4', [[-6904, -494], [-6904 + 285, -494 + 279]]],
+            ['永恒绿洲', [[-6793, -125], [-6793 + 698, -125 + 689]]],
+            ['赤王的水晶杯', [[-7043, -284], [-7043 + 769, -284 + 902]]]],
+        [
+            ['君王之殿1', [[-6310, 138], [-6310 + 442, 138 + 409]]],
+            ['君王之殿2', [[-6089, 139], [-6089 + 222, 139 + 139]]],
+            ['君王之殿3', [[-6368, 145], [-6368 + 435, 145 + 468]]],
+        ],
+        [
+            ['沙虫隧道1', [[-5914, -61], [-5914 + 682, -61 + 814]]],
+            ['沙虫隧道2', [[-5517, -19], [-5517 + 275, -19 + 506]]],
+            ['沙虫隧道3', [[-5490, -25], [-5490 + 180, -25 + 290]]],
+        ],
+        [
+            ['居尔城墟·赤王神殿1', [[-7341, 1174], [-7341 + 583, 1174 + 688]]],
+            ['居尔城墟·赤王神殿2', [[-6886, 1577], [-6886 + 130, 1577 + 169]]],
+            ['居尔城墟·赤王神殿3', [[-7317, 1237], [-7317 + 581, 1237 + 482]]],
+        ],
+        [
+            ['生命之殿', [[-7612, 2], [-7612 + 643, 2 + 588]]],
+            ['五绿洲', [[-6171, -730], [-6171 + 643, -730 + 390]]],
+            ['行宫花园', [[-7219, -785], [-7219 + 507, -785 + 522]]],
+            ['镇灵监牢及巨人峡谷', [[-7186, 502], [-7186 + 788, 502 + 510]]],
+        ]
+    ];
+    for (let i = 0; i < 5; i++) {
+        for (let j of XumiArea3_list[i]) {
+            let overlay = L.imageOverlay(`https://assets.yuanshen.site/overlay/${j[0]}.png`, j[1]);
+            overlay_list[i].push(overlay)
+        }
+    }
+    return overlay_list
+}
 export {
     create_map_layer,
     create_map,
     add_map_overlay_qd,
     add_map_overlay_XumiUnderground,
+    add_map_overlay_XumiArea2,
+    add_map_overlay_XumiArea3,
     init_map
 }

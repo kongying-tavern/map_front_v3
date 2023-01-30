@@ -59,7 +59,9 @@
       <div class="xumi">
         <level-switch
           v-if="mainStore.selected_area == '须弥'"
-          @callback="xumi_functions"
+          @switch1="xumi_switch1"
+          @switch2="xumi_switch2"
+          @switch3="xumi_switch3"
         ></level-switch>
       </div>
     </div>
@@ -100,6 +102,7 @@ export default {
       opacity_state: false,
       map_bg: null,
       xumi_opacity_state: false,
+      xumi_childarea2_overlay_group: null,
     };
   },
   components: {
@@ -322,24 +325,35 @@ export default {
         this.map.removeLayer(this.teleport_group);
       }
     },
-    //须弥的相关函数
-    xumi_functions(val) {
+    //切换须弥的地下和地上地图
+    xumi_switch1(val) {
       this.loading = true;
-      if (this.xumi_map_overlay == undefined) {
-        this.xumi_map_overlay = add_map_overlay_XumiUnderground();
-      }
-      if (val) {
+      if (val.state) {
         this.map_tiles.setOpacity(1);
-        for (let i of this.xumi_map_overlay) {
+        for (let i of val.imgs) {
           this.map.removeLayer(i);
         }
         this.loading = false;
       } else {
         this.map_tiles.setOpacity(0.45);
-        for (let i of this.xumi_map_overlay) {
+        for (let i of val.imgs) {
           this.map.addLayer(i);
         }
         this.loading = false;
+      }
+    },
+    //切换须弥的大赤沙海地区的层级显示
+    xumi_switch2(val) {
+      this.xumi_childarea2_overlay_group = val;
+      if (!this.map.hasLayer(this.xumi_childarea2_overlay_group)) {
+        this.map.addLayer(val);
+      }
+    },
+    //切换须弥的千壑沙地地区的层级显示
+    xumi_switch3(val) {
+      this.xumi_childarea3_overlay_group = val;
+      if (!this.map.hasLayer(this.xumi_childarea3_overlay_group)) {
+        this.map.addLayer(val);
       }
     },
     //读取存档数据
@@ -374,7 +388,7 @@ export default {
         imgs[0].className = imgs[0].className.replace(/opacity_on/, "");
       }
     },
-    //切换须弥的地上地下显示
+    //切换须弥地下点位的显隐状态
     xumi_underground_opacity_switch() {
       this.xumi_opacity_state = !this.xumi_opacity_state;
       let layers = document.getElementsByClassName("leaflet-shadow-pane");
@@ -432,7 +446,7 @@ export default {
     "mainStore.selected_area": function (val) {
       sessionStorage.setItem("area", val);
       if (val != "须弥" && this.xumi != undefined) {
-        this.xumi_functions(true);
+        this.xumi_switch1(true);
       }
     },
     "mainStore.selected_child_area": function (val, oldval) {
