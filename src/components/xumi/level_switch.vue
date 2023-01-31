@@ -118,27 +118,27 @@ export default {
       xumi_childarea2_selected: [1, 0, 1, 1],
       xumi_childarea3_list: {
         酣乐之殿: [
-          { label: "酣乐之殿·上", value: 1 },
-          { label: "酣乐之殿·中", value: 2 },
-          { label: "酣乐之殿·下", value: 3 },
-          { label: "酣乐之殿·底", value: 4 },
-          { label: "永恒绿洲", value: 5 },
-          { label: "赤王的水晶杯", value: 6 },
-        ],
-        君王之殿: [
-          { label: "君王之殿·上", value: 1 },
-          { label: "君王之殿·中", value: 2 },
-          { label: "君王之殿·下", value: 3 },
-        ],
-        沙虫隧道: [
-          { label: "沙虫隧道·上", value: 1 },
-          { label: "沙虫隧道·中", value: 2 },
-          { label: "沙虫隧道·下", value: 3 },
+          { label: "酣乐之殿·上", value: 0 },
+          { label: "酣乐之殿·中", value: 1 },
+          { label: "酣乐之殿·下", value: 2 },
+          { label: "酣乐之殿·底", value: 3 },
+          { label: "永恒绿洲", value: 4 },
+          { label: "赤王的水晶杯", value: 5 },
         ],
         赤王之殿: [
-          { label: "赤王之殿·上", value: 1 },
-          { label: "赤王之殿·中", value: 2 },
-          { label: "赤王之殿·下", value: 3 },
+          { label: "赤王之殿·上", value: 6 },
+          { label: "赤王之殿·中", value: 7 },
+          { label: "赤王之殿·下", value: 8 },
+        ],
+        君王之殿: [
+          { label: "君王之殿·上", value: 10 },
+          { label: "君王之殿·中", value: 11 },
+          { label: "君王之殿·下", value: 12 },
+        ],
+        沙虫隧道: [
+          { label: "沙虫隧道·上", value: 13 },
+          { label: "沙虫隧道·中", value: 14 },
+          { label: "沙虫隧道·下", value: 15 },
         ],
       },
       xumi_childarea3_selected: [1, 1, 1, 1],
@@ -175,16 +175,17 @@ export default {
       arr.reverse();
       for (let i of arr) {
         this.xumi_childarea3_overlay_group.addLayer(i);
-        this.$emit("switch3", this.xumi_childarea3_overlay_group);
       }
+      this.$emit("switch3", this.xumi_childarea3_overlay_group);
     },
-    change_area3() {
-      this.xumi_childarea3_overlay_group.setZIndex(100);
-      for (let i in this.xumi_childarea3_selected) {
-        this.xumi_overlay3[i][this.xumi_childarea3_selected[i] - 1].setZIndex(
-          200
-        );
-      }
+    change_area3(value) {
+      this.xumi_childarea3_overlay_group.eachLayer((layer) => {
+        layer.setOpacity(0.2);
+      });
+      let layers = this.xumi_childarea3_overlay_group.getLayers();
+      console.log(layers);
+      let target_layer = layers.find((item) => item.options.count == value);
+      target_layer.setOpacity(1);
     },
   },
 
