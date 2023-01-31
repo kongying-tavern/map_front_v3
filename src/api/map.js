@@ -329,7 +329,7 @@ function add_map_overlay_XumiArea3() {
     ];
     let zindex = 100
     let count = -1;
-    for (let i = 0; i < 4; i++) {
+    for (let i = 0; i < XumiArea3_list.length; i++) {
         let arr = [];
         for (let j of XumiArea3_list[i]) {
             zindex = zindex + 50
@@ -342,7 +342,6 @@ function add_map_overlay_XumiArea3() {
         }
         overlay_list.push(arr);
     }
-    console.log(overlay_list);
     return overlay_list
 }
 export {

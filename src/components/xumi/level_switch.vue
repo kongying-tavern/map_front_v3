@@ -54,7 +54,14 @@
               </div>
             </div>
           </q-tab-panel>
-          <q-tab-panel name="千壑沙地">
+          <q-tab-panel name="千壑沙地" style="padding-top: 0">
+            <div>
+              <q-btn
+                color="primary"
+                label="全部显示"
+                @click="reset_xumiarea3"
+              />
+            </div>
             <div
               v-for="(i, key, index) in xumi_childarea3_list"
               :key="key"
@@ -141,7 +148,7 @@ export default {
           { label: "沙虫隧道·下", value: 15 },
         ],
       },
-      xumi_childarea3_selected: [1, 1, 1, 1],
+      xumi_childarea3_selected: [-1, -1, -1, -1],
       xumi_overlay3: null,
     };
   },
@@ -172,10 +179,10 @@ export default {
       for (let i of this.xumi_overlay3) {
         arr = arr.concat(i);
       }
-      arr.reverse();
       for (let i of arr) {
         this.xumi_childarea3_overlay_group.addLayer(i);
       }
+      console.log(arr);
       this.$emit("switch3", this.xumi_childarea3_overlay_group);
     },
     change_area3(value) {
@@ -183,9 +190,14 @@ export default {
         layer.setOpacity(0.2);
       });
       let layers = this.xumi_childarea3_overlay_group.getLayers();
-      console.log(layers);
       let target_layer = layers.find((item) => item.options.count == value);
       target_layer.setOpacity(1);
+    },
+    reset_xumiarea3() {
+      this.xumi_childarea3_overlay_group.eachLayer((layer) => {
+        layer.setOpacity(1);
+      });
+      this.xumi_childarea3_selected = [-1, -1, -1, -1];
     },
   },
 
