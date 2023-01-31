@@ -92,7 +92,6 @@ export default {
       tab: "大赤沙海",
       switch_state: true,
       dialog: false,
-      xumi_map_overlay: null,
       xumi_childarea2_list: {
         秘仪圣殿: [
           { label: "秘仪圣殿·上", value: 1 },
@@ -143,18 +142,16 @@ export default {
         ],
       },
       xumi_childarea3_selected: [1, 1, 1, 1],
+      xumi_overlay3: null,
     };
   },
   methods: {
     switch_view() {
       this.switch_state = !this.switch_state;
-      this.$emit("switch1", {
-        state: this.switch_state,
-        imgs: this.xumi_map_overlay,
-      });
+      this.$emit("switch1", this.switch_state);
       if (!this.switch_state) {
         this.change_area2();
-        this.change_area3();
+        this.init_area3();
       }
     },
     change_area2() {
@@ -168,20 +165,30 @@ export default {
       }
       this.$emit("switch2", this.xumi_childarea2_overlay_group);
     },
-    change_area3() {
+    init_area3() {
       this.xumi_childarea3_overlay_group.clearLayers();
-      let arr = add_map_overlay_XumiArea3();
-      for (let i = 0; i < 5; i++) {
-        for (let j = 0; j < arr[i].length; j++) {
-          this.xumi_childarea3_overlay_group.addLayer(arr[i][j]);
-        }
+      this.xumi_overlay3 = add_map_overlay_XumiArea3();
+      let arr = [];
+      for (let i of this.xumi_overlay3) {
+        arr = arr.concat(i);
       }
-      this.$emit("switch3", this.xumi_childarea3_overlay_group);
+      arr.reverse();
+      for (let i of arr) {
+        this.xumi_childarea3_overlay_group.addLayer(i);
+        this.$emit("switch3", this.xumi_childarea3_overlay_group);
+      }
+    },
+    change_area3() {
+      this.xumi_childarea3_overlay_group.setZIndex(100);
+      for (let i in this.xumi_childarea3_selected) {
+        this.xumi_overlay3[i][this.xumi_childarea3_selected[i] - 1].setZIndex(
+          200
+        );
+      }
     },
   },
 
   mounted() {
-    this.xumi_map_overlay = add_map_overlay_XumiUnderground();
     this.xumi_childarea2_overlay_group = layergroup_register_prototype();
     this.xumi_childarea3_overlay_group = layergroup_register_prototype();
   },

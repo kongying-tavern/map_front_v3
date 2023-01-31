@@ -97,12 +97,11 @@ function create_icon_options(url, type = "off", extra) {
     // shadowAnchor: [16, 35.5], // the same for the shadow
     popupAnchor: [0, -35], // point from which the popup should open relative to the iconAnchor
     // className: type == 'on' ? `opacity_on` : 'opactiy_off'
-    className: `${sessionStorage.getItem('area')} ${type == 'on' ? 'opacity_on' : 'opactiy_off'}`
+    className: `${type == 'on' ? 'opacity_on' : 'opactiy_off'}`
   };
   if (extra != null) {
     let className = options.className;
-    extra = JSON.parse(extra);
-    if (extra.sumeru_underground) {
+    if (extra.search('sumeru') != -1) {
       options.className = `${className} sumeru_underground`
     }
   }
@@ -161,7 +160,6 @@ function create_icon_options(url, type = "off", extra) {
  * @returns {Object} marker对象
  */
 function layer_register(data, iconurl, type = 'off') {
-  console.log(data);
   let extra = data.markerExtraContent
   let marker = L.marker(data.position.split(','), {
     icon:

@@ -42,21 +42,21 @@
         ></div>
         <div class="text">标记点位</div>
       </div>
-      <!-- <div class="xumi">
+      <div class="xumi" v-if="xumi_show">
         <div class="switch row items-center">
           <div
             class="switch_btn"
             :class="{ on: xumi_opacity_state }"
             @click="xumi_underground_opacity_switch"
           ></div>
-          <div class="text">仅显示地下点位</div>
+          <div class="text">仅显示须弥地下点位</div>
         </div>
-      </div> -->
+      </div>
     </div>
     <!-- 左上侧各种开关 -->
     <extra-btn @load="load_savedata" @loading="toggle_loading"></extra-btn>
     <div class="area_components">
-      <div class="xumi">
+      <div class="xumi" v-if="xumi_show">
         <level-switch
           v-if="mainStore.selected_area == '须弥'"
           @switch1="xumi_switch1"
@@ -103,6 +103,7 @@ export default {
       map_bg: null,
       xumi_opacity_state: false,
       xumi_childarea2_overlay_group: null,
+      xumi_show: false,
     };
   },
   components: {
@@ -328,17 +329,24 @@ export default {
     //切换须弥的地下和地上地图
     xumi_switch1(val) {
       this.loading = true;
-      if (val.state) {
+      if (this.xumi_map_overlay2 == undefined) {
+        this.xumi_map_overlay2 = add_map_overlay_XumiUnderground();
+      }
+      if (val) {
         this.map_tiles.setOpacity(1);
-        for (let i of val.imgs) {
+        for (let i of this.xumi_map_overlay2) {
           this.map.removeLayer(i);
+        }
+        if (this.xumi_childarea3_overlay_group != undefined) {
+          this.map.removeLayer(this.xumi_childarea3_overlay_group);
         }
         this.loading = false;
       } else {
         this.map_tiles.setOpacity(0.45);
-        for (let i of val.imgs) {
+        for (let i of this.xumi_map_overlay2) {
           this.map.addLayer(i);
         }
+
         this.loading = false;
       }
     },
@@ -445,9 +453,15 @@ export default {
   watch: {
     "mainStore.selected_area": function (val) {
       sessionStorage.setItem("area", val);
-      if (val != "须弥" && this.xumi != undefined) {
+      if (val != "须弥") {
+        this.xumi_show = false;
         this.xumi_switch1(true);
+        if(this.xumi_opacity_state){
+          this.xumi_underground_opacity_switch();
+        }
+        return;
       }
+      this.xumi_show = true;
     },
     "mainStore.selected_child_area": function (val, oldval) {
       if (

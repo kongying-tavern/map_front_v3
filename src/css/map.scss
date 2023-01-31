@@ -278,7 +278,7 @@ img {
 }
 .leaflet-shadow-pane.underground_on,
 .leaflet-marker-pane.underground_on {
-  .须弥.leaflet-marker-icon:not(.sumeru_underground, .clusterIcon) {
+  .leaflet-marker-icon:not(.sumeru_underground, .clusterIcon) {
     opacity: 0.3;
   }
 }
