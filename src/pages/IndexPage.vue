@@ -99,7 +99,7 @@ export default {
       handle_layer: null,
       handle_layergroup: null,
       teleport_state: false,
-      opacity_state: false,
+      opacity_state: true,
       map_bg: null,
       xumi_opacity_state: false,
       xumi_childarea2_overlay_group: null,
@@ -386,9 +386,10 @@ export default {
     //切换点位的显隐状态
     opacity_switch() {
       this.opacity_state = !this.opacity_state;
+      document.documentElement.style.setProperty("--opacity",!this.opacity_state?0.3:1);
       let layers = document.getElementsByClassName("leaflet-shadow-pane");
       let imgs = document.getElementsByClassName("leaflet-marker-pane");
-      if (this.opacity_state) {
+      if (!this.opacity_state) {
         layers[0].className = `${layers[0].className} opacity_on`;
         imgs[0].className = `${imgs[0].className} opacity_on`;
       } else {
@@ -399,6 +400,7 @@ export default {
     //切换须弥地下点位的显隐状态
     xumi_underground_opacity_switch() {
       this.xumi_opacity_state = !this.xumi_opacity_state;
+      document.documentElement.style.setProperty("--underground",this.xumi_opacity_state?0.3:1);
       let layers = document.getElementsByClassName("leaflet-shadow-pane");
       let imgs = document.getElementsByClassName("leaflet-marker-pane");
       if (this.xumi_opacity_state) {
@@ -444,6 +446,7 @@ export default {
       set_Storage("_gitee_usercode", this.$route.query.code);
       this.$router.push("/");
     }
+    this.opacity_switch();
   },
   computed: {
     //请参考pinia不使用组合式api的用法的说明文档

@@ -21,17 +21,24 @@
     // let childClassName = childClassNameTemp[0].split("-");
     //console.log(childClassName[1]);
     let doneNum = 0;
+    let sumeru_underground=false;
     for (let i = 0; i < cluster.getChildCount(); i++) {
+      console.log(childMarkers[i].options)
+      let childClassName=childMarkers[i].options.icon.options.className;
       let key = childMarkers[i].options.data.id;
       let data = JSON.parse(localStorage.getItem('marked_layers'))
       if (data.findIndex(item => item == key) != -1) {
         doneNum++;
+      }
+      if(childClassName.indexOf("sumeru_underground")!=-1){
+        sumeru_underground=true;
       }
     }
     let childCount = cluster.getChildCount();
     let svgTipFill = (doneNum / childCount == 1) ? "#00EBF4" : "#E6E6E6";
     let doneIcon = (doneNum / childCount == 1) ? "_done" : "";
     let doneclass = (doneNum / childCount == 1) ? " _doneCluster" : "";
+    let undergroundclass = sumeru_underground ? " sumeru_underground" : "";
     const id = ` cluster_${cluster._leaflet_id}`
     return {
       // html的最后有图标url
@@ -63,7 +70,7 @@
       <b>${doneNum}/${childCount}</b>
       <img class='clusterImg' src='${cluster._group.options.iconUrl}' onerror="javascript:this.src='https://assets.yuanshen.site/icons/-1.png';"/>
   `,
-      className: "clusterIcon " + doneclass + id,
+      className: "clusterIcon " + doneclass + id + undergroundclass,
       iconSize: [36 + childCount / 3, 36 + childCount / 3], // size of the icon
       iconAnchor: [(36 + childCount / 3) / 2, 36 + childCount / 3 * 0.95]
     };
