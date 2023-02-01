@@ -127,7 +127,7 @@ img {
       transform: scale(0.4);
       transform-origin: 100% 100%;
 
-      @media screen and (max-width: 1080px) {
+      @media screen and (max-width: 1080px)  and (-webkit-device-pixel-ratio: 1){
         font-size: 40rem;
         bottom: unset;
         top: 3rem;
