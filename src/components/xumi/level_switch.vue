@@ -21,7 +21,7 @@
       <q-tooltip> 切换地下层级 </q-tooltip>
     </q-btn>
     <q-dialog v-model="dialog" position="left" seamless style="z-index: 1000">
-      <q-card style="width: 450rem; height: 500rem; padding: 8rem">
+      <q-card style="width: 450rem; height: 520rem; padding: 8rem">
         <div class="row items-center no-wrap">
           <div>
             <div class="title text-weight-bold">切换地下层级</div>
@@ -69,7 +69,7 @@
             >
               <div class="row items-center title2 text-weight-bold">
                 <div>{{ key }}</div>
-                <div style="margin-left: 15px">
+                <div style="margin-left: 15rem">
                   <q-btn
                     color="primary"
                     label="显示该区域"
