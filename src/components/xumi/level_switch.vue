@@ -148,14 +148,14 @@ export default {
           { label: "赤王之殿·下", value: 6 },
         ],
         君王之殿: [
-          { label: "君王之殿·上", value: 12 },
-          { label: "君王之殿·中", value: 11 },
-          { label: "君王之殿·下", value: 10 },
+          { label: "君王之殿·上", value: 11 },
+          { label: "君王之殿·中", value: 10 },
+          { label: "君王之殿·下", value: 9 },
         ],
         沙虫隧道: [
-          { label: "沙虫隧道·上", value: 15 },
-          { label: "沙虫隧道·中", value: 14 },
-          { label: "沙虫隧道·下", value: 13 },
+          { label: "沙虫隧道·上", value: 14 },
+          { label: "沙虫隧道·中", value: 13 },
+          { label: "沙虫隧道·下", value: 12 },
         ],
       },
       xumi_childarea3_selected: [-1, -1, -1, -1],
@@ -218,6 +218,7 @@ export default {
       this.xumi_childarea3_selected = [-1, -1, -1, -1];
     },
     reset_xumiarea3_part(index) {
+      console.log(index);
       this.xumi_childarea3_overlay_group.eachLayer((layer) => {
         if (layer.options.group == index) {
           layer.setOpacity(1);
