@@ -106,6 +106,9 @@ function create_icon_options(url, type = "off", extra) {
     }
   }
   if (type == 'off' || type == 'on') {
+    options.html = `${options.html}
+    <div class="xumu_underground_marker"></div>
+    `
     return options
   } else {
     options = {
@@ -124,6 +127,10 @@ function create_icon_options(url, type = "off", extra) {
           shadowAnchor: [12, 24], // the same for the shadow
           popupAnchor: [0, -21.5], // point from which the popup should open relative to the iconAnchor
         };
+        options.html = `
+        <img id="markerIcon" width="30" height="43" style="margin: 0 auto;left: 0;right: 0;top: 5px; position: absolute" src="${url == '' ? 'https://assets.yuanshen.site/icons/-1.png' : url}" onerror="javascript:this.src='https://assets.yuanshen.site/icons/-1.png';"/>
+        <div class="xumu_underground_teleport_marker"></div>
+        `
         return options;
       case "传送锚点":
         options = {
@@ -134,10 +141,27 @@ function create_icon_options(url, type = "off", extra) {
           shadowAnchor: [12, 24], // the same for the shadow
           popupAnchor: [0, -16.5], // point from which the popup should open relative to the iconAnchor
         };
+        options.html = `
+        <img id="markerIcon" width="23" height="33" style="margin: 0 auto;left: 0;right: 0;top: 5px; position: absolute" src="${url == '' ? 'https://assets.yuanshen.site/icons/-1.png' : url}" onerror="javascript:this.src='https://assets.yuanshen.site/icons/-1.png';"/>
+        <div class="xumu_underground_teleport_marker"></div>
+        `
         return options;
       case "秘境":
       case "征讨领域":
       case "浪船锚点":
+        options = {
+          ...options,
+          iconSize: [33, 33], // size of the icon
+          shadowSize: [24, 24], // size of the shadow
+          iconAnchor: [16.5, 16.5], // point of the icon which will correspond to marker's location
+          shadowAnchor: [12, 24], // the same for the shadow
+          popupAnchor: [0, -16.5], // point from which the popup should open relative to the iconAnchor
+        };
+        options.html = `
+        <img id="markerIcon" width="33" height="33" style="margin: 0 auto;left: 0;right: 0;top: 5px; position: absolute" src="${url == '' ? 'https://assets.yuanshen.site/icons/-1.png' : url}" onerror="javascript:this.src='https://assets.yuanshen.site/icons/-1.png';"/>
+        <div class="xumu_underground_teleport_marker"></div>
+        `
+        return options;
       default:
         options = {
           ...options,
@@ -165,7 +189,7 @@ function layer_register(data, iconurl, type = 'off') {
     icon:
       (type == 'off' || type == 'on')
         ? L.divIcon(create_icon_options(iconurl, type, extra))
-        : L.icon(create_icon_options(iconurl, type, extra)),
+        : L.divIcon(create_icon_options(iconurl, type, extra)),
     data: {
       ...data
     },
@@ -223,7 +247,7 @@ function layer_mark(layer, marktype) {
   } else if (type == 'off') {
     icon = L.divIcon(create_icon_options(layer.options.icon.options.iconUrl, 'on', extra))
   } else {
-    icon = L.icon(create_icon_options(layer.options.icon.options.iconUrl, 'none', extra))
+    icon = L.divIcon(create_icon_options(layer.options.icon.options.iconUrl, 'none', extra))
   }
   layer = layer.setIcon(icon);
   return layer

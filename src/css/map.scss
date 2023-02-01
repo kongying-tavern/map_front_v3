@@ -282,3 +282,23 @@ img {
     opacity: 0.3;
   }
 }
+.leaflet-marker-icon.sumeru_underground .xumu_underground_marker {
+  width: 20px;
+  height: 20px;
+  top: -8px;
+  right: -3px;
+  position: absolute;
+  z-index: 1000;
+  background: url(/imgs/layer_underground_mark.png) no-repeat;
+  background-size: 100% 100%;
+}
+.leaflet-marker-icon.sumeru_underground .xumu_underground_teleport_marker {
+  width: 12px;
+  height: 12px;
+  top: 26px;
+  right: 0px;
+  position: absolute;
+  z-index: 1000;
+  background: url(/imgs/teleport_underground_icon.png) no-repeat;
+  background-size: 100% 100%;
+}
