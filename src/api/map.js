@@ -336,13 +336,13 @@ function add_map_overlay_XumiArea3() {
             count = count + 1;
             let overlay = L.imageOverlay(`https://assets.yuanshen.site/overlay/${j[0]}-阴影.png`, j[1], {
                 zIndex: zindex,
-                count: count
+                count: count,
+                group: i
             });
             arr.push(overlay)
         }
         overlay_list.push(arr);
     }
-    console.log(overlay_list);
     return overlay_list
 }
 export {

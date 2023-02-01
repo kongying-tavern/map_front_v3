@@ -65,9 +65,19 @@
             <div
               v-for="(i, key, index) in xumi_childarea3_list"
               :key="key"
-              style="margin-top: 5rem"
+              style="margin-top: 8rem"
             >
-              <div class="title2 text-weight-bold">{{ key }}</div>
+              <div class="row items-center title2 text-weight-bold">
+                <div>{{ key }}</div>
+                <div style="margin-left: 15px">
+                  <q-btn
+                    color="primary"
+                    label="显示该区域"
+                    @click="reset_xumiarea3_part(index)"
+                    dense
+                  />
+                </div>
+              </div>
               <div>
                 <q-option-group
                   v-model="xumi_childarea3_selected[index]"
@@ -186,11 +196,19 @@ export default {
       this.$emit("switch3", this.xumi_childarea3_overlay_group);
     },
     change_area3(value) {
-      this.xumi_childarea3_overlay_group.eachLayer((layer) => {
-        layer.setOpacity(0.2);
-      });
       let layers = this.xumi_childarea3_overlay_group.getLayers();
       let target_layer = layers.find((item) => item.options.count == value);
+      let index = this.xumi_childarea3_selected.findIndex(
+        (item) => item == target_layer.options.count
+      );
+      this.xumi_childarea3_overlay_group.eachLayer((layer) => {
+        if (layer.options.group == index) {
+          layer.setOpacity(0.2);
+        }
+        if (layer.options.count == value) {
+          layer.setOpacity(1);
+        }
+      });
       target_layer.setOpacity(1);
     },
     reset_xumiarea3() {
@@ -198,6 +216,14 @@ export default {
         layer.setOpacity(1);
       });
       this.xumi_childarea3_selected = [-1, -1, -1, -1];
+    },
+    reset_xumiarea3_part(index) {
+      this.xumi_childarea3_overlay_group.eachLayer((layer) => {
+        if (layer.options.group == index) {
+          layer.setOpacity(1);
+        }
+        this.xumi_childarea3_selected[index] = -1;
+      });
     },
   },
 
