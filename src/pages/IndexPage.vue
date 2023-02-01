@@ -346,7 +346,6 @@ export default {
         for (let i of this.xumi_map_overlay2) {
           this.map.addLayer(i);
         }
-
         this.loading = false;
       }
     },
@@ -386,7 +385,10 @@ export default {
     //切换点位的显隐状态
     opacity_switch() {
       this.opacity_state = !this.opacity_state;
-      document.documentElement.style.setProperty("--opacity",!this.opacity_state?0.3:1);
+      document.documentElement.style.setProperty(
+        "--opacity",
+        !this.opacity_state ? 0.3 : 1
+      );
       let layers = document.getElementsByClassName("leaflet-shadow-pane");
       let imgs = document.getElementsByClassName("leaflet-marker-pane");
       if (!this.opacity_state) {
@@ -400,7 +402,10 @@ export default {
     //切换须弥地下点位的显隐状态
     xumi_underground_opacity_switch() {
       this.xumi_opacity_state = !this.xumi_opacity_state;
-      document.documentElement.style.setProperty("--underground",this.xumi_opacity_state?0.3:1);
+      document.documentElement.style.setProperty(
+        "--underground",
+        this.xumi_opacity_state ? 0.3 : 1
+      );
       let layers = document.getElementsByClassName("leaflet-shadow-pane");
       let imgs = document.getElementsByClassName("leaflet-marker-pane");
       if (this.xumi_opacity_state) {
@@ -459,7 +464,7 @@ export default {
       if (val != "须弥") {
         this.xumi_show = false;
         this.xumi_switch1(true);
-        if(this.xumi_opacity_state){
+        if (this.xumi_opacity_state) {
           this.xumi_underground_opacity_switch();
         }
         return;

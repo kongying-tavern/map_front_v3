@@ -169,6 +169,9 @@ export default {
       if (!this.switch_state) {
         this.change_area2();
         this.init_area3();
+      } else {
+        this.xumi_childarea2_overlay_group.clearLayers();
+        this.xumi_childarea3_overlay_group.clearLayers();
       }
     },
     change_area2() {
@@ -218,7 +221,6 @@ export default {
       this.xumi_childarea3_selected = [-1, -1, -1, -1];
     },
     reset_xumiarea3_part(index) {
-      console.log(index);
       this.xumi_childarea3_overlay_group.eachLayer((layer) => {
         if (layer.options.group == index) {
           layer.setOpacity(1);
