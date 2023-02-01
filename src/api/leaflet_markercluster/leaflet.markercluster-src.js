@@ -69,7 +69,8 @@
       </svg>
       <b>${doneNum}/${childCount}</b>
       <img class='clusterImg' src='${cluster._group.options.iconUrl}' onerror="javascript:this.src='https://assets.yuanshen.site/icons/-1.png';"/>
-  `,
+      <div class="xumu_underground_marker"></div>
+      `,
       className: "clusterIcon " + doneclass + id + undergroundclass,
       iconSize: [36 + childCount / 3, 36 + childCount / 3], // size of the icon
       iconAnchor: [(36 + childCount / 3) / 2, 36 + childCount / 3 * 0.95]
