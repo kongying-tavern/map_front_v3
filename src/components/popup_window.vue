@@ -3,39 +3,44 @@
   <div id="opened_popup row" class="q-pa-md">
     <div class="text">
       <div class="title">
-        {{ layer_data.markerTitle }} id:{{ layer_data.id }}
+        {{ layer_data.markerTitle }}
+      </div>
+      <div class="id">
+        id:{{ layer_data.id }}
       </div>
       <q-separator spaced />
-      <q-img
-        v-if="!teleport_type"
-        class="layer_img"
-        :src="
-          layer_data.picture == ''
-            ? 'https://assets.yuanshen.site/images/noImage.png'
-            : layer_data.picture
-        "
-        spinner-color="primary"
-        style="cursor: pointer"
-        @click="full_img_window = true"
-      >
-        <template v-slot:error>
-          <div class="absolute-full flex flex-center bg-primary text-white">
-            没有相关图片
-          </div>
-        </template>
-      </q-img>
-      <q-avatar
-        v-if="layer_data.videoPath != ''"
-        class="video_btn"
-        icon="mdi-play-speed"
-        font-size="50rem"
-        text-color="white"
-        @click="openURL(layer_data.videoPath)"
-      >
-        <q-tooltip> 点击播放视频 </q-tooltip>
-      </q-avatar>
       <div class="info scroll hide-scrollbar">
         {{ layer_data.content }}
+      </div>
+      <div class="layer_img_content">
+        <q-img
+          v-if="!teleport_type"
+          class="layer_img"
+          :src="
+            layer_data.picture == ''
+              ? 'https://assets.yuanshen.site/images/noImage.png'
+              : layer_data.picture
+          "
+          spinner-color="primary"
+          style="cursor: pointer"
+          @click="full_img_window = true"
+        >
+          <template v-slot:error>
+            <div class="absolute-full flex flex-center bg-primary text-white">
+              没有相关图片
+            </div>
+          </template>
+        </q-img>
+        <q-avatar
+          v-if="layer_data.videoPath != ''"
+          class="video_btn"
+          icon="mdi-play-speed"
+          font-size="50px"
+          text-color="white"
+          @click="openURL(layer_data.videoPath)"
+        >
+          <q-tooltip> 点击播放视频 </q-tooltip>
+        </q-avatar>
       </div>
     </div>
     <div
@@ -76,6 +81,7 @@
       </q-card>
     </q-dialog>
   </div>
+  <div class="opened_popup_down"></div>
 </template>
 
 <script>

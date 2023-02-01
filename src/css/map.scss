@@ -88,38 +88,81 @@ img {
 //地图弹窗的样式
 #popup_window {
   font-family: HYWH;
+  color: #2A3260;
+  .opened_popup_down{
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: -30rem;
+    margin: auto;
+    height: 40rem;
+    width: 102rem;
+    background-image: url("/imgs/popup_down.png");
+    background-size:cover;
+    background-position:center;
+    pointer-events: none;
+  }
 
   .text {
-    width: 250rem;
+    width: 256rem;
+
+    .q-separator{
+      margin: 9rem 0 !important;
+    }
+
+    .title{
+      margin: 0 !important;
+    }
+
+    .info{
+      margin-bottom: 9rem;
+    }
+
+    .id{
+      position: absolute;
+      right: 15rem;
+      bottom: 0rem;
+      color: #af9c7a;
+      font-size: 24rem;
+      transform: scale(0.4);
+      transform-origin: 100% 100%;
+
+      @media screen and (max-width: 1080px) {
+        font-size: 40rem;
+        bottom: unset;
+        top: 3rem;
+        color: inherit;
+      }
+    }
   }
 
   .q-pa-md {
-    padding: 16rem 16rem !important;
+    padding: 13rem 13rem !important;
   }
 
   .toggle_btn {
     user-select: none;
     position: relative;
     width: 100%;
-    height: 30rem;
+    height: 32rem;
     background: #f0e9e2;
     border-radius: 50rem;
     border: 2rem solid #c5b79d;
-    margin-top: 10rem;
+    margin-top: 16rem;
 
     .thumb {
       z-index: 1;
       position: absolute;
-      width: 50%;
+      width: 124rem;
       height: 24rem;
       border-radius: 50rem;
 
       .thumb_sign {
         position: absolute;
-        left: 10rem;
-        top: 5rem;
-        width: 12rem;
-        height: 12rem;
+        left: 4rem;
+        top: 4rem;
+        width: 14rem;
+        height: 14rem;
       }
     }
 
@@ -251,6 +294,9 @@ img {
 //leaflet的一些样式覆盖
 .leaflet-popup-content-wrapper {
   background: #f0e9e2;
+  box-shadow: none !important;
+  outline: 3rem solid rgba(0, 0, 0, 0.3);
+  border-radius: 10rem;
 }
 
 .leaflet-popup-content {
@@ -265,10 +311,13 @@ img {
 
 .leaflet-popup {
   left: -142rem !important;
+  .leaflet-popup-tip-container {
+    display: none; 
 
-  .leaflet-popup-tip {
-    background: #f0e9e2 !important;
-    bottom: -19px;
+    .leaflet-popup-tip {
+      background: #f0e9e2 !important;
+      bottom: -19px;
+    }
   }
 }
 
@@ -314,4 +363,27 @@ img {
   z-index: 1000;
   background: url(/imgs/teleport_underground_icon.png) no-repeat;
   background-size: 100% 100%;
+}
+.layer_img_content{
+  position: relative;
+  .layer_img{
+    margin: 0 !important;
+    width: 100%;
+    height: auto;
+    border-radius: 5rem;
+    border: 2rem solid #FFFFFF;
+  }
+}
+.video_btn{
+  position: absolute !important;
+  top: unset !important;
+  left: unset !important;
+  right: 3rem;
+  bottom: 4rem;
+  cursor: url("/imgs/UI_Img_Cursor_PC.png"), auto !important;
+  transform-origin: center;
+  translate: 0rem 0rem;
+}
+.leaflet-popup{
+  bottom: 50rem !important;
 }
