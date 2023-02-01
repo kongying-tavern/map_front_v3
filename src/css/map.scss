@@ -12,6 +12,19 @@
   }
 }
 
+:root{
+  --opacity:1
+  --underground:1
+}
+
+._doneCluster{
+  opacity: var(--opacity);
+}
+
+.clusterIcon:not(.sumeru_underground){
+  opacity: var(--underground);
+}
+
 html {
   font-size: 1px;
   height: 100%;
