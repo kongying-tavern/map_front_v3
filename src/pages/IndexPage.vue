@@ -6,49 +6,29 @@
     <div class="map_containor">
       <div class="stars"></div>
       <div class="twinkling"></div>
-      <div id="map"></div>
+      <canvas id="canvas"></canvas>
     </div>
     <!-- 地区选择器 -->
     <area-selector></area-selector>
     <!-- 物品筛选器 -->
-    <item-selector
-      @callback="item_selector_callback"
-      @clear="clearall"
-      @refresh="refresh_layergroup"
-    ></item-selector>
+    <item-selector @callback="item_selector_callback" @clear="clearall" @refresh="refresh_layergroup"></item-selector>
     <!-- 地图上点位的弹窗 -->
     <div id="popup_window" ref="window" v-show="popup_window_show">
-      <popup-window
-        :layer="handle_layer"
-        @callback="popup_callback"
-        @close="close_popup"
-      ></popup-window>
+      <popup-window :layer="handle_layer" @callback="popup_callback" @close="close_popup"></popup-window>
     </div>
     <!-- 左下侧各种开关 -->
     <div class="switch_list">
       <div class="switch row items-center">
-        <div
-          class="switch_btn"
-          :class="{ on: teleport_state }"
-          @click="teleport_switch"
-        ></div>
+        <div class="switch_btn" :class="{ on: teleport_state }" @click="teleport_switch"></div>
         <div class="text">传送点位</div>
       </div>
       <div class="switch row items-center">
-        <div
-          class="switch_btn"
-          :class="{ on: opacity_state }"
-          @click="opacity_switch"
-        ></div>
+        <div class="switch_btn" :class="{ on: opacity_state }" @click="opacity_switch"></div>
         <div class="text">标记点位</div>
       </div>
       <div class="xumi" v-if="xumi_show">
         <div class="switch row items-center">
-          <div
-            class="switch_btn"
-            :class="{ on: xumi_opacity_state }"
-            @click="xumi_underground_opacity_switch"
-          ></div>
+          <div class="switch_btn" :class="{ on: xumi_opacity_state }" @click="xumi_underground_opacity_switch"></div>
           <div class="text">仅显示须弥地下点位</div>
         </div>
       </div>
@@ -57,12 +37,8 @@
     <extra-btn @load="load_savedata" @loading="toggle_loading"></extra-btn>
     <div class="area_components">
       <div class="xumi" v-if="xumi_show">
-        <level-switch
-          v-if="mainStore.selected_area == '须弥'"
-          @switch1="xumi_switch1"
-          @switch2="xumi_switch2"
-          @switch3="xumi_switch3"
-        ></level-switch>
+        <level-switch v-if="mainStore.selected_area == '须弥'" @switch1="xumi_switch1" @switch2="xumi_switch2"
+          @switch3="xumi_switch3"></level-switch>
       </div>
     </div>
     <q-inner-loading :showing="loading" style="z-index: 2000">
@@ -82,9 +58,7 @@ import { mapStores } from "pinia";
 import { useCounterStore } from "../stores/example-store";
 import {
   layergroup_register,
-  subgroup_register,
-  layer_mark,
-  layer_register,
+  layer_Reregister
 } from "../api/layer";
 import { query_itemlayer_infolist } from "../service/base_request";
 import { switch_area_list, set_Storage } from "../api/common";
@@ -146,117 +120,94 @@ export default {
               value.item.typeIdList.indexOf(10) != -1 ||
               value.item.typeIdList.indexOf(11) != -1
             ) {
-              layergroup = subgroup_register(
+              layergroup = layergroup_register(
+                this.map,
                 this.BXGroup,
                 res.data.data,
                 iconurl
               );
             } else {
-              layergroup = layergroup_register(true, res.data.data, iconurl);
+              layergroup = layergroup_register(this.map, true, res.data.data, iconurl);
             }
-            //为每个点位绑定点击时弹出弹窗函数
-            layergroup.eachLayer((layer) => {
-              layer.bindPopup(this.$refs.window);
-              layer.on({
-                popupopen: (layer) => {
-                  this.handle_layer = layer;
-                  this.popup_window_show = true;
-                  this.handle_layergroup = layergroup;
-                },
-              });
-              //检测点位是否已被标记，若标记则为该点位着色
-              let arr = JSON.parse(localStorage.getItem("marked_layers"));
-              let layerid = layer.options.data.id;
-              if (arr.includes(layerid)) {
-                layer_mark(layer);
-              }
-            });
-            this.map.addLayer(layergroup);
             this.layergroup_map.set(value.item.itemId, layergroup);
             this.loading = false;
           });
           //否则使用缓存，直接从点位组map对象中调取队应的点位组
         } else {
           let layergroup = this.layergroup_map.get(value.item.itemId);
-          layergroup.eachLayer((layer) => {
-            layer_mark(layer, "on");
-            let arr = JSON.parse(localStorage.getItem("marked_layers"));
-            let layerid = layer.options.data.id;
-            if (arr.includes(layerid)) {
-              layer_mark(layer);
-            }
-          });
-          this.map.addLayer(layergroup);
+          layer_Reregister(this.map, layergroup);
+          this.map.draw();
         }
         //移除点位组
       } else {
         let layergroup = this.layergroup_map.get(value.item.itemId);
-        this.map.removeLayer(layergroup);
+        this.map.markerLayers.splice(this.map.markerLayers.lastIndexOf(layergroup),1)
+        this.map.draw();
       }
     },
     //刷新点位的状态
     refresh_layergroup() {
-      this.loading = true;
-      this.clearall();
-      for (let i of this.layergroup_map.keys()) {
-        if (
-          this.mainStore.selected_item_list.find((item) => item.itemId == i) !=
-          undefined
-        ) {
-          let layergroup = this.layergroup_map.get(i);
-          let arr = JSON.parse(localStorage.getItem("marked_layers"));
-          layergroup.eachLayer((layer) => {
-            layer_mark(layer, "on");
-            let layerid = layer.options.data.id;
-            if (arr.includes(layerid)) {
-              layer_mark(layer);
-            }
-          });
-          this.map.addLayer(this.layergroup_map.get(i));
-        }
-      }
-      this.loading = false;
+      // this.loading = true;
+      // this.clearall();
+      // for (let i of this.layergroup_map.keys()) {
+      //   if (
+      //     this.mainStore.selected_item_list.find((item) => item.itemId == i) !=
+      //     undefined
+      //   ) {
+      //     let layergroup = this.layergroup_map.get(i);
+      //     let arr = JSON.parse(localStorage.getItem("marked_layers"));
+      //     layergroup.eachLayer((layer) => {
+      //       layer_mark(layer, "on");
+      //       let layerid = layer.options.data.id;
+      //       if (arr.includes(layerid)) {
+      //         layer_mark(layer);
+      //       }
+      //     });
+      //     this.map.addLayer(this.layergroup_map.get(i));
+      //   }
+      // }
+      // this.loading = false;
     },
     //清除所有点位
     clearall() {
-      for (let i of this.layergroup_map.values()) {
-        this.map.removeLayer(i);
-      }
+      // for (let i of this.layergroup_map.values()) {
+      //   this.map.removeLayer(i);
+      // }
     },
     //弹窗的标记功能
     popup_callback(layer) {
-      let marklayer = this.handle_layergroup.getLayer(layer.target._leaflet_id);
-      layer_mark(marklayer);
-      let layerid = layer.target.options.data.id;
-      let arr = JSON.parse(localStorage.getItem("marked_layers"));
-      let index = arr.findIndex((item) => item == layerid);
-      if (index == -1) {
-        arr.push(layerid);
-        localStorage.setItem("marked_layers", JSON.stringify(arr));
-      } else {
-        arr.splice(index, 1);
-        localStorage.setItem("marked_layers", JSON.stringify(arr));
-      }
-      // 使用标记功能后，更新此节点的父级聚合点cluster信息
-      this.updateClusterByMarker(layer.target);
+      // let marklayer = this.handle_layergroup.getLayer(layer.target._leaflet_id);
+      // layer_mark(marklayer);
+      // let layerid = layer.target.options.data.id;
+      // let arr = JSON.parse(localStorage.getItem("marked_layers"));
+      // let index = arr.findIndex((item) => item == layerid);
+      // if (index == -1) {
+      //   arr.push(layerid);
+      //   localStorage.setItem("marked_layers", JSON.stringify(arr));
+      // } else {
+      //   arr.splice(index, 1);
+      //   localStorage.setItem("marked_layers", JSON.stringify(arr));
+      // }
+      // // 使用标记功能后，更新此节点的父级聚合点cluster信息
+      // this.updateClusterByMarker(layer.target);
     },
     // 更新父级聚合点cluster信息
     updateClusterByMarker(marker) {
-      let parent = marker.__parent;
-      while (parent) {
-        const updateForCluster = parent.silentlyUpdate;
-        updateForCluster && updateForCluster();
-        parent = parent.__parent;
-      }
+      // let parent = marker.__parent;
+      // while (parent) {
+      //   const updateForCluster = parent.silentlyUpdate;
+      //   updateForCluster && updateForCluster();
+      //   parent = parent.__parent;
+      // }
     },
     //关闭弹窗
     close_popup() {
-      this.map.closePopup();
+      // this.map.closePopup();
     },
     //查询并生成该地区的传送点
     teleport_layer_init() {
       if (this.teleport_group != null) {
-        this.map.removeLayer(this.teleport_group);
+        // this.map.removeLayer(this.teleport_group);
       }
       if (
         !this.teleport_map.has(`${this.mainStore.selected_child_area.name}`)
@@ -273,7 +224,7 @@ export default {
             iconurl: this.get_itemicon(i),
           });
         }
-        let layergroup = layergroup_register(false);
+        let layergroup = layergroup_register(this.map, false);
         //生成传送点位列表
         query_itemlayer_infolist({
           typeIdList: [],
@@ -281,87 +232,69 @@ export default {
           itemIdList: item_list,
           getBeta: 0,
         }).then((res) => {
-          for (let i of res.data.data) {
-            let iconurl = icon_list.find(
-              (item) => item.itemId == i.itemList[0].itemId
-            ).iconurl;
-            let iconname = icon_list.find(
-              (item) => item.itemId == i.itemList[0].itemId
-            ).itemName;
-            let marker = layer_register(i, iconurl, iconname);
-            layergroup.addLayer(marker);
-          }
-          layergroup.eachLayer((layer) => {
-            layer.bindPopup(this.$refs.window);
-            layer.on({
-              popupopen: (layer) => {
-                this.handle_layer = layer;
-                this.popup_window_show = true;
-                this.handle_layergroup = layergroup;
-              },
-            });
-          });
+          layergroup_register(this.map, false, res.data.data, res.data.data[0].itemList[0].iconTag)
+
           this.teleport_map.set(
             `${this.mainStore.selected_child_area.name}`,
             layergroup
           );
           this.teleport_group = layergroup;
-          this.map.addLayer(this.teleport_group);
+          // this.map.addLayer(this.teleport_group);
           this.loading = false;
         });
       } else {
-        this.map.removeLayer(this.teleport_group);
+        // this.map.removeLayer(this.teleport_group);
         this.teleport_group = this.teleport_map.get(
           `${this.mainStore.selected_child_area.name}`
         );
-        this.map.addLayer(this.teleport_group);
+        // this.map.addLayer(this.teleport_group);
       }
     },
     //切换传送点位显隐
     teleport_switch() {
       this.teleport_state = !this.teleport_state;
-      if (this.teleport_state) {
-        this.teleport_layer_init();
-      } else {
-        this.map.removeLayer(this.teleport_group);
-      }
+      // if (this.teleport_state) {
+      //   this.teleport_layer_init();
+      // } else {
+      //   this.map.removeLayer(this.teleport_group);
+      // }
     },
     //切换须弥的地下和地上地图
     xumi_switch1(val) {
-      this.loading = true;
-      if (this.xumi_map_overlay2 == undefined) {
-        this.xumi_map_overlay2 = add_map_overlay_XumiUnderground();
-      }
-      if (val) {
-        this.map_tiles.setOpacity(1);
-        for (let i of this.xumi_map_overlay2) {
-          this.map.removeLayer(i);
-        }
-        if (this.xumi_childarea3_overlay_group != undefined) {
-          this.map.removeLayer(this.xumi_childarea3_overlay_group);
-        }
-        this.loading = false;
-      } else {
-        this.map_tiles.setOpacity(0.45);
-        for (let i of this.xumi_map_overlay2) {
-          this.map.addLayer(i);
-        }
-        this.loading = false;
-      }
+      // this.loading = true;
+      // if (this.xumi_map_overlay2 == undefined) {
+      //   this.xumi_map_overlay2 = add_map_overlay_XumiUnderground();
+      // }
+      // if (val) {
+      //   this.map_tiles.setOpacity(1);
+      //   for (let i of this.xumi_map_overlay2) {
+      //     this.map.removeLayer(i);
+      //   }
+      //   if (this.xumi_childarea3_overlay_group != undefined) {
+      //     this.map.removeLayer(this.xumi_childarea3_overlay_group);
+      //   }
+      //   this.loading = false;
+      // } else {
+      //   this.map_tiles.setOpacity(0.45);
+      //   for (let i of this.xumi_map_overlay2) {
+      //     this.map.addLayer(i);
+      //   }
+      //   this.loading = false;
+      // }
     },
     //切换须弥的大赤沙海地区的层级显示
     xumi_switch2(val) {
-      this.xumi_childarea2_overlay_group = val;
-      if (!this.map.hasLayer(this.xumi_childarea2_overlay_group)) {
-        this.map.addLayer(val);
-      }
+      // this.xumi_childarea2_overlay_group = val;
+      // if (!this.map.hasLayer(this.xumi_childarea2_overlay_group)) {
+      //   this.map.addLayer(val);
+      // }
     },
     //切换须弥的千壑沙地地区的层级显示
     xumi_switch3(val) {
-      this.xumi_childarea3_overlay_group = val;
-      if (!this.map.hasLayer(this.xumi_childarea3_overlay_group)) {
-        this.map.addLayer(val);
-      }
+      // this.xumi_childarea3_overlay_group = val;
+      // if (!this.map.hasLayer(this.xumi_childarea3_overlay_group)) {
+      //   this.map.addLayer(val);
+      // }
     },
     //读取存档数据
     load_savedata(data) {
@@ -376,7 +309,7 @@ export default {
       save_data = new Set(save_data);
       let new_data = Array.from(new Set([...local_data, ...save_data]));
       localStorage.setItem("marked_layers", JSON.stringify(new_data));
-      this.refresh_layergroup();
+      // this.refresh_layergroup();
     },
     //切换地图的加载状态
     toggle_loading() {
@@ -385,60 +318,60 @@ export default {
     //切换点位的显隐状态
     opacity_switch() {
       this.opacity_state = !this.opacity_state;
-      document.documentElement.style.setProperty(
-        "--opacity",
-        !this.opacity_state ? 0.3 : 1
-      );
-      let layers = document.getElementsByClassName("leaflet-shadow-pane");
-      let imgs = document.getElementsByClassName("leaflet-marker-pane");
-      if (!this.opacity_state) {
-        layers[0].className = `${layers[0].className} opacity_on`;
-        imgs[0].className = `${imgs[0].className} opacity_on`;
-      } else {
-        layers[0].className = layers[0].className.replace(/opacity_on/, "");
-        imgs[0].className = imgs[0].className.replace(/opacity_on/, "");
-      }
+      // document.documentElement.style.setProperty(
+      //   "--opacity",
+      //   !this.opacity_state ? 0.3 : 1
+      // );
+      // let layers = document.getElementsByClassName("leaflet-shadow-pane");
+      // let imgs = document.getElementsByClassName("leaflet-marker-pane");
+      // if (!this.opacity_state) {
+      //   layers[0].className = `${layers[0].className} opacity_on`;
+      //   imgs[0].className = `${imgs[0].className} opacity_on`;
+      // } else {
+      //   layers[0].className = layers[0].className.replace(/opacity_on/, "");
+      //   imgs[0].className = imgs[0].className.replace(/opacity_on/, "");
+      // }
     },
     //切换须弥地下点位的显隐状态
     xumi_underground_opacity_switch() {
       this.xumi_opacity_state = !this.xumi_opacity_state;
-      document.documentElement.style.setProperty(
-        "--underground",
-        this.xumi_opacity_state ? 0.3 : 1
-      );
-      let layers = document.getElementsByClassName("leaflet-shadow-pane");
-      let imgs = document.getElementsByClassName("leaflet-marker-pane");
-      if (this.xumi_opacity_state) {
-        layers[0].className = `${layers[0].className} underground_on`;
-        imgs[0].className = `${imgs[0].className} underground_on`;
-      } else {
-        layers[0].className = layers[0].className.replace(/underground_on/, "");
-        imgs[0].className = imgs[0].className.replace(/underground_on/, "");
-      }
+      // document.documentElement.style.setProperty(
+      //   "--underground",
+      //   this.xumi_opacity_state ? 0.3 : 1
+      // );
+      // let layers = document.getElementsByClassName("leaflet-shadow-pane");
+      // let imgs = document.getElementsByClassName("leaflet-marker-pane");
+      // if (this.xumi_opacity_state) {
+      //   layers[0].className = `${layers[0].className} underground_on`;
+      //   imgs[0].className = `${imgs[0].className} underground_on`;
+      // } else {
+      //   layers[0].className = layers[0].className.replace(/underground_on/, "");
+      //   imgs[0].className = imgs[0].className.replace(/underground_on/, "");
+      // }
     },
   },
   mounted() {
     //生成地图和点位组map对象
     this.map = init_map();
     //获取地图背景所属的对象
-    this.map.eachLayer((layer) => {
-      this.map_tiles = layer;
-    });
+    // this.map.eachLayer((layer) => {
+    //   this.map_tiles = layer;
+    // });
     this.teleport_group = null;
     this.layergroup_map = new Map();
     this.teleport_map = new Map();
-    this.BXGroup = L.markerClusterGroup({
-      maxClusterRadius: function (e) {
-        let radius = 80;
-        let radius_map = new Map([[4, 100], [(5, 80)], [(6, 55)], [(7, 25)]]);
-        if (radius_map.has(e)) {
-          radius = radius_map.get(e);
-          return radius;
-        }
-        return radius;
-      },
-      iconUrl: "https://assets.yuanshen.site/icons/26.png",
-    }).addTo(this.map);
+    // this.BXGroup = L.markerClusterGroup({
+    //   maxClusterRadius: function (e) {
+    //     let radius = 80;
+    //     let radius_map = new Map([[4, 100], [(5, 80)], [(6, 55)], [(7, 25)]]);
+    //     if (radius_map.has(e)) {
+    //       radius = radius_map.get(e);
+    //       return radius;
+    //     }
+    //     return radius;
+    //   },
+    //   iconUrl: "https://assets.yuanshen.site/icons/26.png",
+    // }).addTo(this.map);
     //点位缓存
     if (localStorage.getItem("marked_layers") == null) {
       localStorage.setItem("marked_layers", JSON.stringify([]));
@@ -476,10 +409,10 @@ export default {
         switch_area_list.includes(val.name) ||
         switch_area_list.includes(oldval.name)
       ) {
-        this.clearall();
-        this.map.remove();
-        this.map = init_map(val.name);
-        this.BXGroup.addTo(this.map);
+        // this.clearall();
+        // this.map.remove();
+        // this.map = init_map(val.name);
+        // this.BXGroup.addTo(this.map);
       }
     },
     "mainStore.changeitem": function (val) {
@@ -499,6 +432,7 @@ export default {
 @import "../css/map.scss";
 @import "../css/selector.scss";
 @import "../css/area_component.scss";
+
 .map_containor {
   position: relative;
 }

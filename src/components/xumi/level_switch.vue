@@ -101,7 +101,7 @@ import {
   add_map_overlay_XumiArea2,
   add_map_overlay_XumiArea3,
 } from "../../api/map";
-import { layergroup_register_prototype } from "../../api/layer";
+// import { layergroup_register_prototype } from "../../api/layer";
 export default {
   name: "LevelSwitch",
   data() {
@@ -231,8 +231,8 @@ export default {
   },
 
   mounted() {
-    this.xumi_childarea2_overlay_group = layergroup_register_prototype();
-    this.xumi_childarea3_overlay_group = layergroup_register_prototype();
+    // this.xumi_childarea2_overlay_group = layergroup_register_prototype();
+    // this.xumi_childarea3_overlay_group = layergroup_register_prototype();
   },
 };
 </script>

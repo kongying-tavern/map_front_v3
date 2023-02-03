@@ -344,7 +344,7 @@ img {
     opacity: 0.3;
   }
 }
-.leaflet-marker-icon.sumeru_underground .xumu_underground_marker {
+.xumu_underground_marker {
   width: 16px;
   height: 16px;
   top: -3px;
@@ -354,7 +354,7 @@ img {
   background: url(/imgs/layer_underground_mark.png) no-repeat;
   background-size: 100% 100%;
 }
-.leaflet-marker-icon.sumeru_underground .xumu_underground_teleport_marker {
+.xumu_underground_teleport_marker {
   width: 12px;
   height: 12px;
   top: 26px;
