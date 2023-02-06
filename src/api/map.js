@@ -3,8 +3,8 @@
 //地图初始化
 // import * as L from 'leaflet'
 // import "leaflet/dist/leaflet.css";
-import { Tilemap, TileLayer, MarkerLayer, DomLayer} from "@7c00/canvas-tilemap";
-
+import { Tilemap, TileLayer, MarkerLayer, DomLayer, ImageLayer} from "@7c00/canvas-tilemap";
+// import { ImageBounds, ImageLayer } from "@7c00/canvas-tilemap/image-layer";
 /**
  * 生成地图的实例对象
  * @param {string} area_idx 地图别名 twt29：大世界 qd28：梦想群岛 yxg2：渊下宫/三界路飨祭 qd:群岛1 qd2:群岛2 
@@ -134,6 +134,38 @@ function createActiveMarkerImage(image) {
     canvas2d.drawImage(image, 0, 0);
     return canvas;
   }
+
+  function enableUndergroundMaps(tilemap) {
+    const canvas = document.createElement("canvas");
+    const canvas2d = canvas.getContext("2d");
+    canvas2d.fillStyle = "rgba(0, 0, 0, 0.68)";
+    canvas2d.rect(0, 0, canvas.width, canvas.height);
+    canvas2d.fill();
+    let undergroundLayer=new ImageLayer(tilemap, {
+        image: canvas,
+        bounds: [
+          [-origin[0] + tileOffset[0], -origin[1] + tileOffset[1]],
+          size,
+        ],
+      })
+    tilemap.imageLayers.add(
+        undergroundLayer
+    );
+    add_map_overlay_XumiUnderground()
+    add_map_overlay_XumiArea2()
+    add_map_overlay_XumiArea3()
+    return undergroundLayer;
+  }
+
+
+  function addImageLayer(url, bounds) {
+    const image = new Image();
+    image.src = url;
+    image.addEventListener("load", () => tilemap.draw());
+    tilemap.imageLayers.add(new ImageLayer(tilemap, { image, bounds }));
+  }
+
+
 //地图蒙层(群岛)的相关参数
 const qd_postion = {
     ww: [
@@ -252,6 +284,9 @@ function add_map_overlay_XumiUnderground() {
     // for (let i of xumi_underground_map.keys()) {
     //     xumi_map_overlay.push(L.imageOverlay(xumi_underground_map.get(i).imageUrl, xumi_underground_map.get(i).imageBounds))
     // }
+    for (const [_, { imageUrl, imageBounds }] of xumi_underground_map) {
+        addImageLayer(imageUrl, imageBounds);
+      }
     return xumi_map_overlay
 }
 function add_map_overlay_XumiArea2() {
@@ -284,6 +319,12 @@ function add_map_overlay_XumiArea2() {
     //         overlay_list[i].push(overlay)
     //     }
     // }
+    for (const [image, bounds] of XumiArea2_list) {
+        addImageLayer(
+          `https://assets.yuanshen.site/overlay/SM/${image}.png`,
+          bounds
+        );
+      }
     return overlay_list
 
 };
@@ -322,6 +363,12 @@ function add_map_overlay_XumiArea3() {
     ];
     let zindex = 100
     let count = -1;
+    for (const [image, bounds] of XumiArea3_list) {
+        addImageLayer(
+          `https://assets.yuanshen.site/overlay/${image}.png`,
+          bounds
+        );
+      }
     // for (let i = 0; i < XumiArea3_list.length; i++) {
     //     let arr = [];
     //     for (let j of XumiArea3_list[i]) {
@@ -346,5 +393,5 @@ export {
     add_map_overlay_XumiArea3,
     init_map,
     onClick,
-    createActiveMarkerImage
+    enableUndergroundMaps
 }

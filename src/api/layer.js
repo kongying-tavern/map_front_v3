@@ -17,7 +17,7 @@ import domtoimage from 'dom-to-image';
  * @param {string} extra 额外字段
  * @returns {Object} icon对象
  */
-function create_icon_options(tilemap, url, type = "off", extra = "") {
+function create_icon_options(tilemap, url, type = "off", extra = false) {
   const node = document.createElement("div");
   node.style.position = "relative";
 
@@ -76,7 +76,7 @@ function create_icon_options(tilemap, url, type = "off", extra = "") {
       </g>
     </svg>`
   if (type == 'off' || type == 'on') {
-    if (extra.search('sumeru') != -1) {
+    if (extra) {
       node.innerHTML = `${node.innerHTML}
       <div class="xumu_underground_marker"></div>
       `
@@ -111,7 +111,7 @@ function create_icon_options(tilemap, url, type = "off", extra = "") {
         `
         break;
     }
-    if (extra.search('sumeru') != -1) {
+    if (extra) {
       node.innerHTML = `${node.innerHTML}
       <div class="xumu_underground_teleport_marker"></div>
       `
@@ -154,12 +154,12 @@ function create_icon_options(tilemap, url, type = "off", extra = "") {
  * @param {String} iconurl 点位图标链接
  * @returns {Object} marker对象
  */
-function layer_register(tilemap, markersMap, data, iconurl, type = 'off') {
+function layer_register(tilemap, markersMap, data, iconurl, type = 'off', extra = false) {
   let marker = new MarkerLayer(tilemap, {
     positions: data.map((i) =>
       i.position.split(",").map((i) => parseInt(i))
     ),
-    image: create_icon_options(tilemap, iconurl, type)
+    image: create_icon_options(tilemap, iconurl, type, extra)
   });
   markersMap.set(marker, data);
   tilemap.markerLayers.add(marker);
@@ -183,8 +183,58 @@ async function layer_Reregister(tilemap, marker) {
  * @param {String} iconurl 点位图标链接
  * @returns {Object} layerGroup对象
  */
-function layergroup_register(tilemap, markersMap, gather = true, data = [], iconurl) {
-  return layer_register(tilemap, markersMap, data, iconurl)
+function layergroup_register(tilemap, markersMap, markerChecked, teleport = false, data = [], iconurl) {
+  let layers = new Map();
+  data.forEach(a => {
+    if (teleport) {
+      if (a.extra.search('sumeru') != -1) {
+        layers['teleport_underground'].add(a);
+      } else {
+        layers['teleport'].add(a);
+      }
+    } else {
+      if (markerChecked.has(a.id)) {
+        if (a.extra.search('sumeru') != -1) {
+          layers['underground_checked'].add(a);
+        } else {
+          layers['checked'].add(a);
+        }
+      } else {
+        if (a.extra.search('sumeru') != -1) {
+          layers['underground'].add(a);
+        } else {
+          layers['normal'].add(a);
+        }
+      }
+    }
+  });
+  let registedLayers = new Set();
+  layers.forEach((val, key) => {
+    switch (key) {
+      case 'normal':
+        registedLayers.add(layer_register(tilemap, markersMap, val, iconurl));
+        break;
+      case 'checked':
+        registedLayers.add(layer_register(tilemap, markersMap, val, iconurl, 'on'));
+        break;
+      case 'underground':
+        registedLayers.add(layer_register(tilemap, markersMap, val, iconurl, 'off', true));
+        break;
+      case 'underground_checked':
+        registedLayers.add(layer_register(tilemap, markersMap, val, iconurl, 'on', true));
+        break;
+      case 'teleport':
+        registedLayers.add(layer_register(tilemap, markersMap, val, iconurl, 'teleport'));
+        break;
+      case 'teleport_underground':
+        registedLayers.add(layer_register(tilemap, markersMap, val, iconurl, 'teleport', true));
+        break;
+      default:
+        registedLayers.add(layer_register(tilemap, markersMap, val, iconurl));
+        break;
+    }
+  })
+  return registedLayers;
 }
 
 /**

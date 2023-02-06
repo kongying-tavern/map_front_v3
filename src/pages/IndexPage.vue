@@ -53,7 +53,7 @@ import AreaSelector from "../components/area_selector.vue";
 import PopupWindow from "../components/popup_window.vue";
 import ExtraBtn from "../components/extra_btn.vue";
 import LevelSwitch from "../components/xumi/level_switch.vue";
-import { init_map, onClick, add_map_overlay_XumiUnderground } from "../api/map";
+import { init_map, onClick, add_map_overlay_XumiUnderground, enableUndergroundMaps } from "../api/map";
 import { mapStores } from "pinia";
 import { useCounterStore } from "../stores/example-store";
 import {
@@ -123,12 +123,13 @@ export default {
               layergroup = layergroup_register(
                 this.map,
                 this.markersMap,
-                this.BXGroup,
+                this.markerChecked,
+                false,
                 res.data.data,
                 iconurl
               );
             } else {
-              layergroup = layergroup_register(this.map, this.markersMap, true, res.data.data, iconurl);
+              layergroup = layergroup_register(this.map, this.markersMap, this.markerChecked, false, res.data.data, iconurl);
             }
             this.layergroup_map.set(value.item.itemId, layergroup);
             this.loading = false;
@@ -225,7 +226,7 @@ export default {
             iconurl: this.get_itemicon(i),
           });
         }
-        let layergroup = layergroup_register(this.map, this.markersMap, false);
+        let layergroup = layergroup_register(this.map, this.markersMap, this.markerChecked, true);
         //生成传送点位列表
         query_itemlayer_infolist({
           typeIdList: [],
@@ -233,7 +234,7 @@ export default {
           itemIdList: item_list,
           getBeta: 0,
         }).then((res) => {
-          layergroup_register(this.map, this.markersMap, false, res.data.data, res.data.data[0].itemList[0].iconTag)
+          layergroup_register(this.map, this.markersMap, this.markerChecked, true, res.data.data, res.data.data[0].itemList[0].iconTag)
 
           this.teleport_map.set(
             `${this.mainStore.selected_child_area.name}`,
@@ -262,26 +263,29 @@ export default {
     },
     //切换须弥的地下和地上地图
     xumi_switch1(val) {
-      // this.loading = true;
+      this.loading = true;
       // if (this.xumi_map_overlay2 == undefined) {
       //   this.xumi_map_overlay2 = add_map_overlay_XumiUnderground();
       // }
-      // if (val) {
-      //   this.map_tiles.setOpacity(1);
-      //   for (let i of this.xumi_map_overlay2) {
-      //     this.map.removeLayer(i);
-      //   }
-      //   if (this.xumi_childarea3_overlay_group != undefined) {
-      //     this.map.removeLayer(this.xumi_childarea3_overlay_group);
-      //   }
-      //   this.loading = false;
-      // } else {
-      //   this.map_tiles.setOpacity(0.45);
-      //   for (let i of this.xumi_map_overlay2) {
-      //     this.map.addLayer(i);
-      //   }
-      //   this.loading = false;
-      // }
+      if (val) {
+        // this.map_tiles.setOpacity(1);
+        // for (let i of this.xumi_map_overlay2) {
+        //   this.map.removeLayer(i);
+        // }
+        // if (this.xumi_childarea3_overlay_group != undefined) {
+        //   this.map.removeLayer(this.xumi_childarea3_overlay_group);
+        // }
+        if(this.undergroundLayer)this.map.markerLayers.add(this.undergroundLayer);
+        else this.undergroundLayer = enableUndergroundMaps(this.map);
+        this.loading = false;
+      } else {
+        // this.map_tiles.setOpacity(0.45);
+        // for (let i of this.xumi_map_overlay2) {
+        //   this.map.addLayer(i);
+        // }
+        this.map.markerLayers.delete(this.undergroundLayer)
+        this.loading = false;
+      }
     },
     //切换须弥的大赤沙海地区的层级显示
     xumi_switch2(val) {
@@ -363,6 +367,7 @@ export default {
     this.teleport_map = new Map();
     this.markersMap = new Map();
     onClick(this.map, this.markersMap);
+    this.markerChecked = new Set(JSON.parse(localStorage.getItem("marked_layers")));
     // this.BXGroup = L.markerClusterGroup({
     //   maxClusterRadius: function (e) {
     //     let radius = 80;
