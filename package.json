@@ -21,7 +21,7 @@
     "vue": "^3.0.0",
     "vue-i18n": "^9.0.0",
     "vue-router": "^4.0.0",
-    "@7c00/canvas-tilemap": "^0.0.1",
+    "@7c00/canvas-tilemap": "^0.2.0",
     "dom-to-image": "^2.6.0"
   },
   "devDependencies": {
