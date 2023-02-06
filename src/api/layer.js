@@ -8,6 +8,7 @@
 import {
   MarkerLayer
 } from "@7c00/canvas-tilemap";
+
 import domtoimage from 'dom-to-image';
 /**
  * 生成点位背景
@@ -153,18 +154,16 @@ function create_icon_options(tilemap, url, type = "off", extra = "") {
  * @param {String} iconurl 点位图标链接
  * @returns {Object} marker对象
  */
-function layer_register(tilemap, data, iconurl, type = 'off') {
+function layer_register(tilemap, markersMap, data, iconurl, type = 'off') {
   let marker = new MarkerLayer(tilemap, {
     positions: data.map((i) =>
       i.position.split(",").map((i) => parseInt(i))
     ),
-    image: create_icon_options(tilemap, iconurl, type),
-    offset: [-5120, 0],
-  })
-  tilemap.markerLayers.push(
-    marker
-  );
-  return marker
+    image: create_icon_options(tilemap, iconurl, type)
+  });
+  markersMap.set(marker, data);
+  tilemap.markerLayers.add(marker);
+  return marker;
 }
 /**
  * 再生成点位
@@ -173,7 +172,7 @@ function layer_register(tilemap, data, iconurl, type = 'off') {
  * @returns {Object} marker对象
  */
 async function layer_Reregister(tilemap, marker) {
-  tilemap.markerLayers.push(
+  tilemap.markerLayers.add(
     marker
   );
   return marker
@@ -184,8 +183,8 @@ async function layer_Reregister(tilemap, marker) {
  * @param {String} iconurl 点位图标链接
  * @returns {Object} layerGroup对象
  */
-function layergroup_register(tilemap, gather = true, data = [], iconurl) {
-  return layer_register(tilemap, data, iconurl)
+function layergroup_register(tilemap, markersMap, gather = true, data = [], iconurl) {
+  return layer_register(tilemap, markersMap, data, iconurl)
 }
 
 /**

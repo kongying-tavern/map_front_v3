@@ -3,7 +3,7 @@
 //地图初始化
 // import * as L from 'leaflet'
 // import "leaflet/dist/leaflet.css";
-import { Tilemap, TileLayer} from "@7c00/canvas-tilemap";
+import { Tilemap, TileLayer, MarkerLayer, DomLayer} from "@7c00/canvas-tilemap";
 
 /**
  * 生成地图的实例对象
@@ -20,6 +20,7 @@ function create_map(area_idx, settings, mapCenter = [3568, 6286], mapSize = [174
         element: "#canvas",
         size: mapSize,
         origin: mapCenter,
+        tileOffset: mapTilesOffset,
         maxZoom: 0.5,
     
         // 渊下宫
@@ -27,12 +28,11 @@ function create_map(area_idx, settings, mapCenter = [3568, 6286], mapSize = [174
         // origin: [3568, 6286],
       });
     
-      tilemap.tileLayers.push(
+      tilemap.tileLayers.add(
         // 提瓦特大陆
         new TileLayer(tilemap, {
           minZoom: 10,
           maxZoom: 13,
-          offset: mapTilesOffset,
           getTileUrl(x, y, z) {
             return `https://assets.yuanshen.site/tiles_${area_idx}/${z}/${x}_${y}.png`;
           }
@@ -81,10 +81,59 @@ function init_map(area) {
                 [0, 0]
             )
         default:
-            return create_map('twt34_2');
+            return create_map('twt34');
 
     }
 }
+function onClick(tilemap,markersMap){
+  const activeMarkerLayer = new MarkerLayer(tilemap, {
+        positions: [],
+        image: new Image(),
+      });
+      // 点击事件处理
+  tilemap.options.onClick = (event) => {
+    if (event) {
+      const { target, index } = event;
+      if (target == activeMarkerLayer) return;
+
+      const { image, positions } = target.options;
+      tilemap.markerLayers.add(activeMarkerLayer);
+      activeMarkerLayer.options.positions[0] = positions[index];
+      activeMarkerLayer.options.image = createActiveMarkerImage(
+        image
+      );
+
+      const marker = markersMap.get(target)[index];
+      const markerElement = document.createElement("div");
+      markerElement.className = "marker";
+      markerElement.innerHTML = `
+        <div class="marker-title">${marker.markerTitle}</div>
+        <div class="marker-content">${marker.content}</div>
+        ${marker.picture ? `<img src="${marker.picture}">` : ""}
+      `;
+      tilemap.domLayers.clear();
+      tilemap.domLayers.add(
+        new DomLayer(tilemap, {
+          element: markerElement,
+          position: positions[index],
+        })
+      );
+      tilemap.draw();
+    } else {
+      tilemap.markerLayers.delete(activeMarkerLayer);
+      tilemap.domLayers.clear();
+      tilemap.draw();
+    }
+  };
+}
+function createActiveMarkerImage(image) {
+    const canvas = document.createElement("canvas");
+    const canvas2d = canvas.getContext("2d");
+    canvas.width = image.width;
+    canvas.height = image.height;
+    canvas2d.drawImage(image, 0, 0);
+    return canvas;
+  }
 //地图蒙层(群岛)的相关参数
 const qd_postion = {
     ww: [
@@ -295,5 +344,7 @@ export {
     add_map_overlay_XumiUnderground,
     add_map_overlay_XumiArea2,
     add_map_overlay_XumiArea3,
-    init_map
+    init_map,
+    onClick,
+    createActiveMarkerImage
 }

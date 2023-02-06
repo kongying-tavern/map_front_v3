@@ -6,7 +6,7 @@
     <div class="map_containor">
       <div class="stars"></div>
       <div class="twinkling"></div>
-      <canvas id="canvas"></canvas>
+      <div id="canvas"></div>
     </div>
     <!-- 地区选择器 -->
     <area-selector></area-selector>
@@ -53,7 +53,7 @@ import AreaSelector from "../components/area_selector.vue";
 import PopupWindow from "../components/popup_window.vue";
 import ExtraBtn from "../components/extra_btn.vue";
 import LevelSwitch from "../components/xumi/level_switch.vue";
-import { init_map, add_map_overlay_XumiUnderground } from "../api/map";
+import { init_map, onClick, add_map_overlay_XumiUnderground } from "../api/map";
 import { mapStores } from "pinia";
 import { useCounterStore } from "../stores/example-store";
 import {
@@ -122,12 +122,13 @@ export default {
             ) {
               layergroup = layergroup_register(
                 this.map,
+                this.markersMap,
                 this.BXGroup,
                 res.data.data,
                 iconurl
               );
             } else {
-              layergroup = layergroup_register(this.map, true, res.data.data, iconurl);
+              layergroup = layergroup_register(this.map, this.markersMap, true, res.data.data, iconurl);
             }
             this.layergroup_map.set(value.item.itemId, layergroup);
             this.loading = false;
@@ -141,7 +142,7 @@ export default {
         //移除点位组
       } else {
         let layergroup = this.layergroup_map.get(value.item.itemId);
-        this.map.markerLayers.splice(this.map.markerLayers.lastIndexOf(layergroup),1)
+        this.map.markerLayers.delete(layergroup)
         this.map.draw();
       }
     },
@@ -224,7 +225,7 @@ export default {
             iconurl: this.get_itemicon(i),
           });
         }
-        let layergroup = layergroup_register(this.map, false);
+        let layergroup = layergroup_register(this.map, this.markersMap, false);
         //生成传送点位列表
         query_itemlayer_infolist({
           typeIdList: [],
@@ -232,7 +233,7 @@ export default {
           itemIdList: item_list,
           getBeta: 0,
         }).then((res) => {
-          layergroup_register(this.map, false, res.data.data, res.data.data[0].itemList[0].iconTag)
+          layergroup_register(this.map, this.markersMap, false, res.data.data, res.data.data[0].itemList[0].iconTag)
 
           this.teleport_map.set(
             `${this.mainStore.selected_child_area.name}`,
@@ -360,6 +361,8 @@ export default {
     this.teleport_group = null;
     this.layergroup_map = new Map();
     this.teleport_map = new Map();
+    this.markersMap = new Map();
+    onClick(this.map, this.markersMap);
     // this.BXGroup = L.markerClusterGroup({
     //   maxClusterRadius: function (e) {
     //     let radius = 80;

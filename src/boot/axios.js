@@ -13,7 +13,7 @@ import {
 // for each client)
 
 const api = axios.create({
-  baseURL: 'https://cloud.yuanshen.site/api',
+  baseURL: 'http://genshin-dev.momincong.com/api',
 })
 api.interceptors.response.use(res => {
   if (res.data.errorStatus != 200) {

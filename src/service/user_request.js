@@ -5,7 +5,7 @@ import { client_list } from "../api/client"
 function quest_request() {
     return axios({
         method: 'post',
-        url: 'https://cloud.yuanshen.site/oauth/token',
+        url: 'http://genshin-dev.momincong.com/oauth/token',
         params: {
             scope: 'all',
             grant_type: 'client_credentials',
