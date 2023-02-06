@@ -10,6 +10,7 @@ import {
 } from "@7c00/canvas-tilemap";
 
 import domtoimage from 'dom-to-image';
+import { Map } from "leaflet";
 /**
  * 生成点位背景
  * @param {Object} url 点点位图标地址
@@ -208,7 +209,7 @@ function layergroup_register(tilemap, markersMap, markerChecked, teleport = fals
       }
     }
   });
-  let registedLayers = new Set();
+  let registedLayers = new Map();
   layers.forEach((val, key) => {
     switch (key) {
       case 'normal':
@@ -234,6 +235,7 @@ function layergroup_register(tilemap, markersMap, markerChecked, teleport = fals
         break;
     }
   })
+  let info={"layers":registedLayers,"data":"25"}
   return registedLayers;
 }
 
