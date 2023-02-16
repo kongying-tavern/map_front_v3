@@ -8,5 +8,6 @@ export const useCounterStore = defineStore('main', {
     selected_item_list: [],
     teleport_list: [],
     change_mark: false,
+    layer_count: new Map(),
   }),
 });

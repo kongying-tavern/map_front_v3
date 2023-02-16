@@ -88,6 +88,7 @@ import {
 } from "../api/layer";
 import { query_itemlayer_infolist } from "../service/base_request";
 import { switch_area_list, set_Storage } from "../api/common";
+import { query_itemlayer_byid } from "../service/base_request";
 export default {
   name: "IndexPage",
   data() {
@@ -223,11 +224,35 @@ export default {
         this.map.removeLayer(i);
       }
     },
+    //点位的计数功能
+    mark_count() {
+      if (localStorage.getItem("marked_layers") != null) {
+        let arr = JSON.parse(localStorage.getItem("marked_layers"));
+        query_itemlayer_byid(arr).then((res) => {
+          for (let i of res.data.data) {
+            for (let j of i.itemList) {
+              if (!this.mainStore.layer_count.get(j.itemId)) {
+                this.mainStore.layer_count.set(j.itemId, 1);
+              } else {
+                this.mainStore.layer_count.set(
+                  j.itemId,
+                  this.mainStore.layer_count.get(j.itemId) + 1
+                );
+              }
+            }
+          }
+          let count = JSON.stringify([...this.mainStore.layer_count]);
+          localStorage.setItem("marked_count", count);
+        });
+      }
+    },
     //弹窗的标记功能
-    popup_callback(layer) {
-      let marklayer = this.handle_layergroup.getLayer(layer.target._leaflet_id);
+    popup_callback(data) {
+      let marklayer = this.handle_layergroup.getLayer(
+        data[0].target._leaflet_id
+      );
       layer_mark(marklayer);
-      let layerid = layer.target.options.data.id;
+      let layerid = data[0].target.options.data.id;
       let arr = JSON.parse(localStorage.getItem("marked_layers"));
       let index = arr.findIndex((item) => item == layerid);
       if (index == -1) {
@@ -237,8 +262,30 @@ export default {
         arr.splice(index, 1);
         localStorage.setItem("marked_layers", JSON.stringify(arr));
       }
+      //物品选择器的计数
+      if (data[1]) {
+        for (let i of data[0].target.options.data.itemList) {
+          if (this.mainStore.layer_count.get(i.itemId)) {
+            this.mainStore.layer_count.set(
+              i.itemId,
+              this.mainStore.layer_count.get(i.itemId) + 1
+            );
+          } else {
+            this.mainStore.layer_count.set(i.itemId, 1);
+          }
+        }
+      } else {
+        for (let i of data[0].target.options.data.itemList) {
+          this.mainStore.layer_count.set(
+            i.itemId,
+            this.mainStore.layer_count.get(i.itemId) - 1
+          );
+        }
+      }
+      let count = JSON.stringify([...this.mainStore.layer_count]);
+      localStorage.setItem("marked_count", count);
       // 使用标记功能后，更新此节点的父级聚合点cluster信息
-      this.updateClusterByMarker(layer.target);
+      this.updateClusterByMarker(data[0].target);
     },
     // 更新父级聚合点cluster信息
     updateClusterByMarker(marker) {
@@ -326,6 +373,45 @@ export default {
         this.map.removeLayer(this.teleport_group);
       }
     },
+    //读取存档数据
+    load_savedata(data) {
+      localStorage.setItem("marked_layers", JSON.stringify([]));
+      let local_data = new Set(
+        JSON.parse(localStorage.getItem("marked_layers"))
+      );
+      let save_data = JSON.parse(data.files.Data_KYJG.content);
+      for (let i in save_data) {
+        save_data[i] = parseInt(save_data[i]);
+      }
+      save_data = new Set(save_data);
+      let new_data = Array.from(new Set([...local_data, ...save_data]));
+      localStorage.setItem("marked_layers", JSON.stringify(new_data));
+      this.refresh_layergroup();
+      localStorage.setItem("marked_count", JSON.stringify([]));
+      this.mainStore.layer_count = new Map();
+      this.mark_count();
+    },
+    //切换地图的加载状态
+    toggle_loading() {
+      this.loading = !this.loading;
+    },
+    //切换点位的显隐状态
+    opacity_switch() {
+      this.opacity_state = !this.opacity_state;
+      document.documentElement.style.setProperty(
+        "--opacity",
+        !this.opacity_state ? 0.3 : 1
+      );
+      let layers = document.getElementsByClassName("leaflet-shadow-pane");
+      let imgs = document.getElementsByClassName("leaflet-marker-pane");
+      if (!this.opacity_state) {
+        layers[0].className = `${layers[0].className} opacity_on`;
+        imgs[0].className = `${imgs[0].className} opacity_on`;
+      } else {
+        layers[0].className = layers[0].className.replace(/opacity_on/, "");
+        imgs[0].className = imgs[0].className.replace(/opacity_on/, "");
+      }
+    },
     //切换须弥的地下和地上地图
     xumi_switch1(val) {
       this.loading = true;
@@ -349,56 +435,6 @@ export default {
         this.loading = false;
       }
     },
-    //切换须弥的大赤沙海地区的层级显示
-    xumi_switch2(val) {
-      this.xumi_childarea2_overlay_group = val;
-      if (!this.map.hasLayer(this.xumi_childarea2_overlay_group)) {
-        this.map.addLayer(val);
-      }
-    },
-    //切换须弥的千壑沙地地区的层级显示
-    xumi_switch3(val) {
-      this.xumi_childarea3_overlay_group = val;
-      if (!this.map.hasLayer(this.xumi_childarea3_overlay_group)) {
-        this.map.addLayer(val);
-      }
-    },
-    //读取存档数据
-    load_savedata(data) {
-      localStorage.setItem("marked_layers", JSON.stringify([]));
-      let local_data = new Set(
-        JSON.parse(localStorage.getItem("marked_layers"))
-      );
-      let save_data = JSON.parse(data.files.Data_KYJG.content);
-      for (let i in save_data) {
-        save_data[i] = parseInt(save_data[i]);
-      }
-      save_data = new Set(save_data);
-      let new_data = Array.from(new Set([...local_data, ...save_data]));
-      localStorage.setItem("marked_layers", JSON.stringify(new_data));
-      this.refresh_layergroup();
-    },
-    //切换地图的加载状态
-    toggle_loading() {
-      this.loading = !this.loading;
-    },
-    //切换点位的显隐状态
-    opacity_switch() {
-      this.opacity_state = !this.opacity_state;
-      document.documentElement.style.setProperty(
-        "--opacity",
-        !this.opacity_state ? 0.3 : 1
-      );
-      let layers = document.getElementsByClassName("leaflet-shadow-pane");
-      let imgs = document.getElementsByClassName("leaflet-marker-pane");
-      if (!this.opacity_state) {
-        layers[0].className = `${layers[0].className} opacity_on`;
-        imgs[0].className = `${imgs[0].className} opacity_on`;
-      } else {
-        layers[0].className = layers[0].className.replace(/opacity_on/, "");
-        imgs[0].className = imgs[0].className.replace(/opacity_on/, "");
-      }
-    },
     //切换须弥地下点位的显隐状态
     xumi_underground_opacity_switch() {
       this.xumi_opacity_state = !this.xumi_opacity_state;
@@ -414,6 +450,20 @@ export default {
       } else {
         layers[0].className = layers[0].className.replace(/underground_on/, "");
         imgs[0].className = imgs[0].className.replace(/underground_on/, "");
+      }
+    },
+    //切换须弥的大赤沙海地区的层级显示
+    xumi_switch2(val) {
+      this.xumi_childarea2_verlay_group = val;
+      if (!this.map.hasLayer(this.xumi_childarea2_overlay_group)) {
+        this.map.addLayer(val);
+      }
+    },
+    //切换须弥的千壑沙地地区的层级显示
+    xumi_switch3(val) {
+      this.xumi_childarea3_overlay_group = val;
+      if (!this.map.hasLayer(this.xumi_childarea3_overlay_group)) {
+        this.map.addLayer(val);
       }
     },
   },
@@ -446,12 +496,16 @@ export default {
     if (localStorage.getItem("marked_timelayers") == null) {
       localStorage.setItem("marked_timelayers", JSON.stringify({}));
     }
+    if (localStorage.getItem("marked_count") == null) {
+      localStorage.setItem("marked_count", JSON.stringify([]));
+    }
     //回调时，记录用户的code
     if (this.$route.query.code != undefined) {
       set_Storage("_gitee_usercode", this.$route.query.code);
       this.$router.push("/");
     }
     this.opacity_switch();
+    this.mark_count();
   },
   computed: {
     //请参考pinia不使用组合式api的用法的说明文档

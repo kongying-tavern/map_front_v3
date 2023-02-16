@@ -1,10 +1,5 @@
-import {
-  api
-} from '../boot/axios'
-import {
-  get_Cookies
-} from "../api/common"
-
+import { api } from '../boot/axios'
+import { get_Cookies } from "../api/common"
 function default_request(url, data, method = 'post') {
   return api({
     method: method,
@@ -66,6 +61,14 @@ function query_itemlayer_infolist(data) {
   return default_request(`/marker/get/list_byinfo`, data);
 }
 /**
+ * 按id列表查询点位信息
+ * @param {Array} data 物品类型ID列表
+ * @returns 物品点位id信息
+ */
+function query_itemlayer_byid(data) {
+  return default_request(`/marker/get/list_byid`, data)
+}
+/**
  * 列出所有图标
  * @param {Array} iconIdList 物品类型ID列表
  * @param {Array} typeIdList 地区ID列表
@@ -80,4 +83,5 @@ export {
   query_itemlist,
   query_itemlayer_infolist,
   query_iconlist,
+  query_itemlayer_byid
 }

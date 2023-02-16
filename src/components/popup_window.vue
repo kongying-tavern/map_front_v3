@@ -5,9 +5,7 @@
       <div class="title">
         {{ layer_data.markerTitle }}
       </div>
-      <div class="id">
-        id:{{ layer_data.id }}
-      </div>
+      <div class="id">id:{{ layer_data.id }}</div>
       <q-separator spaced />
       <div class="info scroll hide-scrollbar">
         {{ layer_data.content }}
@@ -80,8 +78,8 @@
         </q-img>
       </q-card>
     </q-dialog>
+    <div class="opened_popup_down"></div>
   </div>
-  <div class="opened_popup_down"></div>
 </template>
 
 <script>
@@ -102,7 +100,7 @@ export default {
     openURL,
     marklayer() {
       this.marked = !this.marked;
-      this.$emit("callback", this.layer);
+      this.$emit("callback", [this.layer, this.marked]);
       this.mainStore.change_mark = true;
     },
     closelayer() {

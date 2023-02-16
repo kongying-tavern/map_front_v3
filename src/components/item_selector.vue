@@ -98,11 +98,14 @@
                     <span class="item_option_title ellipsis">
                       {{ i.name }}
                     </span>
-                    <span class="item_option_count ellipsis">{{
-                      i.count
-                    }}</span>
+                    <span class="item_option_count ellipsis"
+                      >{{ count_layer(i) }}/{{ i.count }}</span
+                    >
                     <span class="item_option_progress">
-                      <span class="item_option_progress_bar" style="width: 0%">
+                      <span
+                        class="item_option_progress_bar"
+                        :style="{ width: `${count_layer(i)}%` }"
+                      >
                       </span>
                     </span>
                   </div>
@@ -169,7 +172,6 @@ import { useCounterStore } from "../stores/example-store";
 import {
   query_type,
   query_itemlist,
-  query_itemlayer_infolist,
   query_iconlist,
 } from "../service/base_request";
 import { switch_area_list } from "../api/common";
@@ -316,6 +318,7 @@ export default {
         "https://assets.yuanshen.site/icons/-1.png"
       );
     },
+    //隐藏无可选性的分类
     check_item_length(item) {
       if (item.typeId != 9) {
         if (
@@ -326,6 +329,13 @@ export default {
         }
       }
       return true;
+    },
+    //计算计数的点位数量，反映到物品选择器上
+    count_layer(item) {
+      if (this.mainStore.layer_count.get(item.itemId)) {
+        return this.mainStore.layer_count.get(item.itemId);
+      }
+      return 0;
     },
   },
   mounted() {

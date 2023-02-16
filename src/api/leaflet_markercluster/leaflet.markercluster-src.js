@@ -23,7 +23,7 @@
     let doneNum = 0;
     let sumeru_underground=false;
     for (let i = 0; i < cluster.getChildCount(); i++) {
-      console.log(childMarkers[i].options)
+      // console.log(childMarkers[i].options)
       let childClassName=childMarkers[i].options.icon.options.className;
       let key = childMarkers[i].options.data.id;
       let data = JSON.parse(localStorage.getItem('marked_layers'))
