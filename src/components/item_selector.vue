@@ -233,7 +233,7 @@ export default {
           }
         }
         for (let i of res.data.data.record) {
-          if (i.count > 0) {
+          if (i.count > 0 || i.count == 0) {
             for (let j of i.typeIdList) {
               if (i.specialFlag != 1) {
                 this.item_list[j].push(i);

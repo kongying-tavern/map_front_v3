@@ -231,10 +231,10 @@ export default {
       }
     },
     //获取存档
-    get_saves() {
+    async get_saves() {
       this.loading = true;
       this.save_data = [];
-      get_gitee_gist().then((res) => {
+      await get_gitee_gist().then((res) => {
         this.loading = false;
         for (let i of res.data) {
           if (i.files.Data_KYJG != undefined) {
@@ -247,13 +247,7 @@ export default {
     open_save_window(refresh = true) {
       if (this.save_data.length == 0 && refresh) {
         this.loading = true;
-        get_gitee_gist().then((res) => {
-          this.loading = false;
-          for (let i of res.data) {
-            if (i.files.Data_KYJG != undefined) {
-              this.save_data.push(i);
-            }
-          }
+        this.get_saves().then(() => {
           this.save_window = true;
         });
       } else {
@@ -275,7 +269,6 @@ export default {
           this.loading = false;
           if (res.status == 201) {
             create_notify("创建成功！");
-            this.get_saves();
           }
           this.add_item = res;
         })
@@ -322,7 +315,8 @@ export default {
       localStorage.setItem("_yuanshenmap_saveid", data);
     },
     //读取存档
-    load_save(data, hint = true) {
+    async load_save(data, hint = true) {
+      await this.get_saves();
       if (this.saveid != data.id) {
         if (this.save_marked) {
           if (confirm("建议您在切换存档前保存当前存档，是否继续切换？")) {
@@ -359,7 +353,9 @@ export default {
       }
     },
     //上传存档
-    update_save() {
+    async update_save() {
+      await this.get_saves();
+      console.log(this.save_data);
       this.loading = true;
       this.mainStore.change_mark = false;
       this.$emit("loading");
@@ -445,13 +441,16 @@ export default {
           if (arr.length != 0) {
             alert("检测到你有本地存档未上传至云端，已自动为您新建存档");
             this.add_save().then(() => {
-              this.open_save_window(false);
-              this.saveid = this.add_item.data.id;
-              localStorage.setItem(
-                "_yuanshenmap_saveid",
-                this.add_item.data.id
-              );
-              this.update_save();
+              this.get_saves().then(() => {
+                this.saveid = this.add_item.data.id;
+                localStorage.setItem(
+                  "_yuanshenmap_saveid",
+                  this.add_item.data.id
+                );
+                this.update_save().then(() => {
+                  this.open_save_window(false);
+                });
+              });
             });
           }
         } else {
