@@ -17,12 +17,15 @@
   --underground:1
 }
 
-._doneCluster{
-  opacity: var(--opacity);
-}
-
 .clusterIcon:not(.sumeru_underground){
   opacity: var(--underground);
+  &._doneCluster{
+    opacity: var(--opacity);
+  }  
+}
+
+._doneCluster{
+  opacity: var(--opacity);
 }
 
 html {
