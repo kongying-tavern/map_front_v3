@@ -104,7 +104,9 @@
                     <span class="item_option_progress">
                       <span
                         class="item_option_progress_bar"
-                        :style="{ width: `${count_layer(i)}%` }"
+                        :style="{
+                          width: `${(count_layer(i) / i.count) * 100}%`,
+                        }"
                       >
                       </span>
                     </span>
