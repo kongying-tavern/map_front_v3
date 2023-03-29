@@ -88,7 +88,7 @@ import {
 } from "../api/layer";
 import { query_itemlayer_infolist } from "../service/base_request";
 import { switch_area_list, set_Storage } from "../api/common";
-import { query_itemlayer_byid } from "../service/base_request";
+import { query_itemlayer_byid, clear_cache } from "../service/base_request";
 export default {
   name: "IndexPage",
   data() {

@@ -15,58 +15,99 @@
       <!-- 选择器的内容 -->
       <div class="item_selector_list_container_background"></div>
       <div class="item_selector_list_container">
-        <q-scroll-area style="height: 100%; width: 100%" :thumb-style="{
-          width: '2rem',
-          right: '4rem',
-        }" :bar-style="{
-  borderRadius: '1rem',
-  backgroundColor: '#DDD8D3',
-}">
-          <div class="item_selector_item" v-for="(item, index) in type_list" :key="index"
-            v-show="check_item_length(item)">
+        <q-scroll-area
+          style="height: 100%; width: 100%"
+          :thumb-style="{
+            width: '2rem',
+            right: '4rem',
+          }"
+          :bar-style="{
+            borderRadius: '1rem',
+            backgroundColor: '#DDD8D3',
+          }"
+        >
+          <div
+            class="item_selector_item"
+            v-for="(item, index) in type_list"
+            :key="index"
+            v-show="check_item_length(item)"
+          >
             <!-- 标题项 -->
-            <div class="item_header row items-center justify-between" @click="switch_item_fold(item)">
+            <div
+              class="item_header row items-center justify-between"
+              @click="switch_item_fold(item)"
+            >
               <div class="row items-center">
-                <q-img :src="`/imgs/itemicon_${item.name}.png`" style="width: 32rem; height: 32rem; margin-left: 12rem" />
+                <q-img
+                  :src="`/imgs/itemicon_${item.name}.png`"
+                  style="width: 32rem; height: 32rem; margin-left: 12rem"
+                />
                 <span class="item_name">{{ item.name }}</span>
               </div>
-              <div class="item_fold_btn" :class="{ on: get_item_fold(item) }"></div>
+              <div
+                class="item_fold_btn"
+                :class="{ on: get_item_fold(item) }"
+              ></div>
             </div>
             <!-- 下拉项 -->
             <q-slide-transition>
               <div class="item_body row" v-if="get_item_fold(item)">
                 <div class="col-12 q-pa-sm" v-if="item.name == '宝箱'">
-                  <q-btn-toggle dense padding="8rem" v-model="chest_type" color="toggle_btn_color"
-                    toggle-color="toggle_btn_toggle_color" text-color="toggle_btn_text_color" unelevated
-                    style="font-family: HYWH" :options="[
+                  <q-btn-toggle
+                    dense
+                    padding="8rem"
+                    v-model="chest_type"
+                    color="toggle_btn_color"
+                    toggle-color="toggle_btn_toggle_color"
+                    text-color="toggle_btn_text_color"
+                    unelevated
+                    style="font-family: HYWH"
+                    :options="[
                       { label: '宝箱品质', value: 10 },
                       { label: '宝箱形式', value: 11 },
-                    ]" />
+                    ]"
+                  />
                 </div>
-                <div class="item_option row" v-for="(i, index) in item_list[
-                  item.typeId == 9 ? chest_type : item.typeId
-                ]" :class="{
-  on:
-    selected_item_list.find(
-      (item) => item.itemId == i.itemId
-    ) != undefined,
-}" :key="index" @click="insert_selected_item(i)">
+                <div
+                  class="item_option row"
+                  v-for="(i, index) in item_list[
+                    item.typeId == 9 ? chest_type : item.typeId
+                  ]"
+                  :class="{
+                    on:
+                      selected_item_list.find(
+                        (item) => item.itemId == i.itemId
+                      ) != undefined,
+                  }"
+                  :key="index"
+                  @click="insert_selected_item(i)"
+                >
                   <div class="item_option_avatar">
-                    <q-img :src="get_itemicon(i)" style="
-                              width: 40rem;
-                              height: 40rem;
-                              vertical-align: initial;
-                            " referrerpolicy="no-referrer" @error="handle_item_icon_error(i)" />
+                    <q-img
+                      :src="get_itemicon(i)"
+                      style="
+                        width: 40rem;
+                        height: 40rem;
+                        vertical-align: initial;
+                      "
+                      referrerpolicy="no-referrer"
+                      @error="handle_item_icon_error(i)"
+                    />
                   </div>
                   <div class="col" style="height: 100%; position: relative">
                     <span class="item_option_title ellipsis">
                       {{ i.name }}
                     </span>
-                    <span class="item_option_count ellipsis">{{ count_layer(i) }}/{{ i.count }}</span>
+                    <span class="item_option_count ellipsis"
+                      >{{ count_layer(i) }}/{{ i.count }}</span
+                    >
                     <span class="item_option_progress">
-                      <span class="item_option_progress_bar" :style="{
-                        width: `${(count_layer(i) / i.count) * 100}%`,
-                      }">
+                      <span
+                        class="item_option_progress_bar"
+                        :style="{
+                          width: `${(count_layer(i) / i.count) * 100}%`,
+                        }"
+                      >
                       </span>
                     </span>
                   </div>
@@ -82,20 +123,41 @@
       <!-- 已选项 -->
       <div class="item_selected_bar" v-show="selected_item_list.length != 0">
         <div class="close-all" @click="closeall">
-          <q-tooltip anchor="center left" self="center right" :offset="[10, 10]" transition-show="jump-left"
-            transition-hide="jump-right">
+          <q-tooltip
+            anchor="center left"
+            self="center right"
+            :offset="[10, 10]"
+            transition-show="jump-left"
+            transition-hide="jump-right"
+          >
             清除所有
           </q-tooltip>
         </div>
         <div class="item_list">
-          <q-scroll-area style="height: 100%; width: 100%" :thumb-style="{ background: 'none' }">
-            <div class="item" v-for="(item, index) in selected_item_list" :key="index"
-              @click="insert_selected_item(item)">
+          <q-scroll-area
+            style="height: 100%; width: 100%"
+            :thumb-style="{ background: 'none' }"
+          >
+            <div
+              class="item"
+              v-for="(item, index) in selected_item_list"
+              :key="index"
+              @click="insert_selected_item(item)"
+            >
               <div class="item_close"></div>
-              <q-img :src="get_itemicon(item)" style="width: 48rem; height: 48rem; margin: 1rem"
-                referrerpolicy="no-referrer" @error="handle_item_icon_error(item)" />
-              <q-tooltip anchor="center left" self="center right" :offset="[10, 10]" transition-show="jump-left"
-                transition-hide="jump-right">
+              <q-img
+                :src="get_itemicon(item)"
+                style="width: 48rem; height: 48rem; margin: 1rem"
+                referrerpolicy="no-referrer"
+                @error="handle_item_icon_error(item)"
+              />
+              <q-tooltip
+                anchor="center left"
+                self="center right"
+                :offset="[10, 10]"
+                transition-show="jump-left"
+                transition-hide="jump-right"
+              >
                 {{ item.area }}-{{ item.name }}
               </q-tooltip>
             </div>
@@ -293,7 +355,7 @@ export default {
         query_type(1, {
           current: 1,
           typeIdList: [],
-          size: 999,
+          size: 9999,
         }),
       ])
       .then(
@@ -313,6 +375,15 @@ export default {
           this.icon_list_cache();
         })
       );
+    // query_itemlist({
+    //   typeIdList: [],
+    //   areaIdList: [],
+    //   current: 0,
+    //   size: 9909,
+    // }).then((res) => {
+    //   console.log(this.mainStore.area_list);
+    //   console.log(res);
+    // });
   },
   computed: {
     //请参考pinia不使用组合式api的用法的说明文档

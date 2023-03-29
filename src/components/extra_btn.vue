@@ -14,9 +14,18 @@
         <q-tooltip> 反馈/建议 </q-tooltip>
       </div>
       <div
-        class="btn save desktop-only"
+        class="btn desktop-only"
         @click="openURL('https://yuanshen.site/docs/download-client.html')"
       >
+       <q-avatar
+          square
+          size="64rem"
+          font-size="64rem"
+          text-color="white"
+          icon="mdi-download-box-outline"
+        >
+          <q-badge v-if="save_marked" color="red" rounded floating />
+        </q-avatar>
         <q-tooltip> 下载客户端 </q-tooltip>
       </div>
       <div class="btn" @click="check_log_state">

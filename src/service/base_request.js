@@ -77,11 +77,15 @@ function query_itemlayer_byid(data) {
 function query_iconlist(data) {
   return default_request(`/icon/get/list`, data);
 }
+function clear_cache() {
+  return default_request(`/cache/item`, undefined, 'delete');
+}
 export {
   query_area,
   query_type,
   query_itemlist,
   query_itemlayer_infolist,
   query_iconlist,
-  query_itemlayer_byid
+  query_itemlayer_byid,
+  clear_cache
 }
