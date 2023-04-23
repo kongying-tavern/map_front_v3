@@ -149,6 +149,7 @@ function create_icon_options(url, type = "off", extra) {
       case "秘境":
       case "征讨领域":
       case "浪船锚点":
+      case "奖励秘境":
         options = {
           ...options,
           iconSize: [33, 33], // size of the icon

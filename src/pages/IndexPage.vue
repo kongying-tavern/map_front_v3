@@ -329,12 +329,22 @@ export default {
           getBeta: 0,
         }).then((res) => {
           for (let i of res.data.data) {
-            let iconurl = icon_list.find(
-              (item) => item.itemId == i.itemList[0].itemId
-            ).iconurl;
-            let iconname = icon_list.find(
-              (item) => item.itemId == i.itemList[0].itemId
-            ).itemName;
+            let iconurl = "https://assets.yuanshen.site/icons/-1.png";
+            let iconname = "off";
+            if (icon_list.find((item) => item.itemId == i.itemList[0].itemId)) {
+              iconurl = icon_list.find(
+                (item) => item.itemId == i.itemList[0].itemId
+              ).iconurl;
+              iconname = icon_list.find(
+                (item) => item.itemId == i.itemList[0].itemId
+              ).itemName;
+            }
+            console.log(i, iconurl, iconname);
+            // let iconurl =
+            //   icon_list.find((item) => item.itemId == i.itemList[0].itemId)
+            //     .iconurl == undefined
+            //     ? "https://assets.yuanshen.site/icons/-1.png"
+            //     : icon_list.find((item) => item.itemId == i.itemList[0].itemId);
             let marker = layer_register(i, iconurl, iconname);
             layergroup.addLayer(marker);
           }
