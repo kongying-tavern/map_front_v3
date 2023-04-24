@@ -59,9 +59,8 @@
       <div class="xumi" v-if="xumi_show">
         <level-switch
           v-if="mainStore.selected_area == '须弥'"
-          @switch1="xumi_switch1"
-          @switch2="xumi_switch2"
-          @switch3="xumi_switch3"
+          @underground_switch="xumi_underground_switch"
+          @underground_area_switch="xumi_underground_child_area_switch"
         ></level-switch>
       </div>
     </div>
@@ -84,6 +83,7 @@ import {
 } from "../api/map";
 import { mapStores } from "pinia";
 import { useCounterStore } from "../stores/example-store";
+import { xumi_underground_name } from "../api/extra_data/xumi_underground";
 import {
   layergroup_register,
   subgroup_register,
@@ -105,16 +105,11 @@ export default {
       handle_layergroup: null,
       teleport_state: false,
       opacity_state: true,
+      xumi_underground_name,
       xumi_opacity_state: false,
       xumi_underground_overlaygroup: null,
       xumi_underground_bg: null,
       xumi_show: false,
-      xumi_area3_array: {
-        酣乐之殿: [],
-        赤王之殿: [],
-        君王之殿: [],
-        沙虫隧道: [],
-      },
     };
   },
   components: {
@@ -427,7 +422,7 @@ export default {
       }
     },
     //切换须弥的地下和地上地图
-    xumi_switch1(val) {
+    xumi_underground_switch(val) {
       this.loading = true;
       if (this.xumi_underground_overlaygroup == null) {
         this.xumi_underground_bg = add_map_overlay_XumiUnderground();
@@ -465,47 +460,68 @@ export default {
         imgs[0].className = imgs[0].className.replace(/underground_on/, "");
       }
     },
-    //切换须弥的大赤沙海地区的层级显示
-    xumi_switch2(val) {
-      let area2_group = this.xumi_underground_overlaygroup
-        .get("大赤沙海")
-        .getLayers();
-      area2_group.forEach((item) => {
-        item.setOpacity(0);
-      });
-      for (let i of Object.entries(val)) {
-        let item = area2_group.find(
-          (item) =>
-            item.options.group[0] == i[0] && item.options.group[1] == i[1]
-        );
-        if (item) {
-          item.setOpacity(1);
-        }
-      }
-    },
-    //切换须弥的千壑沙地地区的层级显示
-    xumi_switch3(val) {
-      let area3_group = this.xumi_underground_overlaygroup
-        .get("千壑沙地")
-        .getLayers();
-      if (this.xumi_area3_array.酣乐之殿.length == 0) {
-        for (let item of area3_group) {
-          let key = item.options.group[0];
-          if (this.xumi_area3_array[key]) {
-            this.xumi_area3_array[key].push(item);
+    //切换须弥地下地区子地区的状态
+    xumi_underground_child_area_switch(data) {
+      let area = xumi_underground_name[data.index][1];
+      let area_group = "";
+      switch (data.index) {
+        //切换须弥的大赤沙海地区的层级显示
+        case 0:
+          area_group = this.xumi_underground_overlaygroup.get(area).getLayers();
+          area_group.forEach((item) => {
+            item.setOpacity(0);
+          });
+          for (let i of Object.entries(data.data)) {
+            let item = area_group.find(
+              (item) =>
+                item.options.group[0] == i[0] && item.options.group[1] == i[1]
+            );
+            if (item) {
+              item.setOpacity(1);
+            }
           }
-        }
-      }
-      for (let i of Object.entries(val)) {
-        this.xumi_area3_array[i[0]].forEach((item) => {
-          item.setOpacity(1);
-          if (item.options.group[1] != i[1]) {
-            item.setOpacity(0.2);
+          break;
+        //切换须弥的千壑沙地/苍漠囿土地区的层级显示
+        case 1:
+        case 2:
+          area_group = this.xumi_underground_overlaygroup.get(area).getLayers();
+          for (let i of Object.entries(data.data)) {
+            let arr = [];
+            for (let item of area_group) {
+              if (item.options.group[0] == i[0]) {
+                arr.push(item);
+              }
+            }
+            for (let j of arr) {
+              j.setOpacity(1);
+              if (j.options.group[1] != i[1]) {
+                j.setOpacity(0.2);
+              }
+              if (i[1] == -1) {
+                j.setOpacity(1);
+              }
+            }
           }
-          if (i[1] == -1) {
-            item.setOpacity(1);
-          }
-        });
+          // if (this.xumi_area3_array.酣乐之殿.length == 0) {
+          //   for (let item of area_group) {
+          //     let key = item.options.group[0];
+          //     if (this.xumi_area3_array[key]) {
+          //       this.xumi_area3_array[key].push(item);
+          //     }
+          //   }
+          // }
+          // for (let i of Object.entries(data.data)) {
+          //   this.xumi_area3_array[i[0]].forEach((item) => {
+          //     item.setOpacity(1);
+          //     if (item.options.group[1] != i[1]) {
+          //       item.setOpacity(0.2);
+          //     }
+          //     if (i[1] == -1) {
+          //       item.setOpacity(1);
+          //     }
+          //   });
+          // }
+          break;
       }
     },
   },
@@ -559,7 +575,7 @@ export default {
       sessionStorage.setItem("area", val);
       if (val != "须弥") {
         this.xumi_show = false;
-        this.xumi_switch1(true);
+        this.xumi_underground_switch(true);
         if (this.xumi_opacity_state) {
           this.xumi_underground_opacity_switch();
         }

@@ -172,7 +172,7 @@ function add_map_overlay_qd(type, index) {
 function create_xumi_underground_layers() {
     let map = new Map();
     for (let i in xumi_underground_name) {
-        let zindex = 100
+        let zindex = 1000
         let layergroup = layergroup_register_prototype();
         for (let j of xumi_underground_list[i]) {
             let settings = {}
@@ -181,10 +181,17 @@ function create_xumi_underground_layers() {
                     group: j[2]
                 }
             }
-            if (i == 2) {
+            if (i != 0) {
                 zindex = zindex + 50
                 settings = {
-                    group: j[2],
+                    ...settings,
+                    zIndex: zindex,
+                }
+            }
+            else {
+                zindex = zindex - 50
+                settings = {
+                    ...settings,
                     zIndex: zindex,
                 }
             }
