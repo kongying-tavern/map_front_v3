@@ -96,11 +96,6 @@
 </template>
 
 <script>
-import {
-  add_map_overlay_XumiUnderground,
-  add_map_overlay_XumiArea2,
-  add_map_overlay_XumiArea3,
-} from "../../api/map";
 import { layergroup_register_prototype } from "../../api/layer";
 export default {
   name: "LevelSwitch",
@@ -111,28 +106,28 @@ export default {
       dialog: false,
       xumi_childarea2_list: {
         秘仪圣殿: [
-          { label: "秘仪圣殿·上", value: 1 },
-          { label: "秘仪圣殿·中", value: 2 },
-          { label: "秘仪圣殿·下", value: 3 },
+          { label: "秘仪圣殿·上", value: 0 },
+          { label: "秘仪圣殿·中", value: 1 },
+          { label: "秘仪圣殿·下", value: 2 },
         ],
         赤王陵: [
-          { label: "赤王陵·上", value: 1 },
-          { label: "赤王陵·中", value: 2 },
-          { label: "赤王陵·下", value: 3 },
-          { label: "衡淮大厅", value: 0 },
+          { label: "赤王陵·上", value: 0 },
+          { label: "赤王陵·中", value: 1 },
+          { label: "赤王陵·下", value: 2 },
+          { label: "衡淮大厅", value: -1 },
         ],
         舍身步道: [
-          { label: "舍身步道·上", value: 1 },
-          { label: "舍身步道·中", value: 2 },
-          { label: "舍身步道·下", value: 3 },
+          { label: "舍身步道·上", value: 0 },
+          { label: "舍身步道·中", value: 1 },
+          { label: "舍身步道·下", value: 2 },
         ],
         圣显厅: [
-          { label: "圣显厅·上", value: 1 },
-          { label: "圣显厅·中", value: 2 },
-          { label: "圣显厅·下", value: 3 },
+          { label: "圣显厅·上", value: 0 },
+          { label: "圣显厅·中", value: 1 },
+          { label: "圣显厅·下", value: 2 },
         ],
       },
-      xumi_childarea2_selected: [1, 0, 1, 1],
+      xumi_childarea2_selected: [0, -1, 0, 0],
       xumi_childarea3_list: {
         酣乐之殿: [
           { label: "酣乐之殿·上", value: 5 },
@@ -143,19 +138,19 @@ export default {
           { label: "赤王的水晶杯", value: 0 },
         ],
         赤王之殿: [
-          { label: "赤王之殿·上", value: 8 },
-          { label: "赤王之殿·中", value: 7 },
-          { label: "赤王之殿·下", value: 6 },
+          { label: "赤王之殿·上", value: 2 },
+          { label: "赤王之殿·中", value: 1 },
+          { label: "赤王之殿·下", value: 0 },
         ],
         君王之殿: [
-          { label: "君王之殿·上", value: 11 },
-          { label: "君王之殿·中", value: 10 },
-          { label: "君王之殿·下", value: 9 },
+          { label: "君王之殿·上", value: 2 },
+          { label: "君王之殿·中", value: 1 },
+          { label: "君王之殿·下", value: 0 },
         ],
         沙虫隧道: [
-          { label: "沙虫隧道·上", value: 14 },
-          { label: "沙虫隧道·中", value: 13 },
-          { label: "沙虫隧道·下", value: 12 },
+          { label: "沙虫隧道·上", value: 2 },
+          { label: "沙虫隧道·中", value: 1 },
+          { label: "沙虫隧道·下", value: 0 },
         ],
       },
       xumi_childarea3_selected: [-1, -1, -1, -1],
@@ -168,68 +163,42 @@ export default {
       this.$emit("switch1", this.switch_state);
       if (!this.switch_state) {
         this.change_area2();
-        this.init_area3();
       } else {
         this.xumi_childarea2_overlay_group.clearLayers();
         this.xumi_childarea3_overlay_group.clearLayers();
       }
     },
     change_area2() {
-      this.xumi_childarea2_overlay_group.clearLayers();
-      let arr = add_map_overlay_XumiArea2();
-      for (let i in this.xumi_childarea2_selected) {
-        if (this.xumi_childarea2_selected[i] != 0) {
-          let value = this.xumi_childarea2_selected[i];
-          this.xumi_childarea2_overlay_group.addLayer(arr[i][value - 1]);
-        }
+      let list = Object.keys(this.xumi_childarea2_list);
+      let obj = {};
+      for (let i in list) {
+        obj = {
+          ...obj,
+          [list[i]]: this.xumi_childarea2_selected[i],
+        };
       }
-      this.$emit("switch2", this.xumi_childarea2_overlay_group);
+      this.$emit("switch2", obj);
     },
-    init_area3() {
-      this.xumi_childarea3_overlay_group.clearLayers();
-      this.xumi_overlay3 = add_map_overlay_XumiArea3();
-      let arr = [];
-      for (let i of this.xumi_overlay3) {
-        arr = arr.concat(i);
+    change_area3() {
+      let list = Object.keys(this.xumi_childarea3_list);
+      let obj = {};
+      for (let i in list) {
+        obj = {
+          ...obj,
+          [list[i]]: this.xumi_childarea3_selected[i],
+        };
       }
-      arr.reverse();
-      for (let i of arr) {
-        this.xumi_childarea3_overlay_group.addLayer(i);
-      }
-      this.$emit("switch3", this.xumi_childarea3_overlay_group);
-    },
-    change_area3(value) {
-      let layers = this.xumi_childarea3_overlay_group.getLayers();
-      let target_layer = layers.find((item) => item.options.count == value);
-      let index = this.xumi_childarea3_selected.findIndex(
-        (item) => item == target_layer.options.count
-      );
-      this.xumi_childarea3_overlay_group.eachLayer((layer) => {
-        if (layer.options.group == index) {
-          layer.setOpacity(0.2);
-        }
-        if (layer.options.count == value) {
-          layer.setOpacity(1);
-        }
-      });
-      target_layer.setOpacity(1);
+      this.$emit("switch3", obj);
     },
     reset_xumiarea3() {
-      this.xumi_childarea3_overlay_group.eachLayer((layer) => {
-        layer.setOpacity(1);
-      });
       this.xumi_childarea3_selected = [-1, -1, -1, -1];
+      this.change_area3();
     },
     reset_xumiarea3_part(index) {
-      this.xumi_childarea3_overlay_group.eachLayer((layer) => {
-        if (layer.options.group == index) {
-          layer.setOpacity(1);
-        }
-        this.xumi_childarea3_selected[index] = -1;
-      });
+      this.xumi_childarea3_selected[index] = -1;
+      this.change_area3();
     },
   },
-
   mounted() {
     this.xumi_childarea2_overlay_group = layergroup_register_prototype();
     this.xumi_childarea3_overlay_group = layergroup_register_prototype();

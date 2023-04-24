@@ -77,7 +77,11 @@ import AreaSelector from "../components/area_selector.vue";
 import PopupWindow from "../components/popup_window.vue";
 import ExtraBtn from "../components/extra_btn.vue";
 import LevelSwitch from "../components/xumi/level_switch.vue";
-import { init_map, add_map_overlay_XumiUnderground } from "../api/map";
+import {
+  init_map,
+  add_map_overlay_XumiUnderground,
+  create_xumi_underground_layers,
+} from "../api/map";
 import { mapStores } from "pinia";
 import { useCounterStore } from "../stores/example-store";
 import {
@@ -101,10 +105,16 @@ export default {
       handle_layergroup: null,
       teleport_state: false,
       opacity_state: true,
-      map_bg: null,
       xumi_opacity_state: false,
-      xumi_childarea2_overlay_group: null,
+      xumi_underground_overlaygroup: null,
+      xumi_underground_bg: null,
       xumi_show: false,
+      xumi_area3_array: {
+        酣乐之殿: [],
+        赤王之殿: [],
+        君王之殿: [],
+        沙虫隧道: [],
+      },
     };
   },
   components: {
@@ -308,7 +318,7 @@ export default {
       if (
         !this.teleport_map.has(`${this.mainStore.selected_child_area.name}`)
       ) {
-        //若无缓存，则从传送点位列表中找到所有传送点位类，由于传送点位有不同的类型（锚点/秘境），因为需要为不同的点位类型建立不同改的对象
+        //若无缓存，则从传送点位列表中找到所有传送点位类，由于传送点位有不同的类型（锚点/秘境），需要为不同的点位类型建立不同的对象
         this.loading = true;
         let item_list = [];
         let icon_list = [];
@@ -339,12 +349,6 @@ export default {
                 (item) => item.itemId == i.itemList[0].itemId
               ).itemName;
             }
-            console.log(i, iconurl, iconname);
-            // let iconurl =
-            //   icon_list.find((item) => item.itemId == i.itemList[0].itemId)
-            //     .iconurl == undefined
-            //     ? "https://assets.yuanshen.site/icons/-1.png"
-            //     : icon_list.find((item) => item.itemId == i.itemList[0].itemId);
             let marker = layer_register(i, iconurl, iconname);
             layergroup.addLayer(marker);
           }
@@ -425,25 +429,24 @@ export default {
     //切换须弥的地下和地上地图
     xumi_switch1(val) {
       this.loading = true;
-      if (this.xumi_map_overlay2 == undefined) {
-        this.xumi_map_overlay2 = add_map_overlay_XumiUnderground();
+      if (this.xumi_underground_overlaygroup == null) {
+        this.xumi_underground_bg = add_map_overlay_XumiUnderground();
+        this.xumi_underground_overlaygroup = create_xumi_underground_layers();
       }
-      if (val) {
-        this.map_tiles.setOpacity(1);
-        for (let i of this.xumi_map_overlay2) {
-          this.map.removeLayer(i);
-        }
-        if (this.xumi_childarea3_overlay_group != undefined) {
-          this.map.removeLayer(this.xumi_childarea3_overlay_group);
-        }
-        this.loading = false;
-      } else {
+      if (!val) {
         this.map_tiles.setOpacity(0.45);
-        for (let i of this.xumi_map_overlay2) {
+        this.map.addLayer(this.xumi_underground_bg);
+        for (let i of this.xumi_underground_overlaygroup.values()) {
           this.map.addLayer(i);
         }
-        this.loading = false;
+      } else {
+        this.map_tiles.setOpacity(1);
+        this.map.removeLayer(this.xumi_underground_bg);
+        for (let i of this.xumi_underground_overlaygroup.values()) {
+          this.map.removeLayer(i);
+        }
       }
+      this.loading = false;
     },
     //切换须弥地下点位的显隐状态
     xumi_underground_opacity_switch() {
@@ -464,16 +467,45 @@ export default {
     },
     //切换须弥的大赤沙海地区的层级显示
     xumi_switch2(val) {
-      this.xumi_childarea2_verlay_group = val;
-      if (!this.map.hasLayer(this.xumi_childarea2_overlay_group)) {
-        this.map.addLayer(val);
+      let area2_group = this.xumi_underground_overlaygroup
+        .get("大赤沙海")
+        .getLayers();
+      area2_group.forEach((item) => {
+        item.setOpacity(0);
+      });
+      for (let i of Object.entries(val)) {
+        let item = area2_group.find(
+          (item) =>
+            item.options.group[0] == i[0] && item.options.group[1] == i[1]
+        );
+        if (item) {
+          item.setOpacity(1);
+        }
       }
     },
     //切换须弥的千壑沙地地区的层级显示
     xumi_switch3(val) {
-      this.xumi_childarea3_overlay_group = val;
-      if (!this.map.hasLayer(this.xumi_childarea3_overlay_group)) {
-        this.map.addLayer(val);
+      let area3_group = this.xumi_underground_overlaygroup
+        .get("千壑沙地")
+        .getLayers();
+      if (this.xumi_area3_array.酣乐之殿.length == 0) {
+        for (let item of area3_group) {
+          let key = item.options.group[0];
+          if (this.xumi_area3_array[key]) {
+            this.xumi_area3_array[key].push(item);
+          }
+        }
+      }
+      for (let i of Object.entries(val)) {
+        this.xumi_area3_array[i[0]].forEach((item) => {
+          item.setOpacity(1);
+          if (item.options.group[1] != i[1]) {
+            item.setOpacity(0.2);
+          }
+          if (i[1] == -1) {
+            item.setOpacity(1);
+          }
+        });
       }
     },
   },
