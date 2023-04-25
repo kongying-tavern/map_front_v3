@@ -46,7 +46,7 @@
                 v-if="index != 1"
                 color="primary"
                 label="全部显示"
-                @click="reset_area"
+                @click="reset_area(index)"
               />
             </div>
             <div
@@ -63,7 +63,7 @@
                   color="primary"
                   label="显示区域"
                   dense
-                  @click="reset_area"
+                  @click="reset_area(index, item_index)"
                   style="margin-left: 10px"
                 />
               </div>
@@ -73,7 +73,7 @@
                   :options="xumi_child_area_list[index][item_key]"
                   color="primary"
                   inline
-                  @update:model-value="change_area"
+                  @update:model-value="change_area(index)"
                 />
               </div>
             </div>
@@ -90,7 +90,7 @@ export default {
   data() {
     return {
       area_list: ["诸法丛林", "大赤沙海", "千壑沙地", "苍漠囿土"],
-      tab: "大赤沙海",
+      tab: "诸法丛林",
       switch_state: true,
       dialog: false,
       xumi_child_selected_list: [
@@ -174,74 +174,35 @@ export default {
       this.$emit("underground_switch", this.switch_state);
     },
     change_area(index) {
-      let selected_data = "";
-      let list = "";
-      switch (index) {
-        case 0:
-          selected_data = this.xumi_childarea1_selected;
-          list = Object.keys(this.xumi_childarea1_list);
-          break;
-        case 1:
-          selected_data = this.xumi_childarea2_selected;
-          list = Object.keys(this.xumi_childarea2_list);
-          break;
-        case 2:
-          selected_data = this.xumi_childarea3_selected;
-          list = Object.keys(this.xumi_childarea3_list);
-          break;
-      }
-
+      let list = Object.keys(this.xumi_child_area_list[index]);
       let obj = {};
       for (let i in list) {
         obj = {
           ...obj,
-          [list[i]]: selected_data[i],
+          [list[i]]: this.xumi_child_selected_list[index][i],
         };
       }
-      this.$emit("underground_area_switch", { index: 1, data: obj });
+      this.$emit("underground_area_switch", { index: index, data: obj });
     },
-    reset_area() {},
-    // change_area2() {
-    //   let list = Object.keys(this.xumi_childarea1_list);
-    //   let obj = {};
-    //   for (let i in list) {
-    //     obj = {
-    //       ...obj,
-    //       [list[i]]: this.xumi_childarea1_selected[i],
-    //     };
-    //   }
-    //   this.$emit("underground_area_switch", { index: 1, data: obj });
-    // },
-    // change_area3() {
-    //   let list = Object.keys(this.xumi_childarea2_list);
-    //   let obj = {};
-    //   for (let i in list) {
-    //     obj = {
-    //       ...obj,
-    //       [list[i]]: this.xumi_childarea2_selected[i],
-    //     };
-    //   }
-    //   this.$emit("underground_area_switch", { index: 2, data: obj });
-    // },
-    // change_area4() {
-    //   let list = Object.keys(this.xumi_childarea4_list);
-    //   let obj = {};
-    //   for (let i in list) {
-    //     obj = {
-    //       ...obj,
-    //       [list[i]]: this.xumi_childarea4_selected[i],
-    //     };
-    //   }
-    //   this.$emit("underground_area_switch", { index: 3, data: obj });
-    // },
-    // reset_xumiarea3() {
-    //   this.xumi_childarea2_selected = [-1, -1, -1, -1];
-    //   this.change_area3();
-    // },
-    // reset_xumiarea3_part(index) {
-    //   this.xumi_childarea2_selected[index] = -1;
-    //   this.change_area3();
-    // },
+    reset_area(index, item_index) {
+      if (item_index) {
+        this.xumi_child_selected_list[index][item_index] = -1;
+        this.change_area(index);
+      } else {
+        switch (index) {
+          case 0:
+            this.xumi_child_selected_list[index] = [-1];
+            break;
+          case 2:
+            this.xumi_child_selected_list[index] = [-1, -1, -1, -1];
+            break;
+          case 3:
+            this.xumi_child_selected_list[index] = [-1, -1];
+            break;
+        }
+        this.change_area(index);
+      }
+    },
   },
   mounted() {},
 };

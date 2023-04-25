@@ -466,7 +466,7 @@ export default {
       let area_group = "";
       switch (data.index) {
         //切换须弥的大赤沙海地区的层级显示
-        case 0:
+        case 1:
           area_group = this.xumi_underground_overlaygroup.get(area).getLayers();
           area_group.forEach((item) => {
             item.setOpacity(0);
@@ -481,46 +481,30 @@ export default {
             }
           }
           break;
-        //切换须弥的千壑沙地/苍漠囿土地区的层级显示
-        case 1:
+        //切换须弥的诸法丛林/千壑沙地/苍漠囿土地区的层级显示
+        case 0:
         case 2:
+        case 3:
           area_group = this.xumi_underground_overlaygroup.get(area).getLayers();
           for (let i of Object.entries(data.data)) {
             let arr = [];
             for (let item of area_group) {
-              if (item.options.group[0] == i[0]) {
-                arr.push(item);
+              if (item.options.group) {
+                if (item.options.group[0] == i[0]) {
+                  arr.push(item);
+                }
               }
-            }
-            for (let j of arr) {
-              j.setOpacity(1);
-              if (j.options.group[1] != i[1]) {
-                j.setOpacity(0.2);
-              }
-              if (i[1] == -1) {
+              for (let j of arr) {
                 j.setOpacity(1);
+                if (j.options.group[1] != i[1]) {
+                  j.setOpacity(0.2);
+                }
+                if (i[1] == -1) {
+                  j.setOpacity(1);
+                }
               }
             }
           }
-          // if (this.xumi_area3_array.酣乐之殿.length == 0) {
-          //   for (let item of area_group) {
-          //     let key = item.options.group[0];
-          //     if (this.xumi_area3_array[key]) {
-          //       this.xumi_area3_array[key].push(item);
-          //     }
-          //   }
-          // }
-          // for (let i of Object.entries(data.data)) {
-          //   this.xumi_area3_array[i[0]].forEach((item) => {
-          //     item.setOpacity(1);
-          //     if (item.options.group[1] != i[1]) {
-          //       item.setOpacity(0.2);
-          //     }
-          //     if (i[1] == -1) {
-          //       item.setOpacity(1);
-          //     }
-          //   });
-          // }
           break;
       }
     },
