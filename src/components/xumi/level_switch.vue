@@ -185,7 +185,7 @@ export default {
       this.$emit("underground_area_switch", { index: index, data: obj });
     },
     reset_area(index, item_index) {
-      if (item_index) {
+      if (item_index != undefined) {
         this.xumi_child_selected_list[index][item_index] = -1;
         this.change_area(index);
       } else {
