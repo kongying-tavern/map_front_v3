@@ -236,13 +236,15 @@ export default {
         query_itemlayer_byid(arr).then((res) => {
           for (let i of res.data.data) {
             for (let j of i.itemList) {
-              if (!this.mainStore.layer_count.get(j.itemId)) {
-                this.mainStore.layer_count.set(j.itemId, 1);
-              } else {
-                this.mainStore.layer_count.set(
-                  j.itemId,
-                  this.mainStore.layer_count.get(j.itemId) + 1
-                );
+              if (j.count == 1) {
+                if (!this.mainStore.layer_count.get(j.itemId)) {
+                  this.mainStore.layer_count.set(j.itemId, 1);
+                } else {
+                  this.mainStore.layer_count.set(
+                    j.itemId,
+                    this.mainStore.layer_count.get(j.itemId) + 1
+                  );
+                }
               }
             }
           }
@@ -270,13 +272,15 @@ export default {
       //物品选择器的计数
       if (data[1]) {
         for (let i of data[0].target.options.data.itemList) {
-          if (this.mainStore.layer_count.get(i.itemId)) {
-            this.mainStore.layer_count.set(
-              i.itemId,
-              this.mainStore.layer_count.get(i.itemId) + 1
-            );
-          } else {
-            this.mainStore.layer_count.set(i.itemId, 1);
+          if (i.count == 1) {
+            if (this.mainStore.layer_count.get(i.itemId)) {
+              this.mainStore.layer_count.set(
+                i.itemId,
+                this.mainStore.layer_count.get(i.itemId) + 1
+              );
+            } else {
+              this.mainStore.layer_count.set(i.itemId, 1);
+            }
           }
         }
       } else {

@@ -158,10 +158,10 @@ export default {
         {
           铁穆窟: [
             { label: "铁穆窟", value: 0 },
-            { label: "沙虫隧道·下", value: 1 },
+            { label: "逾渊地墟·下", value: 1 },
           ],
           逾渊地墟: [
-            { label: "逾渊地墟·上", value: 2 },
+            { label: "逾渊地墟·上", value: 0 },
             { label: "逾渊地墟·中", value: 1 },
           ],
         },
