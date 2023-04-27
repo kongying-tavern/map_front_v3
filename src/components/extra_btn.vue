@@ -17,14 +17,13 @@
         class="btn desktop-only"
         @click="openURL('https://yuanshen.site/docs/download-client.html')"
       >
-       <q-avatar
+        <q-avatar
           square
           size="64rem"
           font-size="64rem"
           text-color="white"
           icon="mdi-download-box-outline"
         >
-          <q-badge v-if="save_marked" color="red" rounded floating />
         </q-avatar>
         <q-tooltip> 下载客户端 </q-tooltip>
       </div>
@@ -43,91 +42,27 @@
       </div>
     </div>
     <q-dialog v-model="save_window">
-      <q-card style="max-width: 100vw">
-        <q-card-section>
-          <q-table
-            title="存档列表"
-            :rows="save_data"
-            :columns="save_columns"
-            row-key="id"
-            :rows-per-page-options="[0]"
-            style="min-width: 70vh"
-          >
-            <!-- 表格头插槽 -->
-            <template v-slot:top-right>
-              <div class="row">
-                <q-btn
-                  color="primary"
-                  label="新建存档"
-                  @click="add_save"
-                  style="margin-right: 15rem"
-                />
-                <q-btn
-                  color="primary"
-                  label="保存"
-                  style="margin-right: 15rem"
-                  @click="update_save"
-                >
-                  <q-badge v-if="save_marked" color="red" rounded floating />
-                  <q-tooltip v-if="save_marked"> 有改动尚未保存 </q-tooltip>
-                </q-btn>
-                <q-btn color="red" label="注销" @click="log_out" />
-              </div>
-            </template>
-            <template v-slot:body-cell-state="props">
-              <q-td class="text-center handles">
-                <div v-if="saveid == props.row.id" class="text-red text-bold">
-                  激活中
-                </div>
-                <div v-else class="text-grey">未激活</div>
-                <!-- <q-radio v-model="saveid" :val="props.row.id" :disable="true" /> -->
-              </q-td>
-            </template>
-            <template v-slot:body-cell-handle="props">
-              <q-td class="text-center handles">
-                <a
-                  href="javascript:;"
-                  @click="edit_save(props.row)"
-                  style="margin-right: 10px"
-                  >重命名</a
-                >
-                <a
-                  href="javascript:;"
-                  @click="load_save(props.row)"
-                  style="margin-right: 10px"
-                  >读档</a
-                >
-                <a
-                  href="javascript:;"
-                  v-if="saveid != props.row.id"
-                  @click="delete_save(props.row)"
-                  >删除存档</a
-                >
-              </q-td>
-            </template>
-          </q-table>
-        </q-card-section>
-        <q-inner-loading :showing="loading">
+      <div style="max-width: 100vw;max-height:80vh">
+        <save-dialog @load="load_save"></save-dialog>
+        <q-inner-loading :showing="loading" style="z-index: 2000">
           <q-spinner-gears size="50rem" color="primary" />
         </q-inner-loading>
-      </q-card>
+      </div>
     </q-dialog>
   </div>
   <!-- 功能按钮 -->
 </template>
 
 <script>
+import { date } from "quasar";
+import SaveDialog from "./save_dialogs.vue";
 import { mapStores } from "pinia";
 import { useCounterStore } from "../stores/example-store";
-import { date } from "quasar";
 import { openURL } from "quasar";
 import {
   get_gitee_token,
   refresh_gitee_token,
   get_gitee_gist,
-  add_gitee_gist,
-  delete_gitee_gist,
-  edit_gitee_gist,
 } from "../service/user_request";
 import {
   set_Cookies,
@@ -143,52 +78,44 @@ export default {
     return {
       save_window: false,
       save_hint_window: false,
-      save_data: [],
-      save_columns: [
-        {
-          name: "state",
-          align: "center",
-          label: "状态",
-          field: "state",
-        },
-        {
-          name: "description",
-          align: "center",
-          label: "存档名称",
-          field: "description",
-        },
-        {
-          name: "created_at",
-          align: "center",
-          label: "创建时间",
-          field: "created_at",
-          format: (val) => `${date.formatDate(val, "YYYY-MM-DD HH:mm:ss")}`,
-        },
-        {
-          name: "updated_at",
-          align: "center",
-          label: "最后修改时间",
-          field: "updated_at",
-          format: (val) => `${date.formatDate(val, "YYYY-MM-DD HH:mm:ss")}`,
-        },
-        {
-          name: "handle",
-          align: "center",
-          label: "操作",
-          field: "handle",
-        },
-      ],
-      save_arr: [],
-      local_arr: [],
-      selected: [],
       saveid: null,
+      save_data: [],
       loading: false,
       add_item: null,
       save_marked: false,
     };
   },
+  components: {
+    SaveDialog,
+  },
   methods: {
     openURL,
+    //检查登录状态：如果无code便请求code，如果有code则检查有无access_token，如果有access_token则检查其是否过期
+    check_log_state() {
+      if (get_Storage("_gitee_usercode") != undefined) {
+        if (get_Storage("_gitee_access_token") != undefined) {
+          if (get_Cookies("_gitee_access_expires") == null) {
+            refresh_gitee_token().then((res) => {
+              set_Storage("_gitee_access_token", res.data.access_token);
+              set_Cookies("_gitee_access_expires", true, res.data.expires_in);
+              set_Storage("_gitee_refresh_token", res.data.refresh_token);
+              this.save_window = true;
+            });
+          } else {
+            this.save_window = true;
+          }
+        } else {
+          get_gitee_token().then((res) => {
+            set_Storage("_gitee_access_token", res.data.access_token);
+            set_Cookies("_gitee_access_expires", true, res.data.expires_in);
+            set_Storage("_gitee_refresh_token", res.data.refresh_token);
+            this.save_window = true;
+          });
+        }
+      } else {
+        this.log_to_gitee();
+      }
+    },
     //跳转至gitee登录
     log_to_gitee() {
       this.$q
@@ -213,195 +140,31 @@ export default {
           }
         });
     },
-    //检查登录状态：如果无code便请求code，如果有code则检查有无access_token，如果有access_token则检查其是否过期
-    check_log_state() {
-      if (get_Storage("_gitee_usercode") != undefined) {
-        if (get_Storage("_gitee_access_token") != undefined) {
-          if (get_Cookies("_gitee_access_expires") == null) {
-            refresh_gitee_token().then((res) => {
-              set_Storage("_gitee_access_token", res.data.access_token);
-              set_Cookies("_gitee_access_expires", true, res.data.expires_in);
-              set_Storage("_gitee_refresh_token", res.data.refresh_token);
-              this.open_save_window();
-            });
-          } else {
-            this.open_save_window();
-          }
-        } else {
-          get_gitee_token().then((res) => {
-            set_Storage("_gitee_access_token", res.data.access_token);
-            set_Cookies("_gitee_access_expires", true, res.data.expires_in);
-            set_Storage("_gitee_refresh_token", res.data.refresh_token);
-            this.open_save_window();
-          });
-        }
-      } else {
-        this.log_to_gitee();
-      }
-    },
-    //获取存档
-    async get_saves() {
-      this.loading = true;
-      this.save_data = [];
-      await get_gitee_gist().then((res) => {
-        this.loading = false;
-        for (let i of res.data) {
-          if (i.files.Data_KYJG != undefined) {
-            this.save_data.push(i);
-          }
-        }
-      });
-    },
-    //打开存档弹窗，获取存档
-    open_save_window(refresh = true) {
-      if (this.save_data.length == 0 && refresh) {
-        this.loading = true;
-        this.get_saves().then(() => {
-          this.save_window = true;
-        });
-      } else {
-        this.save_window = true;
-      }
-    },
-    //新增存档
-    async add_save(event, savename = "新的存档", hint = true) {
-      this.loading = true;
-      let data = {
-        files: {
-          Data_KYJG: { content: "[]" },
-          Time_KYJG: { content: "{}" },
-        },
-        description: savename,
-      };
-      await add_gitee_gist(data)
-        .then((res) => {
-          this.loading = false;
-          if (res.status == 201) {
-            create_notify("创建成功！");
-          }
-          this.add_item = res;
-        })
-        .catch((error) => {
-          create_notify(`创建失败！${error.response.data.message}`, "negative");
-        });
-    },
-    //编辑存档名称
-    edit_save(save) {
-      this.$q
-        .dialog({
-          message: "请输入新的存档名称",
-          prompt: {
-            model: "",
-            isValid: (val) => val.length > 0,
-            type: "text", // optional
-          },
-          cancel: true,
-        })
-        .onOk((data) => {
-          this.loading = true;
-          let update_data = {
-            id: save.id,
-            description: data,
-          };
-          edit_gitee_gist(update_data)
-            .then((res) => {
-              this.loading = false;
-              if (res.status == 200) {
-                create_notify("修改成功！");
-              }
-              this.get_saves();
-            })
-            .catch((error) => {
-              create_notify(
-                `修改失败！${error.response.data.message}`,
-                "negative"
-              );
-            });
-        });
-    },
-    //检验存档同步性
-    save_sync_check(data) {
-      localStorage.setItem("_yuanshenmap_saveid", data);
-    },
     //读取存档
-    async load_save(data, hint = true) {
-      await this.get_saves();
-      if (this.saveid != data.id) {
-        if (this.save_marked) {
-          if (confirm("建议您在切换存档前保存当前存档，是否继续切换？")) {
-            this.saveid = data.id;
-            localStorage.setItem("_yuanshenmap_saveid", this.saveid);
-            if (hint) {
-              create_notify("读取成功");
-            }
-            this.save_window = false;
-            this.$emit("load", data);
-            this.mainStore.change_mark = false;
-          }
-        } else {
-          this.saveid = data.id;
-          localStorage.setItem("_yuanshenmap_saveid", this.saveid);
-          if (hint) {
-            create_notify("读取成功");
-          }
-          this.save_window = false;
-          this.$emit("load", data);
-          this.mainStore.change_mark = false;
+    load_save(data) {
+      if (this.save_marked) {
+        if (
+          !confirm(
+            "本地有未保存的改动，读取存档会覆盖本地改动，建议您在读取存档之前，保存当前存档"
+          )
+        ) {
+          return;
         }
       }
-    },
-    //删除存档
-    delete_save(data) {
-      if (confirm("你确定要删除存档吗?")) {
-        delete_gitee_gist(data).then((res) => {
-          if (res.status == 204) {
-            create_notify("删除成功！");
-            this.get_saves();
-          }
-        });
-      }
-    },
-    //上传存档
-    async update_save() {
-      await this.get_saves();
-      console.log(this.save_data);
       this.loading = true;
-      this.mainStore.change_mark = false;
-      this.$emit("loading");
-      let savedata = this.save_data.find((item) => item.id == this.saveid);
-      let marked_layers = JSON.parse(localStorage.getItem("marked_layers"));
-      let marked_timelayers = JSON.parse(
-        localStorage.getItem("marked_timelayers")
-      );
-      for (let i in marked_layers) {
-        marked_layers[i] = marked_layers[i].toString();
-      }
-      let update_data = {
-        id: savedata.id,
-        files: {
-          Data_KYJG: { content: JSON.stringify(marked_layers) },
-          Time_KYJG: { content: JSON.stringify(marked_timelayers) },
-        },
-      };
-      edit_gitee_gist(update_data)
-        .then((res) => {
-          this.$emit("loading");
-          this.loading = false;
-          if (res.status == 200) {
-            create_notify("保存成功！");
-          }
-          this.get_saves();
-        })
-        .catch((error) => {
-          create_notify(`保存失败！${error.response.data.message}`, "negative");
-        });
-    },
-    //登出
-    log_out() {
-      if (confirm("你确定要登出吗？")) {
-        localStorage.removeItem("_gitee_usercode");
-        window.location.reload();
-      }
+      get_gitee_gist().then((res) => {
+        localStorage.setItem("_yuanshenmap_saveid", data.data.id);
+        let cloud_data = res.data.find((item) => item.id == data.data.id);
+        let cloud_time = date.formatDate(
+          cloud_data.updated_at,
+          "YYYY-MM-DD HH:mm:ss"
+        );
+        localStorage.setItem("_yuanshenmap_save_time", cloud_time);
+        this.$emit("load", cloud_data);
+        create_notify("读取成功");
+        this.loading = false;
+        this.save_window = false;
+      });
     },
     //自动保存
     auto_save() {
@@ -436,7 +199,6 @@ export default {
       this.$router.push("/");
     }
     this.saveid = localStorage.getItem("_yuanshenmap_saveid");
-    //如果登录了，检测是否有存档的逻辑
     if (
       get_Storage("_gitee_usercode") != undefined &&
       get_Storage("_gitee_access_token") == null
@@ -445,37 +207,7 @@ export default {
         set_Storage("_gitee_access_token", res.data.access_token);
         set_Cookies("_gitee_access_expires", true, res.data.expires_in);
         set_Storage("_gitee_refresh_token", res.data.refresh_token);
-        if (this.saveid == null) {
-          let arr = JSON.parse(localStorage.getItem("marked_layers"));
-          if (arr.length != 0) {
-            alert("检测到你有本地存档未上传至云端，已自动为您新建存档");
-            this.add_save().then(() => {
-              this.get_saves().then(() => {
-                this.saveid = this.add_item.data.id;
-                localStorage.setItem(
-                  "_yuanshenmap_saveid",
-                  this.add_item.data.id
-                );
-                this.update_save().then(() => {
-                  this.open_save_window(false);
-                });
-              });
-            });
-          }
-        } else {
-          this.$emit("loading");
-          get_gitee_gist().then((res) => {
-            this.$emit("loading");
-            for (let i of res.data) {
-              if (i.files.Data_KYJG != undefined) {
-                this.save_data.push(i);
-              }
-            }
-            let data = this.save_data.find((item) => item.id == this.saveid);
-            this.load_save(data, false);
-          });
-        }
-        this.auto_save();
+        this.save_window = true;
       });
     }
   },

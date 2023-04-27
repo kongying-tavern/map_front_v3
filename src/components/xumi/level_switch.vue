@@ -21,7 +21,10 @@
       <q-tooltip> 切换地下层级 </q-tooltip>
     </q-btn>
     <q-dialog v-model="dialog" position="left" seamless style="z-index: 1000">
-      <q-card class="area_dialog" style="height: 520rem; padding: 8rem">
+      <q-card
+        class="desktop-only area_dialog"
+        style="height: 520rem; padding: 8rem"
+      >
         <div class="row items-center no-wrap">
           <div>
             <div class="title text-weight-bold">切换地下层级</div>
@@ -80,6 +83,75 @@
           </q-tab-panel>
         </q-tab-panels>
       </q-card>
+      <q-card class="q-pa-sm area_dialog_mobile mobile-only">
+        <div class="row items-center text-primary text-bold title">
+          <div class="row items-center">
+            <div class="row items-center">
+              <div>{{ tab }}</div>
+              <q-icon name="mdi-menu-down" size="32px" />
+              <q-menu>
+                <q-list style="min-width: 100px">
+                  <q-item
+                    clickable
+                    v-close-popup
+                    v-for="(item, index) in area_list"
+                    :key="index"
+                    @click="
+                      tab = item;
+                      area_index = index;
+                    "
+                  >
+                    <q-item-section>{{ item }}</q-item-section>
+                  </q-item>
+                </q-list>
+              </q-menu>
+            </div>
+            <q-icon
+              name="mdi-close"
+              color="black"
+              size="20px"
+              v-close-popup
+              style="margin-left: 50px"
+            />
+          </div>
+        </div>
+        <div style="margin-top: 5px">
+          <div
+            v-for="(item, item_key, item_index) in xumi_child_area_list[
+              area_index
+            ]"
+            :key="item_index"
+            style="margin-top: 5rem"
+          >
+            <div class="row items-center">
+              <div class="title2 text-weight-bold">{{ item_key }}</div>
+              <!-- <q-btn
+                v-if="area_index != 1"
+                color="primary"
+                label="显示区域"
+                dense
+                @click="reset_area(area_index, item_index)"
+                style="margin-left: 10px"
+              /> -->
+              <q-icon
+                name="mdi-refresh"
+                color="primary"
+                size="20px"
+                style="margin-left: 5px"
+                @click="reset_area(area_index, item_index)"
+              />
+            </div>
+            <div>
+              <q-option-group
+                v-model="xumi_child_selected_list[area_index][item_index]"
+                :options="xumi_child_area_list[area_index][item_key]"
+                inline
+                @update:model-value="change_area(area_index)"
+              />
+            </div>
+          </div>
+        </div>
+      </q-card>
     </q-dialog>
   </div>
 </template>
@@ -89,6 +161,7 @@ export default {
   name: "LevelSwitch",
   data() {
     return {
+      area_index: 0,
       area_list: ["诸法丛林", "大赤沙海", "千壑沙地", "苍漠囿土"],
       tab: "诸法丛林",
       switch_state: true,
@@ -204,11 +277,13 @@ export default {
       }
     },
   },
-  mounted() {},
+  mounted() {
+    console.log(this.$q.platform.is.mobile);
+  },
 };
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
 .title {
   font-size: 24rem;
 }
@@ -221,6 +296,16 @@ export default {
 @media screen and (max-width: 480px) {
   .area_dialog {
     width: 450rem;
+  }
+}
+.area_dialog_mobile {
+  width: 60vw;
+  height: 40vh;
+  .title {
+    font-size: 22px;
+  }
+  .title2 {
+    font-size: 16px;
   }
 }
 </style>
