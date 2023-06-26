@@ -272,22 +272,20 @@ export default {
       //物品选择器的计数
       if (data[1]) {
         for (let i of data[0].target.options.data.itemList) {
-          if (i.count == 1) {
-            if (this.mainStore.layer_count.get(i.itemId)) {
-              this.mainStore.layer_count.set(
-                i.itemId,
-                this.mainStore.layer_count.get(i.itemId) + 1
-              );
-            } else {
-              this.mainStore.layer_count.set(i.itemId, 1);
-            }
+          if (this.mainStore.layer_count.get(i.itemId)) {
+            this.mainStore.layer_count.set(
+              i.itemId,
+              this.mainStore.layer_count.get(i.itemId) + i.count
+            );
+          } else {
+            this.mainStore.layer_count.set(i.itemId, i.count);
           }
         }
       } else {
         for (let i of data[0].target.options.data.itemList) {
           this.mainStore.layer_count.set(
             i.itemId,
-            this.mainStore.layer_count.get(i.itemId) - 1
+            this.mainStore.layer_count.get(i.itemId) - i.count
           );
         }
       }
