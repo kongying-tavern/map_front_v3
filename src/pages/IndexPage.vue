@@ -162,7 +162,7 @@ export default {
             }
             //为每个点位绑定点击时弹出弹窗函数
             layergroup.eachLayer((layer) => {
-              layer.bindPopup(this.$refs.window);
+              layer.bindPopup(this.$refs.window, { offset: L.point(0, -35) });
               layer.on({
                 popupopen: (layer) => {
                   this.handle_layer = layer;
@@ -349,8 +349,9 @@ export default {
             let marker = layer_register(i, iconurl, iconname);
             layergroup.addLayer(marker);
           }
+
           layergroup.eachLayer((layer) => {
-            layer.bindPopup(this.$refs.window);
+            layer.bindPopup(this.$refs.window, { offset: L.point(0, 7) });
             layer.on({
               popupopen: (layer) => {
                 this.handle_layer = layer;
