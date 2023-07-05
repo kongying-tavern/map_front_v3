@@ -220,6 +220,9 @@
               background: linear-gradient(180deg, rgba(255, 249, 96, 0) 0%, #AFFF60 98.73%);
             }
 
+            &.area25 {
+              background: linear-gradient(180deg, rgba(255, 249, 96, 0) 0%, #60ffb5 98.73%);
+            }
           }
 
           .active {
@@ -242,6 +245,9 @@
               background: #C8FF52;
             }
 
+            &.area25 {
+              background: #52ffcb;
+            }
           }
         }
 
@@ -276,6 +282,13 @@
               background: #ADFF00;
               filter: blur(13.5rem);
             }
+
+            &.area25 {
+              width: 36rem;
+              height: 36rem;
+              background: #60ffb5;
+              filter: blur(13.5rem);
+            }
           }
         }
 
@@ -300,6 +313,9 @@
               background: #C8FF52;
             }
 
+            &.area25 {
+              background: #52ffcb;
+            }
           }
         }
 

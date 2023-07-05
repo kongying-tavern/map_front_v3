@@ -138,6 +138,13 @@ function init_map(area) {
                 [12288, 12288],
                 [0, 0]
             )
+        case '琉形蜃境':
+            return create_map('lxsj', {
+            },
+                [3568, 6286],
+                [12288, 12288],
+                [0, 0]
+            )
         default:
             return create_map('twt36');
 
