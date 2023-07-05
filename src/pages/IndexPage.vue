@@ -338,18 +338,23 @@ export default {
           for (let i of res.data.data) {
             let iconurl = "https://assets.yuanshen.site/icons/-1.png";
             let iconname = "off";
-            if (icon_list.find((item) => item.itemId == i.itemList[0].itemId)) {
-              iconurl = icon_list.find(
-                (item) => item.itemId == i.itemList[0].itemId
-              ).iconurl;
-              iconname = icon_list.find(
-                (item) => item.itemId == i.itemList[0].itemId
-              ).itemName;
+            for (let x of i.itemList) {
+              let icon_item = icon_list.find((item) => item.itemId == x.itemId);
+              if (icon_item) {
+                iconurl = icon_list.find(
+                  (item) => item.itemId == x.itemId
+                ).iconurl;
+                iconname = icon_list.find(
+                  (item) => item.itemId == x.itemId
+                ).itemName;
+                let marker = layer_register(i, iconurl, iconname);
+                layergroup.addLayer(marker);
+              } else if (!icon_item && i.itemList.length == 1) {
+                let marker = layer_register(i, iconurl, iconname);
+                layergroup.addLayer(marker);
+              }
             }
-            let marker = layer_register(i, iconurl, iconname);
-            layergroup.addLayer(marker);
           }
-
           layergroup.eachLayer((layer) => {
             layer.bindPopup(this.$refs.window, { offset: L.point(0, 7) });
             layer.on({
