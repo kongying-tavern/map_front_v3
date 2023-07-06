@@ -262,14 +262,6 @@ function add_map_overlay_island3() {
             imageUrl: `/imgs/UI_Map_Penumbra_03.png`,
             imageBounds: [[-3208, -4766], [-1150, -1694]]
         }]
-        // ['大赤沙海-底图1', {
-        //     imageUrl: `https://tiles.yuanshen.site/d/underground/沙漠/固定底图1.png`,
-        //     imageBounds: [[-7538, 1709], [-6402, 3082]]
-        // }],
-        // ['大赤沙海-底图2', {
-        //     imageUrl: `https://tiles.yuanshen.site/d/underground/沙漠/固定底图2.png`,
-        //     imageBounds: [[-6920, 3087], [-6533, 3204]]
-        // }],
     ]);
     let group = layergroup_register_prototype();
     for (let i of island3_map.keys()) {

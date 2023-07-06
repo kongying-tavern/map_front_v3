@@ -187,10 +187,7 @@ function create_icon_options(url, type = "off", extra) {
 function layer_register(data, iconurl, type = 'off') {
   let extra = data.markerExtraContent
   let marker = L.marker(data.position.split(','), {
-    icon:
-      (type == 'off' || type == 'on')
-        ? L.divIcon(create_icon_options(iconurl, type, extra))
-        : L.divIcon(create_icon_options(iconurl, type, extra)),
+    icon: L.divIcon(create_icon_options(iconurl, type, extra)),
     data: {
       ...data
     },
