@@ -277,9 +277,7 @@ export default {
       }
     },
   },
-  mounted() {
-    console.log(this.$q.platform.is.mobile);
-  },
+  mounted() {},
 };
 </script>
 

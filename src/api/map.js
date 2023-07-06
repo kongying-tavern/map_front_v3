@@ -251,11 +251,37 @@ function add_map_overlay_XumiUnderground() {
     }
     return xumi_underground_bg
 }
+//添加群岛3的蒙层
+function add_map_overlay_island3() {
+    let island3_map = new Map([
+        ['底图1', {
+            imageUrl: `/imgs/UI_Map_Penumbra_02.png`,
+            imageBounds: [[-4223, -4285], [-2019, -2159]]
+        }],
+        ['底图2', {
+            imageUrl: `/imgs/UI_Map_Penumbra_03.png`,
+            imageBounds: [[-3208, -4766], [-1150, -1694]]
+        }]
+        // ['大赤沙海-底图1', {
+        //     imageUrl: `https://tiles.yuanshen.site/d/underground/沙漠/固定底图1.png`,
+        //     imageBounds: [[-7538, 1709], [-6402, 3082]]
+        // }],
+        // ['大赤沙海-底图2', {
+        //     imageUrl: `https://tiles.yuanshen.site/d/underground/沙漠/固定底图2.png`,
+        //     imageBounds: [[-6920, 3087], [-6533, 3204]]
+        // }],
+    ]);
+    let group = layergroup_register_prototype();
+    for (let i of island3_map.keys()) {
+        group.addLayer(L.imageOverlay(island3_map.get(i).imageUrl, island3_map.get(i).imageBounds), { zIndex: 9999 })
+    }
+    return group;
+}
 export {
     create_map_layer,
     create_map,
     add_map_overlay_qd,
     add_map_overlay_XumiUnderground,
     init_map,
-    create_xumi_underground_layers
+    create_xumi_underground_layers, add_map_overlay_island3
 }

@@ -80,6 +80,7 @@ import {
   init_map,
   add_map_overlay_XumiUnderground,
   create_xumi_underground_layers,
+  add_map_overlay_island3,
 } from "../api/map";
 import { mapStores } from "pinia";
 import { useCounterStore } from "../stores/example-store";
@@ -110,6 +111,7 @@ export default {
       xumi_underground_overlaygroup: null,
       xumi_underground_bg: null,
       xumi_show: false,
+      island3_overlay: [],
     };
   },
   components: {
@@ -327,6 +329,7 @@ export default {
             iconurl: this.get_itemicon(i),
           });
         }
+        console.log(icon_list);
         let layergroup = layergroup_register(false);
         //生成传送点位列表
         query_itemlayer_infolist({
@@ -345,6 +348,7 @@ export default {
               iconname = icon_list.find(
                 (item) => item.itemId == i.itemList[0].itemId
               ).itemName;
+              console.log(iconurl, iconname);
             }
             let marker = layer_register(i, iconurl, iconname);
             layergroup.addLayer(marker);
@@ -519,6 +523,7 @@ export default {
     this.map.eachLayer((layer) => {
       this.map_tiles = layer;
     });
+
     this.teleport_group = null;
     this.layergroup_map = new Map();
     this.teleport_map = new Map();
@@ -566,9 +571,9 @@ export default {
         if (this.xumi_opacity_state) {
           this.xumi_underground_opacity_switch();
         }
-        return;
+      } else {
+        this.xumi_show = true;
       }
-      this.xumi_show = true;
     },
     "mainStore.selected_child_area": function (val, oldval) {
       if (
@@ -579,6 +584,8 @@ export default {
         this.map.remove();
         this.map = init_map(val.name);
         this.BXGroup.addTo(this.map);
+        this.island3_overlay = add_map_overlay_island3();
+        this.map.addLayer(this.island3_overlay);
       }
     },
     "mainStore.changeitem": function (val) {
