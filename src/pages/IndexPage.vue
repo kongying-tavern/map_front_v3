@@ -565,6 +565,19 @@ export default {
     //请参考pinia不使用组合式api的用法的说明文档
     //https://pinia.web3doc.top/cookbook/options-api.html
     ...mapStores(useCounterStore),
+    island3_overlay_phases() {
+      let now = Date.now();
+      let timePhase3 = (new Date('2023-07-07 04:00:00 +0800')).getTime();
+      let timePhase4 = (new Date('2023-07-09 04:00:00 +0800')).getTime();
+      let phases = [];
+      if(now < timePhase3) {
+        phases.push(3);
+      }
+      if(now < timePhase4) {
+        phases.push(4);
+      }
+      return phases;
+    }
   },
   watch: {
     "mainStore.selected_area": function (val) {
@@ -588,7 +601,7 @@ export default {
         this.map.remove();
         this.map = init_map(val.name);
         this.BXGroup.addTo(this.map);
-        this.island3_overlay = add_map_overlay_island3();
+        this.island3_overlay = add_map_overlay_island3(this.island3_overlay_phases);
         this.map.removeLayer(this.island3_overlay);
         if (val.name == "琉形蜃境") {
           this.map.addLayer(this.island3_overlay);

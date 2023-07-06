@@ -45,7 +45,7 @@ function create_map_layer(area_idx, mapCenter, mapSize, mapTilesOffset = [0, 0])
 }
 /**
  * 生成地图的实例对象
- * @param {string} area_idx 地图别名 twt29：大世界 qd28：梦想群岛 yxg2：渊下宫/三界路飨祭 qd:群岛1 qd2:群岛2 
+ * @param {string} area_idx 地图别名 twt29：大世界 qd28：梦想群岛 yxg2：渊下宫/三界路飨祭 qd:群岛1 qd2:群岛2
  * @param {object} settings leaflet 地图设置
  * @param {Array} mapCenter 地图中心坐标
  * @param {Array} mapSize 地图尺寸
@@ -175,7 +175,7 @@ function add_map_overlay_qd(type, index) {
     let imageBounds = [qd_postion[type]]
     return L.imageOverlay(imageUrl, imageBounds)
 }
-//添加须弥的地下部分 
+//添加须弥的地下部分
 function create_xumi_underground_layers() {
     let map = new Map();
     for (let i in xumi_underground_name) {
@@ -252,17 +252,21 @@ function add_map_overlay_XumiUnderground() {
     return xumi_underground_bg
 }
 //添加群岛3的蒙层
-function add_map_overlay_island3() {
-    let island3_map = new Map([
-        ['底图1', {
+function add_map_overlay_island3(phases = []) {
+    let sectionsConfig = [];
+    if(phases.indexOf(3) !== -1) {
+        sectionsConfig.push(['底图1', {
             imageUrl: `/imgs/UI_Map_Penumbra_02.png`,
             imageBounds: [[1166, -4246], [5573, 6]]
-        }],
-        ['底图2', {
+        }]);
+    }
+    if(phases.indexOf(4) !== -1) {
+        sectionsConfig.push(['底图2', {
             imageUrl: `/imgs/UI_Map_Penumbra_03.png`,
             imageBounds: [[3196, -3282], [7312, 2862]]
-        }]
-    ]);
+        }]);
+    }
+    let island3_map = new Map(sectionsConfig);
     let group = layergroup_register_prototype();
     for (let i of island3_map.keys()) {
         group.addLayer(L.imageOverlay(island3_map.get(i).imageUrl, island3_map.get(i).imageBounds), { zIndex: 9999 })
