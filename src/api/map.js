@@ -256,11 +256,11 @@ function add_map_overlay_island3() {
     let island3_map = new Map([
         ['底图1', {
             imageUrl: `/imgs/UI_Map_Penumbra_02.png`,
-            imageBounds: [[-4223, -4285], [-2019, -2159]]
+            imageBounds: [[1166, -4246], [5573, 6]]
         }],
         ['底图2', {
             imageUrl: `/imgs/UI_Map_Penumbra_03.png`,
-            imageBounds: [[-3208, -4766], [-1150, -1694]]
+            imageBounds: [[3196, -3282], [7312, 2862]]
         }]
     ]);
     let group = layergroup_register_prototype();
