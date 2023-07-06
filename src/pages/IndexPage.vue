@@ -589,7 +589,10 @@ export default {
         this.map = init_map(val.name);
         this.BXGroup.addTo(this.map);
         this.island3_overlay = add_map_overlay_island3();
-        this.map.addLayer(this.island3_overlay);
+        this.map.removeLayer(this.island3_overlay);
+        if (val.name == "琉形蜃境") {
+          this.map.addLayer(this.island3_overlay);
+        }
       }
     },
     "mainStore.changeitem": function (val) {

@@ -22,7 +22,7 @@
               当前选择 - {{ selected_child_area.name }}
             </div>
           </div>
-          <div class="area_icon">
+          <div class="area_icon" v-if="selected_area.name != '琉形蜃境'">
             <q-img
               :src="`/imgs/${selected_area.name}_Color.png`"
               spinner-color="white"
