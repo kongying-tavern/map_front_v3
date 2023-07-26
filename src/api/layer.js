@@ -101,7 +101,9 @@ function create_icon_options(url, type = "off", extra) {
   };
   if (extra != null) {
     let className = options.className;
-    if (extra.search('sumeru') != -1) {
+    let extra_data = JSON.parse(extra)
+    console.log(extra_data)
+    if (extra_data.hasOwnProperty('underground') && extra_data.underground.hasOwnProperty('is_underground') && extra_data.underground.is_underground) {
       options.className = `${className} sumeru_underground`
     }
   }
