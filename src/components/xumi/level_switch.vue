@@ -5,6 +5,7 @@
       color="white"
       text-color="grey"
       :icon="switch_state ? 'mdi-stairs-down' : 'mdi-stairs-up'"
+      size="25rem"
       @click="switch_view"
     >
       <q-tooltip> 切换地上/地下视图 </q-tooltip>
@@ -15,7 +16,8 @@
       color="white"
       text-color="grey"
       icon="mdi-format-list-numbered"
-      style="margin-top: 40rem"
+      style="margin-top: 20rem"
+      size="25rem"
       @click="dialog = true"
     >
       <q-tooltip> 切换地下层级 </q-tooltip>

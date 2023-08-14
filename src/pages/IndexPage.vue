@@ -49,7 +49,7 @@
             :class="{ on: xumi_opacity_state }"
             @click="xumi_underground_opacity_switch"
           ></div>
-          <div class="text">仅显示须弥地下点位</div>
+          <div class="text">显示/隐藏地下点位</div>
         </div>
       </div>
     </div>
@@ -527,7 +527,6 @@ export default {
     this.map.eachLayer((layer) => {
       this.map_tiles = layer;
     });
-
     this.teleport_group = null;
     this.layergroup_map = new Map();
     this.teleport_map = new Map();
@@ -567,17 +566,17 @@ export default {
     ...mapStores(useCounterStore),
     island3_overlay_phases() {
       let now = Date.now();
-      let timePhase3 = (new Date('2023-07-07 04:00:00 +0800')).getTime();
-      let timePhase4 = (new Date('2023-07-09 04:00:00 +0800')).getTime();
+      let timePhase3 = new Date("2023-07-07 04:00:00 +0800").getTime();
+      let timePhase4 = new Date("2023-07-09 04:00:00 +0800").getTime();
       let phases = [];
-      if(now < timePhase3) {
+      if (now < timePhase3) {
         phases.push(3);
       }
-      if(now < timePhase4) {
+      if (now < timePhase4) {
         phases.push(4);
       }
       return phases;
-    }
+    },
   },
   watch: {
     "mainStore.selected_area": function (val) {
@@ -590,6 +589,10 @@ export default {
         }
       } else {
         this.xumi_show = true;
+        //获取地图背景所属的对象
+        this.map.eachLayer((layer) => {
+          this.map_tiles = layer;
+        });
       }
     },
     "mainStore.selected_child_area": function (val, oldval) {
@@ -601,11 +604,17 @@ export default {
         this.map.remove();
         this.map = init_map(val.name);
         this.BXGroup.addTo(this.map);
-        this.island3_overlay = add_map_overlay_island3(this.island3_overlay_phases);
+        this.island3_overlay = add_map_overlay_island3(
+          this.island3_overlay_phases
+        );
         this.map.removeLayer(this.island3_overlay);
         if (val.name == "琉形蜃境") {
           this.map.addLayer(this.island3_overlay);
         }
+        //获取地图背景所属的对象
+        this.map.eachLayer((layer) => {
+          this.map_tiles = layer;
+        });
       }
     },
     "mainStore.changeitem": function (val) {
