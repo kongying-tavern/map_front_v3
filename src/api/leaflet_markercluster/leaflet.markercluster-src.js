@@ -1035,7 +1035,7 @@
       }
       if (e.layer.getChildCount() > 2 && e.layer !== this._spiderfied) {
         this._shownPolygon = new L.Polygon(e.layer.getConvexHull(), this.options.polygonOptions);
-        map.addLayer(this._shownPolygon);
+        map.value?.addLayer(this._shownPolygon);
       }
     },
 
@@ -2416,7 +2416,7 @@
 
         // Add the leg before the marker, so that in case the latter is a circleMarker, the leg is behind it.
         leg = new L.Polyline([this._latlng, newPos], legOptions);
-        map.addLayer(leg);
+        map.value?.addLayer(leg);
         m._spiderLeg = leg;
 
         // Now add the marker.
@@ -2487,7 +2487,7 @@
 
         // Add the leg before the marker, so that in case the latter is a circleMarker, the leg is behind it.
         leg = new L.Polyline([thisLayerLatLng, newPos], legOptions);
-        map.addLayer(leg);
+        map.value?.addLayer(leg);
         m._spiderLeg = leg;
 
         // Explanations: https://jakearchibald.com/2013/animated-line-drawing-svg/

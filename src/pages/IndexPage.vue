@@ -6,7 +6,7 @@
     <div class="map_containor">
       <div class="stars"></div>
       <div class="twinkling"></div>
-      <div id="map"></div>
+      <div id="map" ref="mapDom"></div>
     </div>
     <!-- 地区选择器 -->
     <area-selector></area-selector>
@@ -73,7 +73,6 @@ import AreaSelector from "../components/area_selector.vue";
 import PopupWindow from "../components/popup_window.vue";
 import ExtraBtn from "../components/extra_btn.vue";
 import LevelSwitch from "../components/overlay/level_switch.vue";
-import { init_map } from "../api/map";
 import { mapStores } from "pinia";
 import { useCounterStore } from "../stores/example-store";
 import {
@@ -85,8 +84,17 @@ import {
 import { query_itemlayer_infolist } from "../service/base_request";
 import { switch_area_list, set_Storage } from "../api/common";
 import { query_itemlayer_byid } from "../service/base_request";
+import { mapLoadConfig } from '../api/config';
+import { create_map } from "../api/map";
+import { map, mapDom } from 'src/api/map_obj';
+
 export default {
   name: "IndexPage",
+  setup() {
+    return {
+      mapDom
+    }
+  },
   data() {
     return {
       loading: false,
@@ -168,7 +176,7 @@ export default {
                 layer_mark(layer);
               }
             });
-            this.map.addLayer(layergroup);
+            map.value?.addLayer(layergroup);
             this.layergroup_map.set(value.item.itemId, layergroup);
             this.loading = false;
           });
@@ -183,12 +191,12 @@ export default {
               layer_mark(layer);
             }
           });
-          this.map.addLayer(layergroup);
+          map.value?.addLayer(layergroup);
         }
         //移除点位组
       } else {
         let layergroup = this.layergroup_map.get(value.item.itemId);
-        this.map.removeLayer(layergroup);
+        map.value?.removeLayer(layergroup);
       }
     },
     //刷新点位的状态
@@ -209,7 +217,7 @@ export default {
               layer_mark(layer);
             }
           });
-          this.map.addLayer(this.layergroup_map.get(i));
+          map.value?.addLayer(this.layergroup_map.get(i));
         }
       }
       this.loading = false;
@@ -217,7 +225,7 @@ export default {
     //清除所有点位
     clearall() {
       for (let i of this.layergroup_map.values()) {
-        this.map.removeLayer(i);
+        map.value?.removeLayer(i);
       }
     },
     //点位的计数功能
@@ -296,12 +304,12 @@ export default {
     },
     //关闭弹窗
     close_popup() {
-      this.map.closePopup();
+      map.value?.closePopup();
     },
     //查询并生成该地区的传送点
     teleport_layer_init() {
       if (this.teleport_group != null) {
-        this.map.removeLayer(this.teleport_group);
+        map.value?.removeLayer(this.teleport_group);
       }
       if (
         !this.teleport_map.has(`${this.mainStore.selected_child_area.name}`)
@@ -318,7 +326,6 @@ export default {
             iconurl: this.get_itemicon(i),
           });
         }
-        console.log(icon_list);
         let layergroup = layergroup_register(false);
         //生成传送点位列表
         query_itemlayer_infolist({
@@ -362,15 +369,15 @@ export default {
             layergroup
           );
           this.teleport_group = layergroup;
-          this.map.addLayer(this.teleport_group);
+          map.value?.addLayer(this.teleport_group);
           this.loading = false;
         });
       } else {
-        this.map.removeLayer(this.teleport_group);
+        map.value?.removeLayer(this.teleport_group);
         this.teleport_group = this.teleport_map.get(
           `${this.mainStore.selected_child_area.name}`
         );
-        this.map.addLayer(this.teleport_group);
+        map.value?.addLayer(this.teleport_group);
       }
     },
     //切换传送点位显隐
@@ -379,7 +386,7 @@ export default {
       if (this.teleport_state) {
         this.teleport_layer_init();
       } else {
-        this.map.removeLayer(this.teleport_group);
+        map.value?.removeLayer(this.teleport_group);
       }
     },
     //读取存档数据
@@ -429,8 +436,6 @@ export default {
         layers[0].className = layers[0].className.replace(/underground_on/g, "");
         imgs[0].className = imgs[0].className.replace(/underground_on/g, "");
       }
-
-      console.log(layers[0].className);
     },
     //切换须弥地下地区子地区的状态
     xumi_underground_child_area_switch(data) {
@@ -482,44 +487,48 @@ export default {
     },
   },
   mounted() {
-    //生成地图和点位组map对象
-    this.map = init_map();
-    //获取地图背景所属的对象
-    this.map.eachLayer((layer) => {
-      this.map_tiles = layer;
-    });
-    this.teleport_group = null;
-    this.layergroup_map = new Map();
-    this.teleport_map = new Map();
-    this.BXGroup = L.markerClusterGroup({
-      maxClusterRadius: function (e) {
-        let radius = 80;
-        let radius_map = new Map([[4, 100], [(5, 80)], [(6, 55)], [(7, 25)]]);
-        if (radius_map.has(e)) {
-          radius = radius_map.get(e);
+    mapLoadConfig()
+    .then(() => {
+      //生成地图和点位组map对象
+      map.value?.remove();
+      map.value = create_map();
+      //获取地图背景所属的对象
+      map.value?.eachLayer((layer) => {
+        this.map_tiles = layer;
+      });
+      this.teleport_group = null;
+      this.layergroup_map = new Map();
+      this.teleport_map = new Map();
+      this.BXGroup = L.markerClusterGroup({
+        maxClusterRadius: function (e) {
+          let radius = 80;
+          let radius_map = new Map([[4, 100], [(5, 80)], [(6, 55)], [(7, 25)]]);
+          if (radius_map.has(e)) {
+            radius = radius_map.get(e);
+            return radius;
+          }
           return radius;
-        }
-        return radius;
-      },
-      iconUrl: "https://assets.yuanshen.site/icons/26.png",
-    }).addTo(this.map);
-    //点位缓存
-    if (localStorage.getItem("marked_layers") == null) {
-      localStorage.setItem("marked_layers", JSON.stringify([]));
-    }
-    if (localStorage.getItem("marked_timelayers") == null) {
-      localStorage.setItem("marked_timelayers", JSON.stringify({}));
-    }
-    if (localStorage.getItem("marked_count") == null) {
-      localStorage.setItem("marked_count", JSON.stringify([]));
-    }
-    //回调时，记录用户的code
-    if (this.$route.query.code != undefined) {
-      set_Storage("_gitee_usercode", this.$route.query.code);
-      this.$router.push("/");
-    }
-    this.opacity_switch();
-    this.mark_count();
+        },
+        iconUrl: "https://assets.yuanshen.site/icons/26.png",
+      }).addTo(map.value);
+      //点位缓存
+      if (localStorage.getItem("marked_layers") == null) {
+        localStorage.setItem("marked_layers", JSON.stringify([]));
+      }
+      if (localStorage.getItem("marked_timelayers") == null) {
+        localStorage.setItem("marked_timelayers", JSON.stringify({}));
+      }
+      if (localStorage.getItem("marked_count") == null) {
+        localStorage.setItem("marked_count", JSON.stringify([]));
+      }
+      //回调时，记录用户的code
+      if (this.$route.query.code != undefined) {
+        set_Storage("_gitee_usercode", this.$route.query.code);
+        this.$router.push("/");
+      }
+      this.opacity_switch();
+      this.mark_count();
+    });
   },
   computed: {
     //请参考pinia不使用组合式api的用法的说明文档
@@ -537,7 +546,7 @@ export default {
       } else {
         this.underground_show = true;
         //获取地图背景所属的对象
-        this.map.eachLayer((layer) => {
+        map.value?.eachLayer((layer) => {
           this.map_tiles = layer;
         });
       }
@@ -548,11 +557,11 @@ export default {
         switch_area_list.includes(oldval.name)
       ) {
         this.clearall();
-        this.map.remove();
-        this.map = init_map(val.name);
-        this.BXGroup.addTo(this.map);
+        map.value?.remove();
+        map.value = create_map(val.code);
+        this.BXGroup.addTo(map.value);
         //获取地图背景所属的对象
-        this.map.eachLayer((layer) => {
+        map.value?.eachLayer((layer) => {
           this.map_tiles = layer;
         });
       }

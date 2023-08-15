@@ -71,11 +71,12 @@ Router.beforeEach((to, from, next) => {
 然后在mounted时，生成地图
 
 ```javascript
-import { init_map } from "../api/map";
+import { create_map } from "../api/map";
+import { map } from "../api/map_obj";
 ......
 mounted() {
     //生成地图
-    this.map = init_map();
+    map.value = create_map();
   },
 ```
 

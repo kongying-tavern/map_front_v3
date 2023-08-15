@@ -64,15 +64,15 @@ var MarkerClusterGroup = L.MarkerClusterGroup = L.FeatureGroup.extend({
 				lineStart = centerPt.y - lineLength / 2,
 				res = [],
 				i;
-	
+
 			res.length = childMarkers.length;
-	
+
 			for (i = childMarkers.length - 1; i >= 0; i--) {
 				//console.log(childMarkers[i]._latlng);
 				let childCenter = map.latLngToLayerPoint(childMarkers[i]._latlng);
 				res[i] = new L.Point(childCenter.x, childCenter.y);
 			}
-	
+
 			return res;
 		},
 
@@ -766,7 +766,7 @@ var MarkerClusterGroup = L.MarkerClusterGroup = L.FeatureGroup.extend({
 		delete e.target.__dragStart;
 		if (dragStart) {
 			this._moveChild(e.target, dragStart, e.target._latlng);
-		}		
+		}
 	},
 
 
@@ -931,7 +931,7 @@ var MarkerClusterGroup = L.MarkerClusterGroup = L.FeatureGroup.extend({
 		}
 		if (e.layer.getChildCount() > 2 && e.layer !== this._spiderfied) {
 			this._shownPolygon = new L.Polygon(e.layer.getConvexHull(), this.options.polygonOptions);
-			map.addLayer(this._shownPolygon);
+			map.value?.addLayer(this._shownPolygon);
 		}
 	},
 
@@ -1842,10 +1842,10 @@ var MarkerCluster = L.MarkerCluster = L.Marker.extend({
 
 /*
 * Extends L.Marker to include two extra methods: clusterHide and clusterShow.
-* 
+*
 * They work as setOpacity(0) and setOpacity(1) respectively, but
 * don't overwrite the options.opacity
-* 
+*
 */
 
 L.Marker.include({
@@ -1855,7 +1855,7 @@ L.Marker.include({
 		this.options.opacity = backup;
 		return this;
 	},
-	
+
 	clusterShow: function () {
 		return this.setOpacity(this.options.opacity);
 	}
@@ -2114,7 +2114,7 @@ Retrieved from: http://en.literateprograms.org/Quickhull_(Javascript)?oldid=1843
 					minLng = pt.lng;
 				}
 			}
-			
+
 			if (minLat !== maxLat) {
 				minPt = minLatPt;
 				maxPt = maxLatPt;
@@ -2299,7 +2299,7 @@ L.MarkerClusterNonAnimated = L.MarkerCluster.extend({
 
 			// Add the leg before the marker, so that in case the latter is a circleMarker, the leg is behind it.
 			leg = new L.Polyline([this._latlng, newPos], legOptions);
-			map.addLayer(leg);
+			map.value?.addLayer(leg);
 			m._spiderLeg = leg;
 
 			// Now add the marker.
@@ -2367,7 +2367,7 @@ L.MarkerCluster.include({
 
 			// Add the leg before the marker, so that in case the latter is a circleMarker, the leg is behind it.
 			leg = new L.Polyline([thisLayerLatLng, newPos], legOptions);
-			map.addLayer(leg);
+			map.value?.addLayer(leg);
 			m._spiderLeg = leg;
 
 			// Explanations: https://jakearchibald.com/2013/animated-line-drawing-svg/
@@ -2386,7 +2386,7 @@ L.MarkerCluster.include({
 			if (m.clusterHide) {
 				m.clusterHide();
 			}
-			
+
 			// Vectors just get immediately added
 			fg.addLayer(m);
 
@@ -2406,7 +2406,7 @@ L.MarkerCluster.include({
 			//Move marker to new position
 			m._preSpiderfyLatlng = m._latlng;
 			m.setLatLng(newPos);
-			
+
 			if (m.clusterShow) {
 				m.clusterShow();
 			}
