@@ -440,13 +440,13 @@ export default {
         this.xumi_underground_overlaygroup = create_xumi_underground_layers();
       }
       if (!val) {
-        this.map_tiles.setOpacity(0.45);
+        this.map_tiles?.setOpacity && this.map_tiles?.setOpacity(0.45);
         this.map.addLayer(this.xumi_underground_bg);
         for (let i of this.xumi_underground_overlaygroup.values()) {
           this.map.addLayer(i);
         }
       } else {
-        this.map_tiles.setOpacity(1);
+        this.map_tiles?.setOpacity && this.map_tiles?.setOpacity(1);
         this.map.removeLayer(this.xumi_underground_bg);
         for (let i of this.xumi_underground_overlaygroup.values()) {
           this.map.removeLayer(i);
@@ -480,7 +480,7 @@ export default {
         case 1:
           area_group = this.xumi_underground_overlaygroup.get(area).getLayers();
           area_group.forEach((item) => {
-            item.setOpacity(0);
+            item?.setOpacity && item?.setOpacity(0);
           });
           for (let i of Object.entries(data.data)) {
             let item = area_group.find(
@@ -488,7 +488,7 @@ export default {
                 item.options.group[0] == i[0] && item.options.group[1] == i[1]
             );
             if (item) {
-              item.setOpacity(1);
+              item?.setOpacity && item?.setOpacity(1);
             }
           }
           break;
@@ -506,12 +506,12 @@ export default {
                 }
               }
               for (let j of arr) {
-                j.setOpacity(1);
+                j?.setOpacity && j?.setOpacity(1);
                 if (j.options.group[1] != i[1]) {
-                  j.setOpacity(0.2);
+                  j?.setOpacity && j?.setOpacity(0.2);
                 }
                 if (i[1] == -1) {
-                  j.setOpacity(1);
+                  j?.setOpacity && j?.setOpacity(1);
                 }
               }
             }
