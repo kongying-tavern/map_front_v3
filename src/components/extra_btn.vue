@@ -42,7 +42,7 @@
       </div>
     </div>
     <q-dialog v-model="save_window">
-      <div style="max-width: 100vw;max-height:80vh">
+      <div style="max-width: 100vw; max-height: 80vh">
         <save-dialog @load="load_save"></save-dialog>
         <q-inner-loading :showing="loading" style="z-index: 2000">
           <q-spinner-gears size="50rem" color="primary" />
@@ -145,7 +145,7 @@ export default {
       if (this.save_marked) {
         if (
           !confirm(
-            "本地有未保存的改动，读取存档会覆盖本地改动，建议您在读取存档之前，保存当前存档"
+            "本地有未保存的改动，读取存档会覆盖本地改动，建议您在读取存档之前，保存当前存档",
           )
         ) {
           return;
@@ -157,7 +157,7 @@ export default {
         let cloud_data = res.data.find((item) => item.id == data.data.id);
         let cloud_time = date.formatDate(
           cloud_data.updated_at,
-          "YYYY-MM-DD HH:mm:ss"
+          "YYYY-MM-DD HH:mm:ss",
         );
         localStorage.setItem("_yuanshenmap_save_time", cloud_time);
         this.$emit("load", cloud_data);
@@ -184,7 +184,7 @@ export default {
           } else {
             create_notify("同步数据中，请稍后", "ongoing");
             let savedata = this.save_data.find(
-              (item) => item.id == this.saveid
+              (item) => item.id == this.saveid,
             );
             this.load_save(savedata, false);
           }
@@ -224,5 +224,4 @@ export default {
 };
 </script>
 
-<style scoped>
-</style>
+<style scoped></style>

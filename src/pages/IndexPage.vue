@@ -57,7 +57,9 @@
     <extra-btn @load="load_savedata" @loading="toggle_loading"></extra-btn>
     <div class="area_components">
       <div class="xumi" v-if="underground_show">
-        <level-switch @underground_area_switch="xumi_underground_child_area_switch">
+        <level-switch
+          @underground_area_switch="xumi_underground_child_area_switch"
+        >
         </level-switch>
       </div>
     </div>
@@ -84,16 +86,16 @@ import {
 import { query_itemlayer_infolist } from "../service/base_request";
 import { switch_area_list, set_Storage } from "../api/common";
 import { query_itemlayer_byid } from "../service/base_request";
-import { mapLoadConfig } from '../api/config';
+import { mapLoadConfig } from "../api/config";
 import { create_map } from "../api/map";
-import { map, mapDom } from 'src/api/map_obj';
+import { map, mapDom } from "src/api/map_obj";
 
 export default {
   name: "IndexPage",
   setup() {
     return {
-      mapDom
-    }
+      mapDom,
+    };
   },
   data() {
     return {
@@ -154,7 +156,7 @@ export default {
               layergroup = subgroup_register(
                 this.BXGroup,
                 res.data.data,
-                iconurl
+                iconurl,
               );
             } else {
               layergroup = layergroup_register(true, res.data.data, iconurl);
@@ -241,7 +243,7 @@ export default {
                 } else {
                   this.mainStore.layer_count.set(
                     j.itemId,
-                    this.mainStore.layer_count.get(j.itemId) + 1
+                    this.mainStore.layer_count.get(j.itemId) + 1,
                   );
                 }
               }
@@ -255,7 +257,7 @@ export default {
     //弹窗的标记功能
     popup_callback(data) {
       let marklayer = this.handle_layergroup.getLayer(
-        data[0].target._leaflet_id
+        data[0].target._leaflet_id,
       );
       layer_mark(marklayer);
       let layerid = data[0].target.options.data.id;
@@ -274,7 +276,7 @@ export default {
           if (this.mainStore.layer_count.get(i.itemId)) {
             this.mainStore.layer_count.set(
               i.itemId,
-              this.mainStore.layer_count.get(i.itemId) + i.count
+              this.mainStore.layer_count.get(i.itemId) + i.count,
             );
           } else {
             this.mainStore.layer_count.set(i.itemId, i.count);
@@ -284,7 +286,7 @@ export default {
         for (let i of data[0].target.options.data.itemList) {
           this.mainStore.layer_count.set(
             i.itemId,
-            this.mainStore.layer_count.get(i.itemId) - i.count
+            this.mainStore.layer_count.get(i.itemId) - i.count,
           );
         }
       }
@@ -341,10 +343,10 @@ export default {
               let icon_item = icon_list.find((item) => item.itemId == x.itemId);
               if (icon_item) {
                 iconurl = icon_list.find(
-                  (item) => item.itemId == x.itemId
+                  (item) => item.itemId == x.itemId,
                 ).iconurl;
                 iconname = icon_list.find(
-                  (item) => item.itemId == x.itemId
+                  (item) => item.itemId == x.itemId,
                 ).itemName;
                 let marker = layer_register(i, iconurl, iconname);
                 layergroup.addLayer(marker);
@@ -366,7 +368,7 @@ export default {
           });
           this.teleport_map.set(
             `${this.mainStore.selected_child_area.name}`,
-            layergroup
+            layergroup,
           );
           this.teleport_group = layergroup;
           map.value?.addLayer(this.teleport_group);
@@ -375,7 +377,7 @@ export default {
       } else {
         map.value?.removeLayer(this.teleport_group);
         this.teleport_group = this.teleport_map.get(
-          `${this.mainStore.selected_child_area.name}`
+          `${this.mainStore.selected_child_area.name}`,
         );
         map.value?.addLayer(this.teleport_group);
       }
@@ -393,7 +395,7 @@ export default {
     load_savedata(data) {
       localStorage.setItem("marked_layers", JSON.stringify([]));
       let local_data = new Set(
-        JSON.parse(localStorage.getItem("marked_layers"))
+        JSON.parse(localStorage.getItem("marked_layers")),
       );
       let save_data = JSON.parse(data.files.Data_KYJG.content);
       for (let i in save_data) {
@@ -433,7 +435,10 @@ export default {
         layers[0].className = `${layers[0].className} underground_on`;
         imgs[0].className = `${imgs[0].className} underground_on`;
       } else {
-        layers[0].className = layers[0].className.replace(/underground_on/g, "");
+        layers[0].className = layers[0].className.replace(
+          /underground_on/g,
+          "",
+        );
         imgs[0].className = imgs[0].className.replace(/underground_on/g, "");
       }
     },
@@ -451,7 +456,7 @@ export default {
           for (let i of Object.entries(data.data)) {
             let item = area_group.find(
               (item) =>
-                item.options.group[0] == i[0] && item.options.group[1] == i[1]
+                item.options.group[0] == i[0] && item.options.group[1] == i[1],
             );
             if (item) {
               item?.setOpacity && item?.setOpacity(1);
@@ -487,8 +492,7 @@ export default {
     },
   },
   mounted() {
-    mapLoadConfig()
-    .then(() => {
+    mapLoadConfig().then(() => {
       //生成地图和点位组map对象
       map.value?.remove();
       map.value = create_map();

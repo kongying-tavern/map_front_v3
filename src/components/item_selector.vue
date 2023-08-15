@@ -76,7 +76,7 @@
                   :class="{
                     on:
                       selected_item_list.find(
-                        (item) => item.itemId == i.itemId
+                        (item) => item.itemId == i.itemId,
                       ) != undefined,
                   }"
                   :key="index"
@@ -212,7 +212,7 @@ export default {
     change_chest_type() {
       this.get_itemlist(
         this.mainStore.selected_child_area.areaId,
-        this.chest_type
+        this.chest_type,
       );
     },
     //查询类型下属的物品列表
@@ -254,7 +254,7 @@ export default {
       if (!this.icon_list_map.has(value.iconTag)) {
         this.icon_list_map.set(
           value.iconTag,
-          "https://assets.yuanshen.site/icons/-1.png"
+          "https://assets.yuanshen.site/icons/-1.png",
         );
       }
       return this.icon_list_map.get(value.iconTag);
@@ -281,7 +281,7 @@ export default {
       }
       //将已选项添加进数组
       let index = this.selected_item_list.findIndex(
-        (item) => item.itemId == value.itemId
+        (item) => item.itemId == value.itemId,
       );
       if (index == -1) {
         value.area = this.mainStore.selected_child_area.name;
@@ -317,7 +317,7 @@ export default {
     handle_item_icon_error(value) {
       this.icon_list_map.set(
         value.iconTag,
-        "https://assets.yuanshen.site/icons/-1.png"
+        "https://assets.yuanshen.site/icons/-1.png",
       );
     },
     //隐藏无可选性的分类
@@ -373,7 +373,7 @@ export default {
           }
           this.item_loading = false;
           this.icon_list_cache();
-        })
+        }),
       );
     // query_itemlist({
     //   typeIdList: [],

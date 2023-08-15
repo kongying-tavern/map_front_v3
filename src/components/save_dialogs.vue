@@ -322,11 +322,11 @@ export default {
           if (confirm("你确定要使用本地存档吗")) {
             localStorage.setItem(
               "_yuanshenmap_saveid",
-              this.local_save.data.id
+              this.local_save.data.id,
             );
             localStorage.setItem(
               "_yuanshenmap_save_time",
-              this.local_save.time
+              this.local_save.time,
             );
           }
           this.submit_data();
@@ -335,11 +335,11 @@ export default {
           if (confirm("你确定要使用云端存档吗")) {
             localStorage.setItem(
               "_yuanshenmap_saveid",
-              this.cloud_save.data.id
+              this.cloud_save.data.id,
             );
             localStorage.setItem(
               "_yuanshenmap_save_time",
-              this.cloud_save.time
+              this.cloud_save.time,
             );
           }
           break;
@@ -350,7 +350,7 @@ export default {
       this.loading = true;
       let marked_layers = JSON.parse(localStorage.getItem("marked_layers"));
       let marked_timelayers = JSON.parse(
-        localStorage.getItem("marked_timelayers")
+        localStorage.getItem("marked_timelayers"),
       );
       for (let i in marked_layers) {
         marked_layers[i] = marked_layers[i].toString();
@@ -404,7 +404,7 @@ export default {
             .catch((error) => {
               create_notify(
                 `修改失败！${error.response.data.message}`,
-                "negative"
+                "negative",
               );
             });
         });
@@ -461,10 +461,10 @@ export default {
               this.save_id = res.data.id;
               localStorage.setItem("_yuanshenmap_saveid", res.data.id);
               let marked_layers = JSON.parse(
-                localStorage.getItem("marked_layers")
+                localStorage.getItem("marked_layers"),
               );
               let marked_timelayers = JSON.parse(
-                localStorage.getItem("marked_timelayers")
+                localStorage.getItem("marked_timelayers"),
               );
               let update_data = {
                 id: this.save_id,
@@ -488,14 +488,14 @@ export default {
                 } else {
                   create_notify(
                     `读取失败！${error.response.data.message}`,
-                    "negative"
+                    "negative",
                   );
                 }
               });
             } else {
               create_notify(
                 `创建失败！${error.response.data.message}`,
-                "negative"
+                "negative",
               );
             }
           });

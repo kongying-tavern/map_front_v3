@@ -1,9 +1,9 @@
 //点位相关
-import * as L from 'leaflet'
+import * as L from "leaflet";
 import "leaflet/dist/leaflet.css";
 import "../api/leaflet_markercluster/leaflet.markercluster-src.js";
-import "leaflet.markercluster/dist/MarkerCluster.css"
-import "../api/leaflet_markercluster/MarkerCluster.Default.css"
+import "leaflet.markercluster/dist/MarkerCluster.css";
+import "../api/leaflet_markercluster/MarkerCluster.Default.css";
 import "leaflet.featuregroup.subgroup";
 /**
  * 生成点位背景
@@ -27,7 +27,9 @@ function create_icon_options(url, type = "off", extra) {
         </g>
     </g>
 </svg>
-<img id="markerIcon" width="22" height="22" style="margin: 0 auto;left: 0;right: 0;top: 5px; position: absolute" src="${url == '' ? 'https://assets.yuanshen.site/icons/-1.png' : url}" onerror="javascript:this.src='https://assets.yuanshen.site/icons/-1.png';"/>
+<img id="markerIcon" width="22" height="22" style="margin: 0 auto;left: 0;right: 0;top: 5px; position: absolute" src="${
+      url == "" ? "https://assets.yuanshen.site/icons/-1.png" : url
+    }" onerror="javascript:this.src='https://assets.yuanshen.site/icons/-1.png';"/>
 <svg width="32" height="32" viewBox="0 0 64 64" version="1.1"
     style="margin: 0 auto;left: 0;right: 0;top: 0px; position: absolute"
     xmlns="http://www.w3.org/2000/svg"
@@ -49,8 +51,12 @@ function create_icon_options(url, type = "off", extra) {
         <g id="展开/包含切图" transform="translate(-1103.000000, -336.000000)">
             <g id="loc_02_on" transform="translate(1093.000000, 326.000000)">
                 <g id="形状结合" transform="translate(42.000000, 42.000000) rotate(-315.000000) translate(-42.000000, -42.000000) ">
-                    <use fill="black" fill-opacity="1" filter="url(${type == 'on' ? '#filter-1' : '#filter-2'})" xlink:href="#path-1"></use>
-                    <use fill="${type == 'on' ? '#00FFFD' : '#E0E0E0'}" fill-rule="evenodd" xlink:href="#path-1"></use>
+                    <use fill="black" fill-opacity="1" filter="url(${
+                      type == "on" ? "#filter-1" : "#filter-2"
+                    })" xlink:href="#path-1"></use>
+                    <use fill="${
+                      type == "on" ? "#00FFFD" : "#E0E0E0"
+                    }" fill-rule="evenodd" xlink:href="#path-1"></use>
                 </g>
             </g>
         </g>
@@ -79,8 +85,12 @@ function create_icon_options(url, type = "off", extra) {
                <polygon id="矩形备份" fill-opacity="0.298595935" fill="#000000" transform="translate(12.020815, 12.020815) rotate(-225.000000) translate(-12.020815, -12.020815) " points="3.52081528 3.52081528 20.5208153 3.52081528 20.5208153 20.5208153 3.52081528 20.5208153"></polygon>
                 <polygon id="矩形备份-2" fill="#FFFFFF" transform="translate(12.020815, 12.020815) rotate(-225.000000) translate(-12.020815, -12.020815) " points="6.52081528 6.52081528 17.5208153 6.52081528 17.5208153 17.5208153 6.52081528 17.5208153"></polygon>
                 <g id="矩形备份-3" transform="translate(12.020815, 8.485281) rotate(-225.000000) translate(-12.020815, -8.485281) ">
-                    <use fill="black" fill-opacity="1" filter="url(${type == 'on' ? '#filter-3' : '#filter-4'})" xlink:href="#path-2"></use>
-                    <use fill="${type == 'on' ? '#00FFFD' : '#E0E0E0'}" fill-rule="evenodd" xlink:href="#path-2"></use>
+                    <use fill="black" fill-opacity="1" filter="url(${
+                      type == "on" ? "#filter-3" : "#filter-4"
+                    })" xlink:href="#path-2"></use>
+                    <use fill="${
+                      type == "on" ? "#00FFFD" : "#E0E0E0"
+                    }" fill-rule="evenodd" xlink:href="#path-2"></use>
                 </g>
             </g>
         </g>
@@ -89,7 +99,7 @@ function create_icon_options(url, type = "off", extra) {
 `,
     type: type,
     teleport: false,
-    iconUrl: url == '' ? 'https://assets.yuanshen.site/icons/-1.png' : url,
+    iconUrl: url == "" ? "https://assets.yuanshen.site/icons/-1.png" : url,
     // shadowUrl: `https://assets.yuanshen.site/icons/loc_02_${type}.png`,
     iconSize: [32, 35], // size of the icon
     // shadowSize: [32, 36], // size of the shadow
@@ -97,27 +107,31 @@ function create_icon_options(url, type = "off", extra) {
     // shadowAnchor: [16, 35.5], // the same for the shadow
     popupAnchor: [0, 0], // point from which the popup should open relative to the iconAnchor
     // className: type == 'on' ? `opacity_on` : 'opactiy_off'
-    className: `${type == 'on' ? 'opacity_on' : 'opactiy_off'}`
+    className: `${type == "on" ? "opacity_on" : "opactiy_off"}`,
   };
   if (extra != null) {
     let className = options.className;
-    let extra_data = JSON.parse(extra)
-    if (extra_data.hasOwnProperty('underground') && extra_data.underground.hasOwnProperty('is_underground') && extra_data.underground.is_underground) {
-      options.className = `${className} marker_underground`
+    let extra_data = JSON.parse(extra);
+    if (
+      extra_data.hasOwnProperty("underground") &&
+      extra_data.underground.hasOwnProperty("is_underground") &&
+      extra_data.underground.is_underground
+    ) {
+      options.className = `${className} marker_underground`;
     }
   }
-  if (type == 'off' || type == 'on') {
+  if (type == "off" || type == "on") {
     options.html = `${options.html}
     <div class="marker_underground_tag"></div>
-    `
-    return options
+    `;
+    return options;
   } else {
     options = {
       ...options,
       // html: '',
       shadowUrl: undefined,
-      teleport: true
-    }
+      teleport: true,
+    };
     switch (type) {
       case "七天神像":
         options = {
@@ -129,9 +143,11 @@ function create_icon_options(url, type = "off", extra) {
           popupAnchor: [0, -21.5], // point from which the popup should open relative to the iconAnchor
         };
         options.html = `
-        <img id="markerIcon" width="30" height="43" style="margin: 0 auto;left: 0;right: 0;top: 5px; position: absolute" src="${url == '' ? 'https://assets.yuanshen.site/icons/-1.png' : url}" onerror="javascript:this.src='https://assets.yuanshen.site/icons/-1.png';"/>
+        <img id="markerIcon" width="30" height="43" style="margin: 0 auto;left: 0;right: 0;top: 5px; position: absolute" src="${
+          url == "" ? "https://assets.yuanshen.site/icons/-1.png" : url
+        }" onerror="javascript:this.src='https://assets.yuanshen.site/icons/-1.png';"/>
         <div class="marker_underground_teleport"></div>
-        `
+        `;
         return options;
       case "传送锚点":
         options = {
@@ -143,9 +159,11 @@ function create_icon_options(url, type = "off", extra) {
           popupAnchor: [0, -16.5], // point from which the popup should open relative to the iconAnchor
         };
         options.html = `
-        <img id="markerIcon" width="23" height="33" style="margin: 0 auto;left: 0;right: 0;top: 5px; position: absolute" src="${url == '' ? 'https://assets.yuanshen.site/icons/-1.png' : url}" onerror="javascript:this.src='https://assets.yuanshen.site/icons/-1.png';"/>
+        <img id="markerIcon" width="23" height="33" style="margin: 0 auto;left: 0;right: 0;top: 5px; position: absolute" src="${
+          url == "" ? "https://assets.yuanshen.site/icons/-1.png" : url
+        }" onerror="javascript:this.src='https://assets.yuanshen.site/icons/-1.png';"/>
         <div class="marker_underground_teleport"></div>
-        `
+        `;
         return options;
       case "秘境":
       case "征讨领域":
@@ -160,9 +178,11 @@ function create_icon_options(url, type = "off", extra) {
           popupAnchor: [0, -16.5], // point from which the popup should open relative to the iconAnchor
         };
         options.html = `
-        <img id="markerIcon" width="33" height="33" style="margin: 0 auto;left: 0;right: 0;top: 5px; position: absolute" src="${url == '' ? 'https://assets.yuanshen.site/icons/-1.png' : url}" onerror="javascript:this.src='https://assets.yuanshen.site/icons/-1.png';"/>
+        <img id="markerIcon" width="33" height="33" style="margin: 0 auto;left: 0;right: 0;top: 5px; position: absolute" src="${
+          url == "" ? "https://assets.yuanshen.site/icons/-1.png" : url
+        }" onerror="javascript:this.src='https://assets.yuanshen.site/icons/-1.png';"/>
         <div class="marker_underground_teleport"></div>
-        `
+        `;
         return options;
       default:
         options = {
@@ -175,9 +195,7 @@ function create_icon_options(url, type = "off", extra) {
         };
         return options;
     }
-
   }
-
 }
 /**
  * 生成点位
@@ -185,17 +203,17 @@ function create_icon_options(url, type = "off", extra) {
  * @param {String} iconurl 点位图标链接
  * @returns {Object} marker对象
  */
-function layer_register(data, iconurl, type = 'off') {
-  let extra = data.markerExtraContent
-  let marker = L.marker(data.position.split(','), {
+function layer_register(data, iconurl, type = "off") {
+  let extra = data.markerExtraContent;
+  let marker = L.marker(data.position.split(","), {
     icon: L.divIcon(create_icon_options(iconurl, type, extra)),
     data: {
-      ...data
+      ...data,
     },
     draggable: false,
     riseOnHover: true,
-  })
-  return marker
+  });
+  return marker;
 }
 /**
  * 生成点位组
@@ -213,7 +231,7 @@ function layergroup_register(gather = true, data = [], iconurl) {
     markers.push(layer_register(i, iconurl));
   }
   layerGroup.addLayers(markers);
-  return layerGroup
+  return layerGroup;
 }
 function layergroup_register_prototype() {
   return L.layerGroup();
@@ -230,7 +248,7 @@ function subgroup_register(parentGroup, data = [], iconurl) {
     markers.push(layer_register(i, iconurl));
   }
   let subGroup = L.featureGroup.subGroup(parentGroup, markers);
-  return subGroup
+  return subGroup;
 }
 /**
  * 标记/取消标记点位
@@ -239,18 +257,23 @@ function subgroup_register(parentGroup, data = [], iconurl) {
  */
 function layer_mark(layer, marktype) {
   let type = marktype == undefined ? layer.options.icon.options.type : marktype;
-  let icon = ''
-  let extra = layer.options.data.markerExtraContent
-  if (type == 'on') {
-    icon = L.divIcon(create_icon_options(layer.options.icon.options.iconUrl, 'off', extra))
-  } else if (type == 'off') {
-    icon = L.divIcon(create_icon_options(layer.options.icon.options.iconUrl, 'on', extra))
+  let icon = "";
+  let extra = layer.options.data.markerExtraContent;
+  if (type == "on") {
+    icon = L.divIcon(
+      create_icon_options(layer.options.icon.options.iconUrl, "off", extra),
+    );
+  } else if (type == "off") {
+    icon = L.divIcon(
+      create_icon_options(layer.options.icon.options.iconUrl, "on", extra),
+    );
   } else {
-    icon = L.divIcon(create_icon_options(layer.options.icon.options.iconUrl, 'none', extra))
+    icon = L.divIcon(
+      create_icon_options(layer.options.icon.options.iconUrl, "none", extra),
+    );
   }
   layer = layer.setIcon(icon);
-  return layer
-
+  return layer;
 }
 /**
  * 为点位着色
@@ -258,9 +281,11 @@ function layer_mark(layer, marktype) {
  * @returns {Object} 着色后的点位
  */
 function layer_dye(layer, type) {
-  let icon = L.divIcon(create_icon_options(layer.options.icon.options.iconUrl, type));
+  let icon = L.divIcon(
+    create_icon_options(layer.options.icon.options.iconUrl, type),
+  );
   layer = layer.setIcon(icon);
-  return layer
+  return layer;
 }
 export {
   create_icon_options,
@@ -268,5 +293,5 @@ export {
   layergroup_register,
   layergroup_register_prototype,
   subgroup_register,
-  layer_mark
-}
+  layer_mark,
+};

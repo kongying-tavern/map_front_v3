@@ -9,8 +9,8 @@ export const map_tiles_config = ref({});
 export const map_plugin_config = ref({});
 
 export const mapLoadConfig = () => {
-    return fetch_config().then((config) => {
-        map_tiles_config.value = config?.tiles || {};
-        map_plugin_config.value = config?.plugins || {};
-    });
+  return fetch_config().then((config) => {
+    map_tiles_config.value = config?.tiles || {};
+    map_plugin_config.value = config?.plugins || {};
+  });
 };

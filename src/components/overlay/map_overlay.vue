@@ -36,7 +36,7 @@ const overlayIcon = computed(() => overlay_options.value?.panelIcon || "");
 
 const overlayIconColorDefault = "#9d9d9d";
 const overlayIconColor = computed(
-  () => overlay_options.value?.panelIconColor || overlayIconColorDefault
+  () => overlay_options.value?.panelIconColor || overlayIconColorDefault,
 );
 
 const overlayMaskOpacityDefault = 0.55;
@@ -124,7 +124,7 @@ const overlayBaseConfig = computed(() => {
             itemUrlTemplate || groupUrlTemplate || globalUrlTemplate || "";
           const overlayUrlRender = _.template(
             overlayUrlTemplate,
-            lodashTemplateOptions
+            lodashTemplateOptions,
           );
           overlayUrl = overlayUrlRender(overlayDataPackChunk);
         }
@@ -149,7 +149,7 @@ const overlayBaseConfig = computed(() => {
       // 自动生成ID
       const overlayIdRender = _.template(
         globalIdTemplate,
-        lodashTemplateOptions
+        lodashTemplateOptions,
       );
       const overlayId = overlayIdRender(overlayDataPackItem);
 
@@ -195,7 +195,7 @@ const overlaySelectionIds = computed(() =>
   _.chain(overlaySelections.value)
     .flattenDeep()
     .filter((v) => v)
-    .value()
+    .value(),
 );
 
 const overlayConfigMap = computed(() => {
@@ -260,7 +260,7 @@ const overlayRefresh = () => {
           if (overlayLayerUrl && overlayLayerBounds) {
             const imageData = add_map_overlay(
               overlayLayerUrl,
-              overlayLayerBounds
+              overlayLayerBounds,
             );
             overlayLayerHandle.value?.addLayer(imageData);
           }

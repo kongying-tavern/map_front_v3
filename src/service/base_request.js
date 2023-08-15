@@ -1,22 +1,22 @@
-import { api } from '../boot/axios'
-import { get_Cookies } from "../api/common"
-function default_request(url, data, method = 'post') {
+import { api } from "../boot/axios";
+import { get_Cookies } from "../api/common";
+function default_request(url, data, method = "post") {
   return api({
     method: method,
     url: url,
     data: JSON.stringify(data),
     transformRequest: (data) => {
-      if (get_Cookies('_yuanshen_map_usertoken') == null) {
-        alert('用户凭证已过期，请刷新页面')
+      if (get_Cookies("_yuanshen_map_usertoken") == null) {
+        alert("用户凭证已过期，请刷新页面");
         window.location.reload();
       }
-      return data
+      return data;
     },
     headers: {
-      'Content-Type': 'application/json',
-      'Authorization': `Bearer ${get_Cookies('_yuanshen_map_usertoken')}`
-    }
-  })
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${get_Cookies("_yuanshen_map_usertoken")}`,
+    },
+  });
 }
 /**
  * 列出地区
@@ -25,7 +25,7 @@ function default_request(url, data, method = 'post') {
  * @returns 地区信息
  */
 function query_area(data) {
-  return default_request('/area/get/list', data);
+  return default_request("/area/get/list", data);
 }
 /**
  * 列出物品类型
@@ -66,7 +66,7 @@ function query_itemlayer_infolist(data) {
  * @returns 物品点位id信息
  */
 function query_itemlayer_byid(data) {
-  return default_request(`/marker/get/list_byid`, data)
+  return default_request(`/marker/get/list_byid`, data);
 }
 /**
  * 列出所有图标
@@ -78,7 +78,7 @@ function query_iconlist(data) {
   return default_request(`/icon/get/list`, data);
 }
 function clear_cache() {
-  return default_request(`/cache/item`, undefined, 'delete');
+  return default_request(`/cache/item`, undefined, "delete");
 }
 export {
   query_area,
@@ -87,5 +87,5 @@ export {
   query_itemlayer_infolist,
   query_iconlist,
   query_itemlayer_byid,
-  clear_cache
-}
+  clear_cache,
+};

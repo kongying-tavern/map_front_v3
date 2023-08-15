@@ -1,11 +1,11 @@
 //地图的构建函数
 
 //地图初始化
-import * as L from 'leaflet'
+import * as L from "leaflet";
 import "leaflet/dist/leaflet.css";
-import _ from 'lodash';
-import { map_tiles_config } from './config';
-import { mapDom, mapTiles } from './map_obj';
+import _ from "lodash";
+import { map_tiles_config } from "./config";
+import { mapDom, mapTiles } from "./map_obj";
 
 //初始化地图中心和地图尺寸
 /**
@@ -16,34 +16,46 @@ import { mapDom, mapTiles } from './map_obj';
  * @param {Array} mapTilesOffset 地图瓦片的偏移
  * @returns 地图瓦片对象
  */
-function create_map_layer(area_code, mapCenter, mapSize, mapTilesOffset = [0, 0], extension = "png") {
-    let imgform = 'png'
-    if (area_code == 'qd' || area_code == 'qd1') {
-        imgform = 'jpg'
-    }
-    let tiles_preUrl = 'https://assets.yuanshen.site/tiles_'
+function create_map_layer(
+  area_code,
+  mapCenter,
+  mapSize,
+  mapTilesOffset = [0, 0],
+  extension = "png",
+) {
+  let imgform = "png";
+  if (area_code == "qd" || area_code == "qd1") {
+    imgform = "jpg";
+  }
+  let tiles_preUrl = "https://assets.yuanshen.site/tiles_";
 
-    L.TileLayer.T = L.TileLayer.extend({
-        getTileUrl: function (coords) {
-            var x = coords.x,
-                y = coords.y,
-                z = coords.z + 13
-            return `${tiles_preUrl}${area_code}/${z}/${x}_${y}.${imgform}`
-        },
-        //如果此项为true，在平移后不可见的切片被放入一个队列中，在新的切片开始可见时他们会被取回（而不是动态地创建一个新的）。这理论上可以降低内存使用率并可以去除在需要新的切片时预留内存。
-        reuseTiles: true,
-    });
-    let tiles = new L.TileLayer.T('', {
-        maxZoom: 10,
-        minZoom: -6,
-        maxNativeZoom: 0,
-        minNativeZoom: -3,
-        bounds: L.latLngBounds(
-            L.latLng(-mapCenter[0] + mapTilesOffset[0], -mapCenter[1] + mapTilesOffset[1]),
-            L.latLng(mapSize[0] - mapCenter[0] + mapTilesOffset[0], mapSize[1] - mapCenter[1] + mapTilesOffset[1])
-        ),
-    });
-    return tiles
+  L.TileLayer.T = L.TileLayer.extend({
+    getTileUrl: function (coords) {
+      var x = coords.x,
+        y = coords.y,
+        z = coords.z + 13;
+      return `${tiles_preUrl}${area_code}/${z}/${x}_${y}.${imgform}`;
+    },
+    //如果此项为true，在平移后不可见的切片被放入一个队列中，在新的切片开始可见时他们会被取回（而不是动态地创建一个新的）。这理论上可以降低内存使用率并可以去除在需要新的切片时预留内存。
+    reuseTiles: true,
+  });
+  let tiles = new L.TileLayer.T("", {
+    maxZoom: 10,
+    minZoom: -6,
+    maxNativeZoom: 0,
+    minNativeZoom: -3,
+    bounds: L.latLngBounds(
+      L.latLng(
+        -mapCenter[0] + mapTilesOffset[0],
+        -mapCenter[1] + mapTilesOffset[1],
+      ),
+      L.latLng(
+        mapSize[0] - mapCenter[0] + mapTilesOffset[0],
+        mapSize[1] - mapCenter[1] + mapTilesOffset[1],
+      ),
+    ),
+  });
+  return tiles;
 }
 /**
  * 生成地图的实例对象
@@ -64,7 +76,7 @@ function create_map(area_config_code = "") {
     tiles_config = _.defaultsDeep(
       {},
       tiles_config,
-      map_tiles_config.value[tiles_extend_name] || {}
+      map_tiles_config.value[tiles_extend_name] || {},
     );
   }
 
@@ -87,8 +99,8 @@ function create_map(area_config_code = "") {
       // 将地理坐标投影为CRS所接受的单位坐标
       project(latlng) {
         return new L.Point(
-            latlng.lat + mapCenter[0],
-            latlng.lng + mapCenter[1]
+          latlng.lat + mapCenter[0],
+          latlng.lng + mapCenter[1],
         );
       },
       // 给定CRS坐标，反向投影为地理坐标
@@ -111,12 +123,12 @@ function create_map(area_config_code = "") {
     maxBounds: L.latLngBounds(
       L.latLng(
         -mapCenter[0] + mapTilesOffset[0] - 10000,
-        -mapCenter[1] + mapTilesOffset[1] - 10000
+        -mapCenter[1] + mapTilesOffset[1] - 10000,
       ),
       L.latLng(
         mapSize[0] - mapCenter[0] + mapTilesOffset[0] + 10000,
-        mapSize[1] - mapCenter[1] + mapTilesOffset[1] + 10000
-      )
+        mapSize[1] - mapCenter[1] + mapTilesOffset[1] + 10000,
+      ),
     ),
     attributionControl: false,
     zoomControl: false,
@@ -128,7 +140,7 @@ function create_map(area_config_code = "") {
     mapCenter,
     mapSize,
     mapTilesOffset,
-    extension
+    extension,
   );
   const map = L.map(mapDom.value, map_setting).addLayer(mapTiles.value);
   L.control
@@ -142,13 +154,10 @@ function create_map(area_config_code = "") {
       <a href='http://beian.miit.gov.cn' target='_blank' rel='noopener noreferrer' title='工业和信息化部域名信息备案管理系统'>蜀ICP备2020028219号-1</a>
   </footer>
       `,
-      position: 'bottomright',
+      position: "bottomright",
     })
-    .addTo(map)
+    .addTo(map);
   return map;
 }
 
-export {
-    create_map_layer,
-    create_map,
-}
+export { create_map_layer, create_map };
