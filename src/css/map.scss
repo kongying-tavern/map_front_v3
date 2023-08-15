@@ -17,11 +17,11 @@
   --underground:1
 }
 
-.clusterIcon:not(.sumeru_underground){
+.clusterIcon:not(.marker_underground){
   opacity: var(--underground);
   &._doneCluster{
     opacity: var(--opacity);
-  }  
+  }
 }
 
 ._doneCluster{
@@ -315,7 +315,7 @@ img {
 .leaflet-popup {
   left: -142rem !important;
   .leaflet-popup-tip-container {
-    display: none; 
+    display: none;
 
     .leaflet-popup-tip {
       background: #f0e9e2 !important;
@@ -343,11 +343,11 @@ img {
 }
 .leaflet-shadow-pane.underground_on,
 .leaflet-marker-pane.underground_on {
-  .leaflet-marker-icon:not(.sumeru_underground, .clusterIcon) {
+  .leaflet-marker-icon:not(.marker_underground, .clusterIcon) {
     opacity: 0.3;
   }
 }
-.leaflet-marker-icon.sumeru_underground .xumu_underground_marker {
+.leaflet-marker-icon.marker_underground .marker_underground_tag {
   width: 16px;
   height: 16px;
   top: -3px;
@@ -357,7 +357,7 @@ img {
   background: url(/imgs/layer_underground_mark.png) no-repeat;
   background-size: 100% 100%;
 }
-.leaflet-marker-icon.sumeru_underground .xumu_underground_teleport_marker {
+.leaflet-marker-icon.marker_underground .marker_underground_teleport {
   width: 12px;
   height: 12px;
   top: 26px;

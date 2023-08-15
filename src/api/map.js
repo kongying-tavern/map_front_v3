@@ -3,8 +3,7 @@
 //地图初始化
 import * as L from 'leaflet'
 import "leaflet/dist/leaflet.css";
-import { xumi_underground_name, xumi_underground_list } from "../api/extra_data/xumi_underground"
-import { layergroup_register_prototype } from "../api/layer"
+
 //初始化地图中心和地图尺寸
 /**
  * 注册地图瓦片
@@ -150,134 +149,8 @@ function init_map(area) {
 
     }
 }
-//地图蒙层(群岛)的相关参数
-const qd_postion = {
-    ww: [
-        [-494, -1164],
-        [1554, -140],
-    ],
-    pp: [
-        [-581, -3214],
-        [443, -2190],
-    ],
-    ss: [
-        [528, -4237],
-        [2576, -2189],
-    ],
-    bd: [
-        [1433, -1814],
-        [2201, -1046],
-    ],
-}
-//添加群岛的额外部分
-function add_map_overlay_qd(type, index) {
-    let imageUrl = `https://assets.yuanshen.site/tiles_qd28/other/${type}/${index}.png`;
-    let imageBounds = [qd_postion[type]]
-    return L.imageOverlay(imageUrl, imageBounds)
-}
-//添加须弥的地下部分
-function create_xumi_underground_layers() {
-    let map = new Map();
-    for (let i in xumi_underground_name) {
-        let zindex = 1000
-        let layergroup = layergroup_register_prototype();
-        for (let j of xumi_underground_list[i]) {
-            let settings = {}
-            if (j.length > 2) {
-                settings = {
-                    group: j[2]
-                }
-            }
-            if (i != 0) {
-                zindex = zindex + 50
-                settings = {
-                    ...settings,
-                    zIndex: zindex,
-                }
-            }
-            else {
-                zindex = zindex - 50
-                settings = {
-                    ...settings,
-                    zIndex: zindex,
-                }
-            }
-            let overlay = L.imageOverlay(`https://tiles.yuanshen.site/d/underground/${xumi_underground_name[i][0]}/${j[0]}.png`, j[1], settings);
-            layergroup.addLayer(overlay);
-        }
-        map.set(xumi_underground_name[i][1], layergroup)
-    }
-    return map
-}
-//添加须弥的地下背景
-function add_map_overlay_XumiUnderground() {
-    let xumi_underground_map = new Map([
-        ['大赤沙海-底图1', {
-            imageUrl: `https://tiles.yuanshen.site/d/underground/沙漠/固定底图1.png`,
-            imageBounds: [[-7538, 1709], [-6402, 3082]]
-        }],
-        ['大赤沙海-底图2', {
-            imageUrl: `https://tiles.yuanshen.site/d/underground/沙漠/固定底图2.png`,
-            imageBounds: [[-6920, 3087], [-6533, 3204]]
-        }],
-        ['大赤沙海-底图3', {
-            imageUrl: `https://tiles.yuanshen.site/d/underground/沙漠/固定底图3.png`,
-            imageBounds: [[-5611, 833], [-5448, 982]]
-        }],
-        ['大赤沙海-底图4', {
-            imageUrl: `https://tiles.yuanshen.site/d/underground/沙漠/固定底图4.png`,
-            imageBounds: [[-5604, 1326], [-5428, 1522]]
-        }],
-        ['大赤沙海-底图5', {
-            imageUrl: `https://tiles.yuanshen.site/d/underground/沙漠/固定底图5.png`,
-            imageBounds: [[-5728, 2015], [-5425, 2484]]
-        }],
-        ['大赤沙海-底图6', {
-            imageUrl: `https://tiles.yuanshen.site/d/underground/沙漠/固定底图6.png`,
-            imageBounds: [[-5423, 1897], [-5072, 2182]]
-        }],
-        ['大赤沙海-底图7', {
-            imageUrl: `https://tiles.yuanshen.site/d/underground/沙漠/固定底图7.png`,
-            imageBounds: [[-4966, 2185], [-4559, 2565]]
-        }],
-        ['大赤沙海-底图8', {
-            imageUrl: `https://tiles.yuanshen.site/d/underground/沙漠/固定底图8.png`,
-            imageBounds: [[-6066, 2842], [-5074, 3549]]
-        }]
-    ])
-    let xumi_underground_bg = layergroup_register_prototype();
-    for (let i of xumi_underground_map.keys()) {
-        xumi_underground_bg.addLayer(L.imageOverlay(xumi_underground_map.get(i).imageUrl, xumi_underground_map.get(i).imageBounds))
-    }
-    return xumi_underground_bg
-}
-//添加群岛3的蒙层
-function add_map_overlay_island3(phases = []) {
-    let sectionsConfig = [];
-    if(phases.indexOf(3) !== -1) {
-        sectionsConfig.push(['底图1', {
-            imageUrl: `/imgs/UI_Map_Penumbra_02.png`,
-            imageBounds: [[1166, -4246], [5573, 6]]
-        }]);
-    }
-    if(phases.indexOf(4) !== -1) {
-        sectionsConfig.push(['底图2', {
-            imageUrl: `/imgs/UI_Map_Penumbra_03.png`,
-            imageBounds: [[3196, -3282], [7312, 2862]]
-        }]);
-    }
-    let island3_map = new Map(sectionsConfig);
-    let group = layergroup_register_prototype();
-    for (let i of island3_map.keys()) {
-        group.addLayer(L.imageOverlay(island3_map.get(i).imageUrl, island3_map.get(i).imageBounds), { zIndex: 9999 })
-    }
-    return group;
-}
 export {
     create_map_layer,
     create_map,
-    add_map_overlay_qd,
-    add_map_overlay_XumiUnderground,
     init_map,
-    create_xumi_underground_layers, add_map_overlay_island3
 }

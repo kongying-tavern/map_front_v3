@@ -4,7 +4,7 @@
       round
       color="white"
       text-color="grey"
-      :icon="switch_state ? 'mdi-stairs-down' : 'mdi-stairs-up'"
+      :icon="switch_state ? 'mdi-layers-outline' : 'mdi-layers'"
       size="25rem"
       @click="switch_view"
     >
@@ -22,7 +22,7 @@
     >
       <q-tooltip> 切换地下层级 </q-tooltip>
     </q-btn>
-    <q-dialog v-model="dialog" position="left" seamless style="z-index: 1000">
+    <!-- <q-dialog v-model="dialog" position="left" seamless style="z-index: 1000">
       <q-card
         class="desktop-only area_dialog"
         style="height: 520rem; padding: 8rem"
@@ -127,14 +127,6 @@
           >
             <div class="row items-center">
               <div class="title2 text-weight-bold">{{ item_key }}</div>
-              <!-- <q-btn
-                v-if="area_index != 1"
-                color="primary"
-                label="显示区域"
-                dense
-                @click="reset_area(area_index, item_index)"
-                style="margin-left: 10px"
-              /> -->
               <q-icon
                 name="mdi-refresh"
                 color="primary"
@@ -154,7 +146,7 @@
           </div>
         </div>
       </q-card>
-    </q-dialog>
+    </q-dialog> -->
   </div>
 </template>
 

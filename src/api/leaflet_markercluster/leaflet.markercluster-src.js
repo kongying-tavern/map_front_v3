@@ -21,7 +21,7 @@
     // let childClassName = childClassNameTemp[0].split("-");
     //console.log(childClassName[1]);
     let doneNum = 0;
-    let sumeru_underground=false;
+    let is_underground = false;
     for (let i = 0; i < cluster.getChildCount(); i++) {
       // console.log(childMarkers[i].options)
       let childClassName=childMarkers[i].options.icon.options.className;
@@ -30,15 +30,15 @@
       if (data.findIndex(item => item == key) != -1) {
         doneNum++;
       }
-      if(childClassName.indexOf("sumeru_underground")!=-1){
-        sumeru_underground=true;
+      if(childClassName.indexOf("marker_underground")!=-1){
+        is_underground = true;
       }
     }
     let childCount = cluster.getChildCount();
     let svgTipFill = (doneNum / childCount == 1) ? "#00EBF4" : "#E6E6E6";
     let doneIcon = (doneNum / childCount == 1) ? "_done" : "";
     let doneclass = (doneNum / childCount == 1) ? " _doneCluster" : "";
-    let undergroundclass = sumeru_underground ? " sumeru_underground" : "";
+    let undergroundclass = is_underground ? " marker_underground" : "";
     const id = ` cluster_${cluster._leaflet_id}`
     return {
       // html的最后有图标url
@@ -69,7 +69,7 @@
       </svg>
       <b>${doneNum}/${childCount}</b>
       <img class='clusterImg' src='${cluster._group.options.iconUrl}' onerror="javascript:this.src='https://assets.yuanshen.site/icons/-1.png';"/>
-      <div class="xumu_underground_marker"></div>
+      <div class="marker_underground_tag"></div>
       `,
       className: "clusterIcon " + doneclass + id + undergroundclass,
       iconSize: [36 + childCount / 3, 36 + childCount / 3], // size of the icon

@@ -104,12 +104,12 @@ function create_icon_options(url, type = "off", extra) {
     let extra_data = JSON.parse(extra)
     console.log(extra_data)
     if (extra_data.hasOwnProperty('underground') && extra_data.underground.hasOwnProperty('is_underground') && extra_data.underground.is_underground) {
-      options.className = `${className} sumeru_underground`
+      options.className = `${className} marker_underground`
     }
   }
   if (type == 'off' || type == 'on') {
     options.html = `${options.html}
-    <div class="xumu_underground_marker"></div>
+    <div class="marker_underground_tag"></div>
     `
     return options
   } else {
@@ -131,7 +131,7 @@ function create_icon_options(url, type = "off", extra) {
         };
         options.html = `
         <img id="markerIcon" width="30" height="43" style="margin: 0 auto;left: 0;right: 0;top: 5px; position: absolute" src="${url == '' ? 'https://assets.yuanshen.site/icons/-1.png' : url}" onerror="javascript:this.src='https://assets.yuanshen.site/icons/-1.png';"/>
-        <div class="xumu_underground_teleport_marker"></div>
+        <div class="marker_underground_teleport"></div>
         `
         return options;
       case "传送锚点":
@@ -145,7 +145,7 @@ function create_icon_options(url, type = "off", extra) {
         };
         options.html = `
         <img id="markerIcon" width="23" height="33" style="margin: 0 auto;left: 0;right: 0;top: 5px; position: absolute" src="${url == '' ? 'https://assets.yuanshen.site/icons/-1.png' : url}" onerror="javascript:this.src='https://assets.yuanshen.site/icons/-1.png';"/>
-        <div class="xumu_underground_teleport_marker"></div>
+        <div class="marker_underground_teleport"></div>
         `
         return options;
       case "秘境":
@@ -162,7 +162,7 @@ function create_icon_options(url, type = "off", extra) {
         };
         options.html = `
         <img id="markerIcon" width="33" height="33" style="margin: 0 auto;left: 0;right: 0;top: 5px; position: absolute" src="${url == '' ? 'https://assets.yuanshen.site/icons/-1.png' : url}" onerror="javascript:this.src='https://assets.yuanshen.site/icons/-1.png';"/>
-        <div class="xumu_underground_teleport_marker"></div>
+        <div class="marker_underground_teleport"></div>
         `
         return options;
       default:

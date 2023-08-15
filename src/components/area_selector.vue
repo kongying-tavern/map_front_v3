@@ -133,6 +133,7 @@ export default {
       this.child_area_list = this.child_area_list_map.get(area.name);
       this.selected_child_area = this.child_area_list[0];
       this.mainStore.selected_area = this.selected_area.name;
+      this.mainStore.selected_area_code = this.selected_area.code;
       this.mainStore.selected_child_area = this.selected_child_area;
       this.child_area_show = true;
       this.child_area_hide = false;

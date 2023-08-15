@@ -42,26 +42,23 @@
         ></div>
         <div class="text">标记点位</div>
       </div>
-      <div class="xumi" v-if="xumi_show">
+      <div class="xumi" v-if="underground_show">
         <div class="switch row items-center">
           <div
             class="switch_btn"
-            :class="{ on: xumi_opacity_state }"
-            @click="xumi_underground_opacity_switch"
+            :class="{ on: underground_opacity }"
+            @click="underground_opacity_switch"
           ></div>
-          <div class="text">显示/隐藏地下点位</div>
+          <div class="text">仅显示地下点位</div>
         </div>
       </div>
     </div>
     <!-- 左上侧各种开关 -->
     <extra-btn @load="load_savedata" @loading="toggle_loading"></extra-btn>
     <div class="area_components">
-      <div class="xumi" v-if="xumi_show">
-        <level-switch
-          v-if="mainStore.selected_area == '须弥'"
-          @underground_switch="xumi_underground_switch"
-          @underground_area_switch="xumi_underground_child_area_switch"
-        ></level-switch>
+      <div class="xumi" v-if="underground_show">
+        <level-switch @underground_area_switch="xumi_underground_child_area_switch">
+        </level-switch>
       </div>
     </div>
     <q-inner-loading :showing="loading" style="z-index: 2000">
@@ -75,16 +72,10 @@ import ItemSelector from "../components/item_selector.vue";
 import AreaSelector from "../components/area_selector.vue";
 import PopupWindow from "../components/popup_window.vue";
 import ExtraBtn from "../components/extra_btn.vue";
-import LevelSwitch from "../components/xumi/level_switch.vue";
-import {
-  init_map,
-  add_map_overlay_XumiUnderground,
-  create_xumi_underground_layers,
-  add_map_overlay_island3,
-} from "../api/map";
+import LevelSwitch from "../components/overlay/level_switch.vue";
+import { init_map } from "../api/map";
 import { mapStores } from "pinia";
 import { useCounterStore } from "../stores/example-store";
-import { xumi_underground_name } from "../api/extra_data/xumi_underground";
 import {
   layergroup_register,
   subgroup_register,
@@ -93,7 +84,7 @@ import {
 } from "../api/layer";
 import { query_itemlayer_infolist } from "../service/base_request";
 import { switch_area_list, set_Storage } from "../api/common";
-import { query_itemlayer_byid, clear_cache } from "../service/base_request";
+import { query_itemlayer_byid } from "../service/base_request";
 export default {
   name: "IndexPage",
   data() {
@@ -106,12 +97,10 @@ export default {
       handle_layergroup: null,
       teleport_state: false,
       opacity_state: true,
-      xumi_underground_name,
-      xumi_opacity_state: false,
+      underground_opacity: false,
       xumi_underground_overlaygroup: null,
       xumi_underground_bg: null,
-      xumi_show: false,
-      island3_overlay: [],
+      underground_show: false,
     };
   },
   components: {
@@ -418,58 +407,30 @@ export default {
     //切换点位的显隐状态
     opacity_switch() {
       this.opacity_state = !this.opacity_state;
-      document.documentElement.style.setProperty(
-        "--opacity",
-        !this.opacity_state ? 0.3 : 1
-      );
       let layers = document.getElementsByClassName("leaflet-shadow-pane");
       let imgs = document.getElementsByClassName("leaflet-marker-pane");
       if (!this.opacity_state) {
         layers[0].className = `${layers[0].className} opacity_on`;
         imgs[0].className = `${imgs[0].className} opacity_on`;
       } else {
-        layers[0].className = layers[0].className.replace(/opacity_on/, "");
-        imgs[0].className = imgs[0].className.replace(/opacity_on/, "");
+        layers[0].className = layers[0].className.replace(/opacity_on/g, "");
+        imgs[0].className = imgs[0].className.replace(/opacity_on/g, "");
       }
-    },
-    //切换须弥的地下和地上地图
-    xumi_underground_switch(val) {
-      this.loading = true;
-      if (this.xumi_underground_overlaygroup == null) {
-        this.xumi_underground_bg = add_map_overlay_XumiUnderground();
-        this.xumi_underground_overlaygroup = create_xumi_underground_layers();
-      }
-      if (!val) {
-        this.map_tiles?.setOpacity && this.map_tiles?.setOpacity(0.45);
-        this.map.addLayer(this.xumi_underground_bg);
-        for (let i of this.xumi_underground_overlaygroup.values()) {
-          this.map.addLayer(i);
-        }
-      } else {
-        this.map_tiles?.setOpacity && this.map_tiles?.setOpacity(1);
-        this.map.removeLayer(this.xumi_underground_bg);
-        for (let i of this.xumi_underground_overlaygroup.values()) {
-          this.map.removeLayer(i);
-        }
-      }
-      this.loading = false;
     },
     //切换须弥地下点位的显隐状态
-    xumi_underground_opacity_switch() {
-      this.xumi_opacity_state = !this.xumi_opacity_state;
-      document.documentElement.style.setProperty(
-        "--underground",
-        this.xumi_opacity_state ? 0.3 : 1
-      );
+    underground_opacity_switch() {
+      this.underground_opacity = !this.underground_opacity;
       let layers = document.getElementsByClassName("leaflet-shadow-pane");
       let imgs = document.getElementsByClassName("leaflet-marker-pane");
-      if (this.xumi_opacity_state) {
+      if (this.underground_opacity) {
         layers[0].className = `${layers[0].className} underground_on`;
         imgs[0].className = `${imgs[0].className} underground_on`;
       } else {
-        layers[0].className = layers[0].className.replace(/underground_on/, "");
-        imgs[0].className = imgs[0].className.replace(/underground_on/, "");
+        layers[0].className = layers[0].className.replace(/underground_on/g, "");
+        imgs[0].className = imgs[0].className.replace(/underground_on/g, "");
       }
+
+      console.log(layers[0].className);
     },
     //切换须弥地下地区子地区的状态
     xumi_underground_child_area_switch(data) {
@@ -564,31 +525,17 @@ export default {
     //请参考pinia不使用组合式api的用法的说明文档
     //https://pinia.web3doc.top/cookbook/options-api.html
     ...mapStores(useCounterStore),
-    island3_overlay_phases() {
-      let now = Date.now();
-      let timePhase3 = new Date("2023-07-07 04:00:00 +0800").getTime();
-      let timePhase4 = new Date("2023-07-09 04:00:00 +0800").getTime();
-      let phases = [];
-      if (now < timePhase3) {
-        phases.push(3);
-      }
-      if (now < timePhase4) {
-        phases.push(4);
-      }
-      return phases;
-    },
   },
   watch: {
     "mainStore.selected_area": function (val) {
       sessionStorage.setItem("area", val);
       if (val != "须弥") {
-        this.xumi_show = false;
-        this.xumi_underground_switch(true);
-        if (this.xumi_opacity_state) {
-          this.xumi_underground_opacity_switch();
+        this.underground_show = false;
+        if (this.underground_opacity) {
+          this.underground_opacity_switch();
         }
       } else {
-        this.xumi_show = true;
+        this.underground_show = true;
         //获取地图背景所属的对象
         this.map.eachLayer((layer) => {
           this.map_tiles = layer;
@@ -604,13 +551,6 @@ export default {
         this.map.remove();
         this.map = init_map(val.name);
         this.BXGroup.addTo(this.map);
-        this.island3_overlay = add_map_overlay_island3(
-          this.island3_overlay_phases
-        );
-        this.map.removeLayer(this.island3_overlay);
-        if (val.name == "琉形蜃境") {
-          this.map.addLayer(this.island3_overlay);
-        }
         //获取地图背景所属的对象
         this.map.eachLayer((layer) => {
           this.map_tiles = layer;
