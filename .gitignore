@@ -28,3 +28,7 @@ yarn-error.log*
 *.ntvs*
 *.njsproj
 *.sln
+
+# Lock files
+yarn.lock
+pnpm-lock.yaml
