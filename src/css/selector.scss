@@ -223,6 +223,10 @@
             &.area25 {
               background: linear-gradient(180deg, rgba(255, 249, 96, 0) 0%, #60ffb5 98.73%);
             }
+
+            &.area27 {
+              background: linear-gradient(180deg, rgba(255, 249, 96, 0) 0%, #52e5ff 98.73%);
+            }
           }
 
           .active {
@@ -247,6 +251,10 @@
 
             &.area25 {
               background: #52ffcb;
+            }
+
+            &.area27 {
+              background: #52e5ff;
             }
           }
         }
@@ -289,6 +297,13 @@
               background: #60ffb5;
               filter: blur(13.5rem);
             }
+
+            &.area27 {
+              width: 36rem;
+              height: 36rem;
+              background: #52e5ff;
+              filter: blur(13.5rem);
+            }
           }
         }
 
@@ -315,6 +330,10 @@
 
             &.area25 {
               background: #52ffcb;
+            }
+
+            &.area27 {
+              background: #52e5ff;
             }
           }
         }

@@ -52,7 +52,7 @@ function create_map_layer(area_idx, mapCenter, mapSize, mapTilesOffset = [0, 0])
  * @param {Array} mapTilesOffset 地图瓦片的偏移
  * @returns 地图对象
  */
-function create_map(area_idx, settings, mapCenter = [3568, 6286], mapSize = [18432, 16384], mapTilesOffset = [-6144, 0]) {
+function create_map(area_idx, settings, mapCenter = [3568, 6286], mapSize = [18432, 18432], mapTilesOffset = [-6144, -2048]) {
     //设置地图要使用的坐标参考系（CRS），本地图使用simple类型CRS，将经度和纬度直接映射到x和y。
     let mapCRS = L.Util.extend({}, L.CRS.Simple, {
         //用给定的系数表示变换对象。
@@ -146,7 +146,7 @@ function init_map(area) {
                 [0, 0]
             )
         default:
-            return create_map('twt36');
+            return create_map('twt40');
 
     }
 }
