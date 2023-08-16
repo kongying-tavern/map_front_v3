@@ -182,14 +182,14 @@ export default {
           easterEggSequence.value.length >= easterEggOnSeq.length &&
           easterEggSequence.value.join("|") === easterEggOnSeqStr
         ) {
-          console.log("ON");
           easterEggMode.value = true;
+          easterEggSequence.value = [];
         } else if (
           easterEggSequence.value.length >= easterEggOffSeq.length &&
           easterEggSequence.value.join("|") === easterEggOffSeqStr
         ) {
-          console.log("OFF");
           easterEggMode.value = false;
+          easterEggSequence.value = [];
         }
       },
       {
