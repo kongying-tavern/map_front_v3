@@ -79,11 +79,12 @@ import {
   layer_register,
 } from "../api/layer";
 import { query_itemlayer_infolist } from "../service/base_request";
-import { switch_area_list, set_Storage } from "../api/common";
+import { set_Storage } from "../api/common";
 import { query_itemlayer_byid } from "../service/base_request";
 import { mapLoadConfig } from "../api/config";
 import { create_map } from "../api/map";
 import { map, mapDom } from "src/api/map_obj";
+import { map_plugin_config } from "../api/config";
 
 export default {
   name: "IndexPage",
@@ -489,32 +490,21 @@ export default {
   watch: {
     "mainStore.selected_area": function (val) {
       sessionStorage.setItem("area", val);
-      if (val != "须弥") {
-        this.underground_show = false;
+    },
+    "mainStore.selected_child_area": function (val) {
+      const plugin_config = (map_plugin_config.value || {})[val?.code];
+      const plugin_extra = plugin_config?.extra || [];
+      const plugin_extra_ug = plugin_extra.includes("underground");
+      this.underground_show = !!plugin_extra_ug;
+
+      if (this.underground_show) {
+        map.value?.eachLayer((layer) => {
+          this.map_tiles = layer;
+        });
+      } else {
         if (this.underground_opacity) {
           this.underground_opacity_switch();
         }
-      } else {
-        this.underground_show = true;
-        //获取地图背景所属的对象
-        map.value?.eachLayer((layer) => {
-          this.map_tiles = layer;
-        });
-      }
-    },
-    "mainStore.selected_child_area": function (val, oldval) {
-      if (
-        switch_area_list.includes(val.name) ||
-        switch_area_list.includes(oldval.name)
-      ) {
-        this.clearall();
-        map.value?.remove();
-        map.value = create_map(val.code);
-        this.BXGroup.addTo(map.value);
-        //获取地图背景所属的对象
-        map.value?.eachLayer((layer) => {
-          this.map_tiles = layer;
-        });
       }
     },
     "mainStore.changeitem": function (val) {

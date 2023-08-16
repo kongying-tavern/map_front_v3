@@ -1,3 +1,104 @@
+@mixin active-highlight-style {
+  &.area_C_LY {
+    background: linear-gradient(180deg, rgba(255, 239, 96, 0) 0%, #FFDC60 98.73%);
+  }
+
+  &.area_C_MD {
+    background: linear-gradient(180deg, rgba(96, 255, 245, 0) 0%, #60FFF5 98.73%);
+  }
+
+  &.area_C_DQ {
+    background: linear-gradient(180deg, rgba(214, 96, 255, 0) 0%, #9360FF 98.73%);
+  }
+
+  &.area_C_XM {
+    background: linear-gradient(180deg, rgba(255, 249, 96, 0) 0%, #AFFF60 98.73%);
+  }
+
+  &.area_C_VELURIYAM {
+    background: linear-gradient(180deg, rgba(255, 249, 96, 0) 0%, #60ffb5 98.73%);
+  }
+
+  &.area_C_FD {
+    background: linear-gradient(180deg, rgba(255, 249, 96, 0) 0%, #52e5ff 98.73%);
+  }
+}
+
+@mixin active-bar-style {
+  width: 72rem;
+  opacity: 1;
+
+  &.area_C_LY {
+    background: #FFF27C;
+  }
+
+  &.area_C_MD {
+    background: #7CFFE7;
+  }
+
+  &.area_C_DQ {
+    background: #C78FFF;
+  }
+
+  &.area_C_XM {
+    background: #C8FF52;
+  }
+
+  &.area_C_VELURIYAM {
+    background: #52ffcb;
+  }
+
+  &.area_C_FD {
+    background: #52e5ff;
+  }
+}
+
+@mixin active-bg-style {
+  transform: translateY(0rem);
+
+  &.area_C_LY {
+    width: 39.27rem;
+    height: 39.27rem;
+    background: #FFC700;
+    filter: blur(12.2727rem);
+  }
+
+  &.area_C_MD {
+    width: 34.36rem;
+    height: 34.36rem;
+    background: #00FFD1;
+    filter: blur(13.5rem);
+  }
+
+  &.area_C_DQ {
+    width: 34.36rem;
+    height: 34.36rem;
+    background: #8F00FF;
+    filter: blur(11.4545rem);
+  }
+
+  &.area_C_XM {
+    width: 36rem;
+    height: 36rem;
+    background: #ADFF00;
+    filter: blur(13.5rem);
+  }
+
+  &.area_C_VELURIYAM {
+    width: 36rem;
+    height: 36rem;
+    background: #60ffb5;
+    filter: blur(13.5rem);
+  }
+
+  &.area_C_FD {
+    width: 36rem;
+    height: 36rem;
+    background: #52e5ff;
+    filter: blur(13.5rem);
+  }
+}
+
 //各个选择器的样式
 //地区选择器的样式
 .area_selector {
@@ -69,9 +170,17 @@
       }
 
       .area_icon {
+        position: relative;
         width: 96rem;
         height: 96rem;
         margin-left: 16rem;
+
+        .color_bg {
+          @include active-bg-style;
+          position: absolute;
+          inset: 50% 50%;
+          transform: translate(-50%, -50%);
+        }
       }
     }
 
@@ -97,17 +206,6 @@
         -o-transition: all .25s;
         transition: all .25s;
         transition-timing-function: cubic-bezier(0.075, 0.82, 0.165, 1);
-
-        // .child_selector {
-        //   opacity: 1;
-        //   transform: scaleX(1);
-        //   -webkit-transition: all .45s;
-        //   -moz-transition: all .45s;
-        //   -ms-transition: all .45s;
-        //   -o-transition: all .45s;
-        //   transition: all .45s;
-        //   transition-timing-function: cubic-bezier(1, 0, 0, 1);
-        // }
       }
 
       .area_selector_background {
@@ -204,137 +302,23 @@
           }
 
           .active_bg {
-            &.area1 {
-              background: linear-gradient(180deg, rgba(255, 239, 96, 0) 0%, #FFDC60 98.73%);
-            }
-
-            &.area5 {
-              background: linear-gradient(180deg, rgba(96, 255, 245, 0) 0%, #60FFF5 98.73%);
-            }
-
-            &.area11 {
-              background: linear-gradient(180deg, rgba(214, 96, 255, 0) 0%, #9360FF 98.73%);
-            }
-
-            &.area18 {
-              background: linear-gradient(180deg, rgba(255, 249, 96, 0) 0%, #AFFF60 98.73%);
-            }
-
-            &.area25 {
-              background: linear-gradient(180deg, rgba(255, 249, 96, 0) 0%, #60ffb5 98.73%);
-            }
-
-            &.area27 {
-              background: linear-gradient(180deg, rgba(255, 249, 96, 0) 0%, #52e5ff 98.73%);
-            }
+            @include active-highlight-style;
           }
 
           .active {
-            width: 72rem;
-            opacity: 1;
-
-            &.area1 {
-              background: #FFF27C;
-            }
-
-            &.area5 {
-              background: #7CFFE7;
-            }
-
-            &.area11 {
-              background: #C78FFF;
-            }
-
-            &.area18 {
-              background: #C8FF52;
-            }
-
-            &.area25 {
-              background: #52ffcb;
-            }
-
-            &.area27 {
-              background: #52e5ff;
-            }
+            @include active-bar-style;
           }
         }
 
         &:hover {
           .area_icon_bg {
-            transform: translateY(0rem);
-
-            &.area1 {
-              width: 39.27rem;
-              height: 39.27rem;
-              background: #FFC700;
-              filter: blur(12.2727rem);
-            }
-
-            &.area5 {
-              width: 34.36rem;
-              height: 34.36rem;
-              background: #00FFD1;
-              filter: blur(13.5rem);
-            }
-
-            &.area11 {
-              width: 34.36rem;
-              height: 34.36rem;
-              background: #8F00FF;
-              filter: blur(11.4545rem);
-            }
-
-            &.area18 {
-              width: 36rem;
-              height: 36rem;
-              background: #ADFF00;
-              filter: blur(13.5rem);
-            }
-
-            &.area25 {
-              width: 36rem;
-              height: 36rem;
-              background: #60ffb5;
-              filter: blur(13.5rem);
-            }
-
-            &.area27 {
-              width: 36rem;
-              height: 36rem;
-              background: #52e5ff;
-              filter: blur(13.5rem);
-            }
+            @include active-bg-style()
           }
         }
 
         &:active {
           .active {
-            width: 72rem;
-            opacity: 1;
-
-            &.area1 {
-              background: #FFF27C;
-            }
-
-            &.area5 {
-              background: #7CFFE7;
-            }
-
-            &.area11 {
-              background: #C78FFF;
-            }
-
-            &.area18 {
-              background: #C8FF52;
-            }
-
-            &.area25 {
-              background: #52ffcb;
-            }
-
-            &.area27 {
-              background: #52e5ff;
-            }
+            @include active-bar-style()
           }
         }
 

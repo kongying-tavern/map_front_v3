@@ -22,9 +22,13 @@
               当前选择 - {{ selected_child_area.name }}
             </div>
           </div>
-          <div class="area_icon" v-if="selected_area.name != '琉形蜃境'">
+          <div class="area_icon">
+            <div
+              class="color_bg"
+              :class="`area_${get_css_code(selected_area.code)}`"
+            ></div>
             <q-img
-              :src="`/imgs/${selected_area.name}_Color.png`"
+              :src="`/imgs/icons/${get_css_code(selected_area.code)}_off.png`"
               spinner-color="white"
             />
           </div>
@@ -38,28 +42,32 @@
         <div class="parent_selector row justify-center">
           <div class="row">
             <div
-              v-for="(item, index) in area_list"
+              v-for="(item, index) in area_list_top"
               :key="index"
               class="row area_type_containor items-center justify-center"
               :class="{ on: selected_area.areaId == item.areaId }"
               @click="change_area(item)"
               v-on:mouseenter="
-                check_chile_area(selected_area.areaId == item.areaId)
+                check_child_area(selected_area.areaId == item.areaId)
               "
-              v-on:mouseleave="check_chile_area(true)"
+              v-on:mouseleave="check_child_area(true)"
             >
-              <div :class="`area_icon_bg area${item.areaId}`"></div>
-              <div :class="`active_bg area${item.areaId}`"></div>
-              <div :class="`active area${item.areaId}`"></div>
+              <div
+                :class="`area_icon_bg area_${get_css_code(item.code)}`"
+              ></div>
+              <div :class="`active_bg area_${get_css_code(item.code)}`"></div>
+              <div :class="`active area_${get_css_code(item.code)}`"></div>
               <q-img
                 class="area_icon"
-                :src="`/imgs/${item.name}_off.png`"
+                :src="`/imgs/icons/${get_css_code(item.code)}_off.png`"
                 no-spinner
-              ></q-img>
+              >
+              </q-img>
             </div>
           </div>
         </div>
         <!-- 展开部分的子地区部分 -->
+        <!--
         <div
           class="child_selector row justify-center"
           :class="{
@@ -77,7 +85,7 @@
             <div
               class="child_area col-shrink"
               :class="{ on: selected_child_area.areaId == item.areaId }"
-              v-for="(item, index) in child_area_list"
+              v-for="(item, index) in area_list_child"
               :key="index"
               @click="change_child_area(item)"
             >
@@ -86,13 +94,14 @@
               </p>
             </div>
           </div>
-        </div>
+        </div> -->
       </div>
     </div>
   </div>
 </template>
 
 <script>
+import _ from "lodash";
 import { mapStores } from "pinia";
 import { useCounterStore } from "../stores/example-store";
 import { query_area } from "../service/base_request";
@@ -101,11 +110,10 @@ export default {
   name: "AreaSelector",
   data() {
     return {
+      easter_egg_mode: false,
       selected_area: {},
       selected_child_area: {},
       area_list: [],
-      child_area_list_map: new Map(),
-      child_area_list: [],
       area_selector_show: false,
       child_area_show: true,
       child_area_hide: false,
@@ -122,16 +130,7 @@ export default {
     //切换主地区的触发事件
     async change_area(area) {
       this.selected_area = area;
-      if (this.child_area_list_map.get(area.name) == undefined) {
-        await query_area({
-          isTraverse: true,
-          parentId: area.areaId,
-        }).then((res) => {
-          this.child_area_list_map.set(area.name, res.data.data);
-        });
-      }
-      this.child_area_list = this.child_area_list_map.get(area.name);
-      this.selected_child_area = this.child_area_list[0];
+      this.selected_child_area = this.area_first_child;
       this.mainStore.selected_area = this.selected_area.name;
       this.mainStore.selected_child_area = this.selected_child_area;
       this.child_area_show = true;
@@ -144,9 +143,13 @@ export default {
       this.area_selector_show = false;
     },
     //子地区的显示隐藏
-    check_chile_area(e) {
+    check_child_area(e) {
       this.child_area_show = e;
       this.child_area_hide = !e;
+    },
+    get_css_code(code = "") {
+      code = code || "";
+      return code.replace(/:/giu, "_");
     },
   },
   mounted() {
@@ -155,13 +158,9 @@ export default {
       isTraverse: true,
       parentId: -1,
     }).then((res) => {
-      this.selected_area = res.data.data[0];
-      for (let i of res.data.data) {
-        if (i.hiddenFlag != 1 && i.parentId == -1) {
-          this.area_list.push(i);
-        }
-      }
+      this.area_list = res.data.data || [];
       this.mainStore.area_list = this.area_list;
+      this.selected_area = this.area_first_top;
       this.change_area(this.selected_area);
       this.area_selector_show = true;
     });
@@ -170,6 +169,36 @@ export default {
     //请参考pinia不使用组合式api的用法的说明文档
     //https://pinia.web3doc.top/cookbook/options-api.html
     ...mapStores(useCounterStore),
+    area_group() {
+      let group = _.chain(this.area_list)
+        .groupBy("parentId")
+        .mapValues((v) => _.sortBy(v, (area) => -area.sortIndex))
+        .value();
+      console.log(group);
+      return group;
+    },
+    area_list_top() {
+      return this.easter_egg_mode
+        ? this.area_list_top_full
+        : _.filter(this.area_list_top_full, (v) => v.hiddenFlag !== 3);
+    },
+    area_list_top_full() {
+      return this.area_group[-1] || [];
+    },
+    area_first_top() {
+      return this.area_list_top[0] || {};
+    },
+    area_list_child() {
+      return this.easter_egg_mode
+        ? this.area_list_child_full
+        : _.filter(this.area_list_child_full, (v) => v.hiddenFlag !== 3);
+    },
+    area_list_child_full() {
+      return this.area_group[this.selected_area?.areaId] || [];
+    },
+    area_first_child() {
+      return this.area_list_child[0] || {};
+    },
   },
 };
 </script>

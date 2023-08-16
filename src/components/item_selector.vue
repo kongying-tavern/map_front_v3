@@ -176,7 +176,6 @@ import {
   query_itemlist,
   query_iconlist,
 } from "../service/base_request";
-import { switch_area_list } from "../api/common";
 export default {
   name: "ItemSelector",
   data() {
@@ -393,12 +392,6 @@ export default {
   watch: {
     "mainStore.selected_child_area": function (val, oldval) {
       this.get_itemlist(val.areaId);
-      if (
-        switch_area_list.includes(val.name) ||
-        switch_area_list.includes(oldval.name)
-      ) {
-        this.closeall();
-      }
     },
   },
 };

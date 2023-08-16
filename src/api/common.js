@@ -1,14 +1,7 @@
 //一些常用的普通函数
 import { Notify, Cookies } from "quasar";
 import { get_gitee_token, refresh_gitee_token } from "../service/user_request";
-const switch_area_list = [
-  "渊下宫",
-  "三界路飨祭",
-  "金苹果群岛",
-  "地下矿区",
-  "琉形蜃境",
-];
-//提示框
+// 提示框
 function create_notify(msg, type = "positive") {
   Notify.create({
     type: type,
@@ -58,7 +51,6 @@ function check_gitee_tokens() {
 }
 export {
   create_notify,
-  switch_area_list,
   set_Cookies,
   set_Storage,
   get_Cookies,
