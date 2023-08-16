@@ -151,6 +151,7 @@ export default {
       "KeyB",
       "KeyA",
     ];
+    const easterEggOnSeqLen = easterEggOnSeq.length;
     const easterEggOnSeqStr = easterEggOnSeq.join("|");
     const easterEggOffSeq = [
       "ArrowDown",
@@ -166,6 +167,7 @@ export default {
       "KeyA",
       "KeyB",
     ];
+    const easterEggOffSeqLen = easterEggOffSeq.length;
     const easterEggOffSeqStr = easterEggOffSeq.join("|");
 
     onKeyUp(
@@ -180,17 +182,23 @@ export default {
         }
 
         if (
-          easterEggSequence.value.length >= easterEggOnSeq.length &&
-          easterEggSequence.value.join("|") === easterEggOnSeqStr
+          easterEggSequence.value.length >= easterEggOnSeqLen &&
+          easterEggSequence.value.slice(-easterEggOnSeqLen).join("|") ===
+            easterEggOnSeqStr
         ) {
-          create_notify("输入秘笈成功！开启隐藏模式！", "", "bottom");
+          if (!easterEggMode.value) {
+            create_notify("输入秘笈成功！开启隐藏模式！", "", "bottom");
+          }
           easterEggMode.value = true;
           easterEggSequence.value = [];
         } else if (
-          easterEggSequence.value.length >= easterEggOffSeq.length &&
-          easterEggSequence.value.join("|") === easterEggOffSeqStr
+          easterEggSequence.value.length >= easterEggOffSeqLen &&
+          easterEggSequence.value.slice(-easterEggOffSeqLen).join("|") ===
+            easterEggOffSeqStr
         ) {
-          create_notify("输入秘笈成功！关闭隐藏模式！", "", "bottom");
+          if (easterEggMode.value) {
+            create_notify("输入秘笈成功！关闭隐藏模式！", "", "bottom");
+          }
           easterEggMode.value = false;
           easterEggSequence.value = [];
         }
