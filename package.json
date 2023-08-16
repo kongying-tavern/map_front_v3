@@ -15,6 +15,7 @@
   "dependencies": {
     "@quasar/extras": "^1.16.5",
     "@vue/compiler-sfc": "^3.3.4",
+    "@vueuse/core": "^10.3.0",
     "axios": "^0.21.1",
     "leaflet": "^1.7.1",
     "leaflet.featuregroup.subgroup": "^1.0.2",

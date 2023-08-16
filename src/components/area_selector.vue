@@ -1,7 +1,7 @@
 <!-- 地区选择器 -->
 <template>
   <!-- 电脑版 -->
-  <div class="area_selector">
+  <div class="area_selector" ref="areaSelector">
     <div class="area_selector_container">
       <!-- 右方地区信息和切换部分 -->
       <div
@@ -102,15 +102,111 @@
 
 <script>
 import _ from "lodash";
+import { ref } from "vue";
 import { mapStores } from "pinia";
 import { useCounterStore } from "../stores/example-store";
 import { query_area } from "../service/base_request";
 import { openURL } from "quasar";
+import { onKeyUp } from "@vueuse/core";
+
 export default {
   name: "AreaSelector",
+  setup() {
+    const areaSelector = ref(null);
+
+    const easterEggMode = ref(false);
+    const easterEggSequence = ref([]);
+
+    const easterShortKeyAllow = [
+      "ArrowLeft",
+      "ArrowRight",
+      "ArrowUp",
+      "ArrowDown",
+      "KeyA",
+      "KeyB",
+    ];
+    const easterShortKeyIgnore = [
+      "Tab",
+      "CapsLock",
+      "ShiftLeft",
+      "ShiftRight",
+      "AltLeft",
+      "AltRight",
+      "ControlLeft",
+      "ControlRight",
+      "Space",
+      "Enter",
+    ];
+    const easterEggOnSeq = [
+      "ArrowUp",
+      "ArrowUp",
+      "ArrowDown",
+      "ArrowDown",
+      "ArrowLeft",
+      "ArrowRight",
+      "ArrowLeft",
+      "ArrowRight",
+      "KeyB",
+      "KeyA",
+      "KeyB",
+      "KeyA",
+    ];
+    const easterEggOnSeqStr = easterEggOnSeq.join("|");
+    const easterEggOffSeq = [
+      "ArrowDown",
+      "ArrowDown",
+      "ArrowUp",
+      "ArrowUp",
+      "ArrowRight",
+      "ArrowLeft",
+      "ArrowRight",
+      "ArrowLeft",
+      "KeyA",
+      "KeyB",
+      "KeyA",
+      "KeyB",
+    ];
+    const easterEggOffSeqStr = easterEggOffSeq.join("|");
+
+    onKeyUp(
+      (e) => {
+        let code = e.code || "";
+        if (easterShortKeyIgnore.indexOf(code) !== -1) {
+          return;
+        } else if (easterShortKeyAllow.indexOf(code) !== -1) {
+          easterEggSequence.value.push(code);
+        } else {
+          easterEggSequence.value = [];
+        }
+
+        if (
+          easterEggSequence.value.length >= easterEggOnSeq.length &&
+          easterEggSequence.value.join("|") === easterEggOnSeqStr
+        ) {
+          console.log("ON");
+          easterEggMode.value = true;
+        } else if (
+          easterEggSequence.value.length >= easterEggOffSeq.length &&
+          easterEggSequence.value.join("|") === easterEggOffSeqStr
+        ) {
+          console.log("OFF");
+          easterEggMode.value = false;
+        }
+      },
+      {
+        target: areaSelector.value,
+      },
+    );
+
+    return {
+      areaSelector,
+
+      easterEggMode,
+      easterEggSequence,
+    };
+  },
   data() {
     return {
-      easter_egg_mode: false,
       selected_area: {},
       selected_child_area: {},
       area_list: [],
@@ -174,11 +270,10 @@ export default {
         .groupBy("parentId")
         .mapValues((v) => _.sortBy(v, (area) => -area.sortIndex))
         .value();
-      console.log(group);
       return group;
     },
     area_list_top() {
-      return this.easter_egg_mode
+      return this.easterEggMode
         ? this.area_list_top_full
         : _.filter(this.area_list_top_full, (v) => v.hiddenFlag !== 3);
     },
@@ -189,7 +284,7 @@ export default {
       return this.area_list_top[0] || {};
     },
     area_list_child() {
-      return this.easter_egg_mode
+      return this.easterEggMode
         ? this.area_list_child_full
         : _.filter(this.area_list_child_full, (v) => v.hiddenFlag !== 3);
     },
