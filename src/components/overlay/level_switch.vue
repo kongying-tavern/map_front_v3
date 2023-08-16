@@ -191,7 +191,7 @@ const overlaySelectionConfig = computed(() => {
   return configList;
 });
 
-const overlayCardVisible = ref(true);
+const overlayCardVisible = ref(false);
 
 const overlaySelections = ref([]);
 
