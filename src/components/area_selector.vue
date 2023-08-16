@@ -108,6 +108,7 @@ import { query_area } from "../service/base_request";
 import { openURL } from "quasar";
 import { onKeyUp } from "@vueuse/core";
 import { create_notify } from "src/api/common";
+import { map_web_config } from "src/api/config";
 
 export default {
   name: "AreaSelector",
@@ -277,6 +278,10 @@ export default {
     ...mapStores(useCounterStore),
     area_group() {
       let group = _.chain(this.area_list)
+        .filter((v) => {
+          const block_areas = map_web_config.value?.blockArea || [];
+          return block_areas.indexOf(v.code) === -1;
+        })
         .groupBy("parentId")
         .mapValues((v) => _.sortBy(v, (area) => -area.sortIndex))
         .value();
