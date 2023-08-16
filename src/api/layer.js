@@ -112,11 +112,7 @@ function create_icon_options(url, type = "off", extra) {
   if (extra != null) {
     let className = options.className;
     let extra_data = JSON.parse(extra);
-    if (
-      extra_data.hasOwnProperty("underground") &&
-      extra_data.underground.hasOwnProperty("is_underground") &&
-      extra_data.underground.is_underground
-    ) {
+    if (!!extra_data?.underground?.is_underground) {
       options.className = `${className} marker_underground`;
     }
   }
