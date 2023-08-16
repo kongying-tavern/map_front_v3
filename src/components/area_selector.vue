@@ -67,7 +67,6 @@
           </div>
         </div>
         <!-- 展开部分的子地区部分 -->
-        <!--
         <div
           class="child_selector row justify-center"
           :class="{
@@ -94,7 +93,7 @@
               </p>
             </div>
           </div>
-        </div> -->
+        </div>
       </div>
     </div>
   </div>
