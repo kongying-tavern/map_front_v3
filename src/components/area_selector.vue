@@ -107,6 +107,7 @@ import { useCounterStore } from "../stores/example-store";
 import { query_area } from "../service/base_request";
 import { openURL } from "quasar";
 import { onKeyUp } from "@vueuse/core";
+import { create_notify } from "src/api/common";
 
 export default {
   name: "AreaSelector",
@@ -182,12 +183,14 @@ export default {
           easterEggSequence.value.length >= easterEggOnSeq.length &&
           easterEggSequence.value.join("|") === easterEggOnSeqStr
         ) {
+          create_notify("输入秘笈成功！开启隐藏模式！", "", "bottom");
           easterEggMode.value = true;
           easterEggSequence.value = [];
         } else if (
           easterEggSequence.value.length >= easterEggOffSeq.length &&
           easterEggSequence.value.join("|") === easterEggOffSeqStr
         ) {
+          create_notify("输入秘笈成功！关闭隐藏模式！", "", "bottom");
           easterEggMode.value = false;
           easterEggSequence.value = [];
         }

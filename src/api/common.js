@@ -2,11 +2,11 @@
 import { Notify, Cookies } from "quasar";
 import { get_gitee_token, refresh_gitee_token } from "../service/user_request";
 // 提示框
-function create_notify(msg, type = "positive") {
+function create_notify(msg, type = "positive", position = "top") {
   Notify.create({
     type: type,
     message: msg,
-    position: "top",
+    position,
     timeout: 1000,
   });
 }
