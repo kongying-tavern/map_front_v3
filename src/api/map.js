@@ -160,4 +160,8 @@ function create_map(area_config_code = "") {
   return map;
 }
 
-export { create_map_layer, create_map };
+function add_map_overlay(imageUrl, imageBounds) {
+  return L.imageOverlay(imageUrl, imageBounds);
+}
+
+export { create_map_layer, create_map, add_map_overlay };

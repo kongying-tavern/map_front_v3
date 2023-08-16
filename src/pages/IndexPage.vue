@@ -42,7 +42,7 @@
         ></div>
         <div class="text">标记点位</div>
       </div>
-      <div class="xumi" v-if="underground_show">
+      <div class="underground_toggle" v-if="underground_show">
         <div class="switch row items-center">
           <div
             class="switch_btn"
@@ -56,12 +56,7 @@
     <!-- 左上侧各种开关 -->
     <extra-btn @load="load_savedata" @loading="toggle_loading"></extra-btn>
     <div class="area_components">
-      <div class="xumi" v-if="underground_show">
-        <level-switch
-          @underground_area_switch="xumi_underground_child_area_switch"
-        >
-        </level-switch>
-      </div>
+      <level-switch :area="mainStore.selected_child_area || {}"></level-switch>
     </div>
     <q-inner-loading :showing="loading" style="z-index: 2000">
       <q-spinner-gears size="50rem" color="primary" />
@@ -440,54 +435,6 @@ export default {
           "",
         );
         imgs[0].className = imgs[0].className.replace(/underground_on/g, "");
-      }
-    },
-    //切换须弥地下地区子地区的状态
-    xumi_underground_child_area_switch(data) {
-      let area = xumi_underground_name[data.index][1];
-      let area_group = "";
-      switch (data.index) {
-        //切换须弥的大赤沙海地区的层级显示
-        case 1:
-          area_group = this.xumi_underground_overlaygroup.get(area).getLayers();
-          area_group.forEach((item) => {
-            item?.setOpacity && item?.setOpacity(0);
-          });
-          for (let i of Object.entries(data.data)) {
-            let item = area_group.find(
-              (item) =>
-                item.options.group[0] == i[0] && item.options.group[1] == i[1],
-            );
-            if (item) {
-              item?.setOpacity && item?.setOpacity(1);
-            }
-          }
-          break;
-        //切换须弥的诸法丛林/千壑沙地/苍漠囿土地区的层级显示
-        case 0:
-        case 2:
-        case 3:
-          area_group = this.xumi_underground_overlaygroup.get(area).getLayers();
-          for (let i of Object.entries(data.data)) {
-            let arr = [];
-            for (let item of area_group) {
-              if (item.options.group) {
-                if (item.options.group[0] == i[0]) {
-                  arr.push(item);
-                }
-              }
-              for (let j of arr) {
-                j?.setOpacity && j?.setOpacity(1);
-                if (j.options.group[1] != i[1]) {
-                  j?.setOpacity && j?.setOpacity(0.2);
-                }
-                if (i[1] == -1) {
-                  j?.setOpacity && j?.setOpacity(1);
-                }
-              }
-            }
-          }
-          break;
       }
     },
   },

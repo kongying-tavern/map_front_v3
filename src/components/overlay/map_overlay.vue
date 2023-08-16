@@ -1,9 +1,10 @@
 <script setup>
 import _ from "lodash";
 import { ref, computed, defineProps, watch } from "vue";
-import { add_map_overlay, get_map_plugin_config } from "src/api/map";
+import { add_map_overlay } from "src/api/map";
 import { layergroup_register } from "src/api/layer";
-import { map, mapTiles } from "src/pages/map";
+import { map, mapTiles } from "src/api/map_obj";
+import { map_plugin_config } from "src/api/config";
 
 const lodashTemplateOptions = {
   interpolate: /{{([\s\S]+?)}}/g,
@@ -18,7 +19,7 @@ const props = defineProps({
 
 const overlay_config = computed(() => {
   const area_code = props.area.code || "";
-  const config = get_map_plugin_config(area_code);
+  const config = (map_plugin_config.value || {})[area_code];
   return config;
 });
 
@@ -32,11 +33,8 @@ const overlay_options = computed(() => {
   return options;
 });
 
-const overlayIcon = computed(() => overlay_options.value?.panelIcon || "");
-
-const overlayIconColorDefault = "#9d9d9d";
-const overlayIconColor = computed(
-  () => overlay_options.value?.panelIconColor || overlayIconColorDefault,
+const overlayIcon = computed(() =>
+  !!overlayCardVisible.value ? "mdi-layers-outline" : "mdi-layers",
 );
 
 const overlayMaskOpacityDefault = 0.55;
@@ -285,6 +283,16 @@ watch(() => overlaySelectionIds.value, overlayRefresh);
         style="width: 350px; max-height: 30rem; overflow-y: auto"
       >
         <q-btn
+          round
+          color="white"
+          text-color="grey"
+          :icon="switch_state ? 'mdi-layers-outline' : 'mdi-layers'"
+          size="25rem"
+          @click="overlayCardVisible = false"
+        >
+          <q-tooltip> 选择地下层级 </q-tooltip>
+        </q-btn>
+        <!-- <q-btn
           dense
           flat
           color="white"
@@ -292,7 +300,7 @@ watch(() => overlaySelectionIds.value, overlayRefresh);
           icon="mdi-close"
           class="absolute-top-right"
           @click="overlayCardVisible = false"
-        />
+        /> -->
         <div
           class="q-pb-sm"
           v-for="(group, groupIndex) in overlaySelectionConfig"
