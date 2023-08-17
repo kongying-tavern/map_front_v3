@@ -99,6 +99,137 @@
   }
 }
 
+@mixin animation($options...) {
+  $browser-prefixes: (
+    '-webkit-',
+    '-moz-',
+    '-ms-',
+    '-o-',
+    ''
+  );
+  $option-default: (
+    name: animation,
+    duration: 1,
+    delay: 0,
+    direction: normal,
+    fillMode: none,
+    playState: running,
+    easingFunction: linear,
+    iterationCount: infinite,
+    pending: false,
+  );
+
+  @each $option in $options {
+    $option: map-merge($option-default, $option);
+    $name: map-get($option, name);
+    $kf: map-get($option, keyframes);
+    $kfLen: length($kf);
+    $duration: map-get($option, duration);
+    $delay: map-get($option, delay);
+    $direction: map-get($option, direction);
+    $fillMode: map-get($option, fillMode);
+    $playState: map-get($option, playState);
+    $easingFunction: map-get($option, easingFunction);
+    $iterationCount: map-get($option, iterationCount);
+    $pending: map-get($option, pending);
+
+    @each $browser-prefix in $browser-prefixes {
+      @#{$browser-prefix}keyframes #{$name} {
+        @each $frame, $props in $kf {
+          #{$frame}% {
+            @each $k, $v in $props {
+              #{$k}: #{$v};
+            }
+          }
+        }
+      }
+
+      @if $pending {
+        // 不添加动画名，用于手动设置
+        #{$browser-prefix}animation: #{$duration}s #{$easingFunction} #{$delay}s #{$iterationCount} #{$direction} #{$fillMode} #{$playState};
+      } @else {
+        #{$browser-prefix}animation: #{$duration}s #{$easingFunction} #{$delay}s #{$iterationCount} #{$direction} #{$fillMode} #{$playState} #{$name};
+      }
+    }
+  }
+}
+
+@mixin keystroke-motion {
+  $motion-x: 20rem;
+  $motion-x-time: .2;
+  $motion-y: 10rem;
+  $motion-y-time: .2;
+  $motion-rotate-deg: 90deg;
+  $motion-rotate-time: .5;
+
+  $motions: (
+    (
+      name: key_arrow_up,
+      animateProps: (
+        translate: 0 (-1 * $motion-y),
+      ),
+      duration: $motion-y-time,
+    ),
+    (
+      name: key_arrow_down,
+      animateProps: (
+        translate: 0 ($motion-y),
+      ),
+      duration: $motion-y-time,
+    ),
+    (
+      name: key_arrow_left,
+      animateProps: (
+        translate: (-1 * $motion-x) 0,
+      ),
+      duration: $motion-x-time,
+    ),
+    (
+      name: key_arrow_right,
+      animateProps: (
+        translate: ($motion-x) 0,
+      ),
+      duration: $motion-x-time,
+    ),
+    (
+      name: key_a,
+      animateProps: (
+        rotate: (-1 * $motion-rotate-deg),
+      ),
+      duration: $motion-rotate-time,
+    ),
+    (
+      name: key_b,
+      animateProps: (
+        rotate: ($motion-rotate-deg),
+      ),
+      duration: $motion-rotate-time,
+    ),
+  );
+
+  @each $motion in $motions {
+    $name: map-get($motion, name);
+    $animateProps: map-get($motion, animateProps);
+    $duration: map-get($motion, duration);
+
+    &.#{$name} {
+      @include animation(
+        (
+          name: #{$name},
+          keyframes: (
+            0: (),
+            50: $animateProps,
+            100: ()
+          ),
+          duration: $duration,
+          easingFunction: ease-in-out,
+          iterationCount: 1,
+        )
+      )
+    }
+  }
+}
+
 //各个选择器的样式
 //地区选择器的样式
 .area_selector {
@@ -228,21 +359,22 @@
         left: 360rem;
         right: 360rem;
         top: 134rem;
-
         background: linear-gradient(90deg, rgba(255, 255, 255, 0) 0%, #FFFFFF 51.04%, rgba(255, 255, 255, 0) 100%);
-        transform: rotate(-180deg);
       }
 
       .area_selector_icon {
         display: block;
         position: absolute;
-        top: 117rem;
-        left: 50%;
-        transform: translateX(-50%);
+        top: calc(50% - 20rem);
+        left: calc(50% - 20rem);
         width: 40rem;
         height: 40rem;
         background: url(/imgs/compass_icon.png) no-repeat;
         background-size: 100% 100%;
+
+        &.key_motion {
+          @include keystroke-motion;
+        }
       }
 
       .area_type_containor {

@@ -37,8 +37,15 @@
       <!-- 地区选择器的展开部分 -->
       <div class="area_selector_unfold" :class="{ on: area_selector_show }">
         <span class="area_selector_background"></span>
-        <span class="area_selector_line"></span>
-        <span class="area_selector_icon"></span>
+        <span class="area_selector_line">
+          <span
+            class="area_selector_icon"
+            :class="easterEggMotionClass"
+            ref="easterEggMotionDom"
+          >
+          </span>
+        </span>
+
         <div class="parent_selector row justify-center">
           <div class="row">
             <div
@@ -68,7 +75,7 @@
         </div>
         <!-- 展开部分的子地区部分 -->
         <div
-          class="child_selector row justify-center"
+          class="child_selector row justify-center q-mt-sm"
           :class="{
             onshow: area_selector_show,
             on: child_area_show,
@@ -101,7 +108,7 @@
 
 <script>
 import _ from "lodash";
-import { ref } from "vue";
+import { nextTick, ref } from "vue";
 import { mapStores } from "pinia";
 import { useCounterStore } from "../stores/example-store";
 import { query_area } from "../service/base_request";
@@ -117,6 +124,8 @@ export default {
 
     const easterEggMode = ref(false);
     const easterEggSequence = ref([]);
+    const easterEggMotionClass = ref([]);
+    const easterEggMotionDom = ref(null);
 
     const easterShortKeyAllow = [
       "ArrowLeft",
@@ -126,6 +135,14 @@ export default {
       "KeyA",
       "KeyB",
     ];
+    const easterShortKeyClass = {
+      ArrowLeft: "key_arrow_left",
+      ArrowRight: "key_arrow_right",
+      ArrowUp: "key_arrow_up",
+      ArrowDown: "key_arrow_down",
+      KeyA: "key_a",
+      KeyB: "key_b",
+    };
     const easterShortKeyIgnore = [
       "Tab",
       "CapsLock",
@@ -171,13 +188,31 @@ export default {
     const easterEggOffSeqLen = easterEggOffSeq.length;
     const easterEggOffSeqStr = easterEggOffSeq.join("|");
 
+    const easterEggMotionHanlder = () => {
+      console.log(123);
+      easterEggMotionClass.value = [];
+    };
+
     onKeyUp(
       (e) => {
+        easterEggMotionDom.value.removeEventListener(
+          "animationend",
+          easterEggMotionHanlder,
+        );
+        easterEggMotionDom.value.addEventListener(
+          "animationend",
+          easterEggMotionHanlder,
+        );
+
         let code = e.code || "";
         if (easterShortKeyIgnore.indexOf(code) !== -1) {
           return;
         } else if (easterShortKeyAllow.indexOf(code) !== -1) {
+          const className = easterShortKeyClass[code] || "";
+          const classArr = className ? ["key_motion", className] : [];
+
           easterEggSequence.value.push(code);
+          easterEggMotionClass.value = classArr;
         } else {
           easterEggSequence.value = [];
         }
@@ -213,7 +248,8 @@ export default {
       areaSelector,
 
       easterEggMode,
-      easterEggSequence,
+      easterEggMotionClass,
+      easterEggMotionDom,
     };
   },
   data() {
