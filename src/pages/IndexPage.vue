@@ -82,8 +82,7 @@ import { query_itemlayer_infolist } from "../service/base_request";
 import { set_Storage } from "../api/common";
 import { query_itemlayer_byid } from "../service/base_request";
 import { mapLoadConfig } from "../api/config";
-import { create_map } from "../api/map";
-import { map, mapDom } from "src/api/map_obj";
+import { map, mapDom, createMap, removeMap } from "src/api/map_obj";
 import { map_plugin_config } from "../api/config";
 
 export default {
@@ -442,8 +441,8 @@ export default {
   mounted() {
     mapLoadConfig().then(() => {
       //生成地图和点位组map对象
-      map.value?.remove();
-      map.value = create_map();
+      removeMap();
+      createMap();
       //获取地图背景所属的对象
       map.value?.eachLayer((layer) => {
         this.map_tiles = layer;

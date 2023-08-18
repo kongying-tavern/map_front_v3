@@ -116,6 +116,7 @@ import { openURL } from "quasar";
 import { onKeyUp } from "@vueuse/core";
 import { create_notify } from "src/api/common";
 import { map_web_config } from "src/api/config";
+import { createMap, removeMap } from "src/api/map_obj";
 
 export default {
   name: "AreaSelector",
@@ -189,7 +190,6 @@ export default {
     const easterEggOffSeqStr = easterEggOffSeq.join("|");
 
     const easterEggMotionHanlder = () => {
-      console.log(123);
       easterEggMotionClass.value = [];
     };
 
@@ -271,7 +271,7 @@ export default {
       this.child_area_hide = false;
     },
     //切换主地区的触发事件
-    async change_area(area) {
+    change_area(area) {
       this.selected_area = area;
       this.selected_child_area = this.area_first_child;
       this.mainStore.selected_area = this.selected_area.name;
@@ -284,6 +284,8 @@ export default {
       this.selected_child_area = area;
       this.mainStore.selected_child_area = area;
       this.area_selector_show = false;
+      removeMap();
+      createMap(area.code);
     },
     //子地区的显示隐藏
     check_child_area(e) {
