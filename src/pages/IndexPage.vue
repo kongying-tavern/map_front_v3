@@ -148,6 +148,23 @@ export default {
               value.item.typeIdList.indexOf(10) != -1 ||
               value.item.typeIdList.indexOf(11) != -1
             ) {
+              if (!this.BXGroup) {
+                this.BXGroup = L.markerClusterGroup({
+                  maxClusterRadius: function (e) {
+                    let radius_default = 80;
+                    let radius_map = {
+                      4: 100,
+                      5: 80,
+                      6: 55,
+                      7: 25,
+                    };
+                    let radius = radius_map[e] || radius_default;
+                    return radius;
+                  },
+                  iconUrl: "https://assets.yuanshen.site/icons/26.png",
+                });
+              }
+
               layergroup = subgroup_register(
                 this.BXGroup,
                 res.data.data,
@@ -174,6 +191,7 @@ export default {
               }
             });
             map.value?.addLayer(layergroup);
+            map.value?.addLayer(this.BXGroup);
             this.layergroup_map.set(value.item.itemId, layergroup);
             this.loading = false;
           });
@@ -450,20 +468,6 @@ export default {
       this.teleport_group = null;
       this.layergroup_map = new Map();
       this.teleport_map = new Map();
-      this.BXGroup = L.markerClusterGroup({
-        maxClusterRadius: function (e) {
-          let radius_default = 80;
-          let radius_map = {
-            4: 100,
-            5: 80,
-            6: 55,
-            7: 25,
-          };
-          let radius = radius_map[e] || radius_default;
-          return radius;
-        },
-        iconUrl: "https://assets.yuanshen.site/icons/26.png",
-      }).addTo(map.value);
       //点位缓存
       if (localStorage.getItem("marked_layers") == null) {
         localStorage.setItem("marked_layers", JSON.stringify([]));
