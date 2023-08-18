@@ -90,7 +90,7 @@
   var MarkerClusterGroup = (L.MarkerClusterGroup = L.FeatureGroup.extend({
     options: {
       maxClusterRadius: 24, //A cluster will cover at most this many pixels from its center
-      iconCreateFunction: null,
+      // iconCreateFunction: null,
       clusterPane: L.Marker.prototype.options.pane,
 
       spiderfyOnEveryZoom: true,
@@ -176,6 +176,7 @@
       if (!this.options.iconCreateFunction) {
         this.options.iconCreateFunction = this._defaultIconCreateFunction;
       }
+
       this._featureGroup = L.featureGroup();
       this._featureGroup.addEventParent(this);
 
@@ -1084,7 +1085,7 @@
           e.layer.getConvexHull(),
           this.options.polygonOptions,
         );
-        map.value?.addLayer(this._shownPolygon);
+        map.addLayer(this._shownPolygon);
       }
     },
 
@@ -2648,7 +2649,7 @@
 
         // Add the leg before the marker, so that in case the latter is a circleMarker, the leg is behind it.
         leg = new L.Polyline([this._latlng, newPos], legOptions);
-        map.value?.addLayer(leg);
+        map.addLayer(leg);
         m._spiderLeg = leg;
 
         // Now add the marker.
@@ -2726,7 +2727,7 @@
 
         // Add the leg before the marker, so that in case the latter is a circleMarker, the leg is behind it.
         leg = new L.Polyline([thisLayerLatLng, newPos], legOptions);
-        map.value?.addLayer(leg);
+        map.addLayer(leg);
         m._spiderLeg = leg;
 
         // Explanations: https://jakearchibald.com/2013/animated-line-drawing-svg/

@@ -1000,7 +1000,7 @@
           e.layer.getConvexHull(),
           this.options.polygonOptions,
         );
-        map.value?.addLayer(this._shownPolygon);
+        map.addLayer(this._shownPolygon);
       }
     },
 
@@ -2557,7 +2557,7 @@ Retrieved from: http://en.literateprograms.org/Quickhull_(Javascript)?oldid=1843
 
         // Add the leg before the marker, so that in case the latter is a circleMarker, the leg is behind it.
         leg = new L.Polyline([this._latlng, newPos], legOptions);
-        map.value?.addLayer(leg);
+        map.addLayer(leg);
         m._spiderLeg = leg;
 
         // Now add the marker.
@@ -2632,7 +2632,7 @@ Retrieved from: http://en.literateprograms.org/Quickhull_(Javascript)?oldid=1843
 
         // Add the leg before the marker, so that in case the latter is a circleMarker, the leg is behind it.
         leg = new L.Polyline([thisLayerLatLng, newPos], legOptions);
-        map.value?.addLayer(leg);
+        map.addLayer(leg);
         m._spiderLeg = leg;
 
         // Explanations: https://jakearchibald.com/2013/animated-line-drawing-svg/

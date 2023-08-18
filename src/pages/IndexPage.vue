@@ -452,12 +452,14 @@ export default {
       this.teleport_map = new Map();
       this.BXGroup = L.markerClusterGroup({
         maxClusterRadius: function (e) {
-          let radius = 80;
-          let radius_map = new Map([[4, 100], [(5, 80)], [(6, 55)], [(7, 25)]]);
-          if (radius_map.has(e)) {
-            radius = radius_map.get(e);
-            return radius;
-          }
+          let radius_default = 80;
+          let radius_map = {
+            4: 100,
+            5: 80,
+            6: 55,
+            7: 25,
+          };
+          let radius = radius_map[e] || radius_default;
           return radius;
         },
         iconUrl: "https://assets.yuanshen.site/icons/26.png",
