@@ -1,6 +1,15 @@
 //一些常用的普通函数
 import { Notify, Cookies } from "quasar";
 import { get_gitee_token, refresh_gitee_token } from "../service/user_request";
+const switch_area_list = [
+  "A:APPLE:2_8",
+  "A:APPLE:1_6_STG2",
+  "A:APPLE:1_6_STG1",
+  "A:LY:CENGYAN_UG",
+  "A:DQ:YUANXIAGONG",
+  "A:DQ:SANJIE",
+  "A:VELURIYAM:3_8"
+];
 // 提示框
 function create_notify(msg, type = "positive", position = "top") {
   Notify.create({
@@ -50,6 +59,7 @@ function check_gitee_tokens() {
   }
 }
 export {
+  switch_area_list,
   create_notify,
   set_Cookies,
   set_Storage,

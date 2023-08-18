@@ -79,7 +79,7 @@ import {
   layer_register,
 } from "../api/layer";
 import { query_itemlayer_infolist } from "../service/base_request";
-import { set_Storage } from "../api/common";
+import { switch_area_list, set_Storage } from "../api/common";
 import { query_itemlayer_byid } from "../service/base_request";
 import { mapLoadConfig } from "../api/config";
 import { map, mapDom, createMap, removeMap } from "src/api/map_obj";
@@ -148,23 +148,6 @@ export default {
               value.item.typeIdList.indexOf(10) != -1 ||
               value.item.typeIdList.indexOf(11) != -1
             ) {
-              if (!this.BXGroup) {
-                this.BXGroup = L.markerClusterGroup({
-                  maxClusterRadius: function (e) {
-                    let radius_default = 80;
-                    let radius_map = {
-                      4: 100,
-                      5: 80,
-                      6: 55,
-                      7: 25,
-                    };
-                    let radius = radius_map[e] || radius_default;
-                    return radius;
-                  },
-                  iconUrl: "https://assets.yuanshen.site/icons/26.png",
-                });
-              }
-
               layergroup = subgroup_register(
                 this.BXGroup,
                 res.data.data,
@@ -191,7 +174,6 @@ export default {
               }
             });
             map.value?.addLayer(layergroup);
-            map.value?.addLayer(this.BXGroup);
             this.layergroup_map.set(value.item.itemId, layergroup);
             this.loading = false;
           });
@@ -468,6 +450,18 @@ export default {
       this.teleport_group = null;
       this.layergroup_map = new Map();
       this.teleport_map = new Map();
+      this.BXGroup = L.markerClusterGroup({
+        maxClusterRadius: function (e) {
+          let radius = 80;
+          let radius_map = new Map([[4, 100], [(5, 80)], [(6, 55)], [(7, 25)]]);
+          if (radius_map.has(e)) {
+            radius = radius_map.get(e);
+            return radius;
+          }
+          return radius;
+        },
+        iconUrl: "https://assets.yuanshen.site/icons/26.png",
+      }).addTo(map.value);
       //点位缓存
       if (localStorage.getItem("marked_layers") == null) {
         localStorage.setItem("marked_layers", JSON.stringify([]));
@@ -496,12 +490,24 @@ export default {
     "mainStore.selected_area": function (val) {
       sessionStorage.setItem("area", val);
     },
-    "mainStore.selected_child_area": function (val) {
+    "mainStore.selected_child_area": function (val,oldval) {
       const plugin_config = (map_plugin_config.value || {})[val?.code];
       const plugin_extra = plugin_config?.extra || [];
       const plugin_extra_ug = plugin_extra.includes("underground");
       this.underground_show = !!plugin_extra_ug;
-
+      if (
+        switch_area_list.includes(val.code) ||
+        switch_area_list.includes(oldval.code)
+      ) {
+        this.clearall();
+        removeMap();
+        createMap(val.code);
+        this.BXGroup.addTo(map.value);
+        //获取地图背景所属的对象
+        map.value?.eachLayer((layer) => {
+          this.map_tiles = layer;
+        });
+      }
       if (this.underground_show) {
         map.value?.eachLayer((layer) => {
           this.map_tiles = layer;
