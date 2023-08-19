@@ -177,6 +177,7 @@ import {
   query_iconlist,
 } from "../service/base_request";
 import { mapSelectedItems } from "src/api/map_obj";
+import { clearLayers } from "src/api/map_obj";
 
 export default {
   name: "ItemSelector",
@@ -310,6 +311,7 @@ export default {
     //清除所有已选项
     closeall() {
       mapSelectedItems.value = [];
+      clearLayers();
     },
     // 图片路径映射表
     icon_list_cache() {
