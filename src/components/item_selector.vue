@@ -171,7 +171,6 @@
 <script>
 import { mapStores } from "pinia";
 import { useCounterStore } from "../stores/example-store";
-import { switch_area_list } from "../api/common";
 import {
   query_type,
   query_itemlist,
@@ -393,12 +392,6 @@ export default {
   watch: {
     "mainStore.selected_child_area": function (val, oldval) {
       this.get_itemlist(val.areaId);
-      if (
-        switch_area_list.includes(val.code) ||
-        switch_area_list.includes(oldval.code)
-      ) {
-      this.closeall();
-      }
     },
   },
 };

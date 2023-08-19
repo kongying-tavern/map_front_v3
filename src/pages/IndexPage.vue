@@ -79,10 +79,10 @@ import {
   layer_register,
 } from "../api/layer";
 import { query_itemlayer_infolist } from "../service/base_request";
-import { switch_area_list, set_Storage } from "../api/common";
+import { set_Storage } from "../api/common";
 import { query_itemlayer_byid } from "../service/base_request";
 import { mapLoadConfig } from "../api/config";
-import { map, mapDom, createMap, removeMap } from "src/api/map_obj";
+import { map, mapDom, createMap } from "src/api/map_obj";
 import { map_plugin_config } from "../api/config";
 
 export default {
@@ -441,7 +441,6 @@ export default {
   mounted() {
     mapLoadConfig().then(() => {
       //生成地图和点位组map对象
-      removeMap();
       createMap();
       //获取地图背景所属的对象
       map.value?.eachLayer((layer) => {
@@ -490,24 +489,22 @@ export default {
     "mainStore.selected_area": function (val) {
       sessionStorage.setItem("area", val);
     },
-    "mainStore.selected_child_area": function (val,oldval) {
+    "mainStore.selected_child_area": function (val, oldval) {
       const plugin_config = (map_plugin_config.value || {})[val?.code];
       const plugin_extra = plugin_config?.extra || [];
       const plugin_extra_ug = plugin_extra.includes("underground");
       this.underground_show = !!plugin_extra_ug;
-      if (
-        switch_area_list.includes(val.code) ||
-        switch_area_list.includes(oldval.code)
-      ) {
+
+      const { redrawMap } = createMap(val.code);
+      if (redrawMap) {
         this.clearall();
-        removeMap();
-        createMap(val.code);
         this.BXGroup.addTo(map.value);
         //获取地图背景所属的对象
         map.value?.eachLayer((layer) => {
           this.map_tiles = layer;
         });
       }
+
       if (this.underground_show) {
         map.value?.eachLayer((layer) => {
           this.map_tiles = layer;
