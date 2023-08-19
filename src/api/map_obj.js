@@ -28,9 +28,11 @@ export const createMap = (areaCode = "提瓦特-base0") => {
     redrawMap = false;
   } else {
     // 不同底图，需要重绘地图
+    clearLayers();
     removeMap();
     const { map: mapObj } = create_map(mapSettings, tiles);
     map.value = mapObj;
+    clearSelectedItems();
     redrawMap = true;
   }
 
@@ -40,4 +42,20 @@ export const createMap = (areaCode = "提瓦特-base0") => {
 
 export const removeMap = () => {
   map.value?.remove();
+};
+
+/** 图层映射 */
+export const mapLayerMap = ref(new Map());
+
+export const clearLayers = () => {
+  for (let i of mapLayerMap.value?.values()) {
+    map.value?.removeLayer(i);
+  }
+};
+
+/** 已选择的物品 */
+export const mapSelectedItems = ref([]);
+
+export const clearSelectedItems = () => {
+  mapSelectedItems.value = [];
 };

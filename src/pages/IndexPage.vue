@@ -13,7 +13,6 @@
     <!-- 物品筛选器 -->
     <item-selector
       @callback="item_selector_callback"
-      @clear="clearall"
       @refresh="refresh_layergroup"
     ></item-selector>
     <!-- 地图上点位的弹窗 -->
@@ -82,7 +81,7 @@ import { query_itemlayer_infolist } from "../service/base_request";
 import { set_Storage } from "../api/common";
 import { query_itemlayer_byid } from "../service/base_request";
 import { mapLoadConfig } from "../api/config";
-import { map, mapDom, createMap } from "src/api/map_obj";
+import { map, mapDom, mapLayerMap, createMap } from "src/api/map_obj";
 import { map_plugin_config } from "../api/config";
 
 export default {
@@ -134,7 +133,7 @@ export default {
       //添加点位组
       if (value.type == 1) {
         //如果没有点位缓存，则请求点位信息
-        if (!this.layergroup_map.has(value.item.itemId)) {
+        if (!mapLayerMap.value?.has(value.item.itemId)) {
           this.loading = true;
           query_itemlayer_infolist({
             typeIdList: [],
@@ -174,12 +173,12 @@ export default {
               }
             });
             map.value?.addLayer(layergroup);
-            this.layergroup_map.set(value.item.itemId, layergroup);
+            mapLayerMap.value?.set(value.item.itemId, layergroup);
             this.loading = false;
           });
           //否则使用缓存，直接从点位组map对象中调取队应的点位组
         } else {
-          let layergroup = this.layergroup_map.get(value.item.itemId);
+          let layergroup = mapLayerMap.value?.get(value.item.itemId);
           layergroup.eachLayer((layer) => {
             layer_mark(layer, "on");
             let arr = JSON.parse(localStorage.getItem("marked_layers"));
@@ -192,20 +191,19 @@ export default {
         }
         //移除点位组
       } else {
-        let layergroup = this.layergroup_map.get(value.item.itemId);
+        let layergroup = mapLayerMap.value?.get(value.item.itemId);
         map.value?.removeLayer(layergroup);
       }
     },
     //刷新点位的状态
     refresh_layergroup() {
       this.loading = true;
-      this.clearall();
-      for (let i of this.layergroup_map.keys()) {
+      for (let i of mapLayerMap.value?.keys()) {
         if (
           this.mainStore.selected_item_list.find((item) => item.itemId == i) !=
           undefined
         ) {
-          let layergroup = this.layergroup_map.get(i);
+          let layergroup = mapLayerMap.value?.get(i);
           let arr = JSON.parse(localStorage.getItem("marked_layers"));
           layergroup.eachLayer((layer) => {
             layer_mark(layer, "on");
@@ -214,16 +212,10 @@ export default {
               layer_mark(layer);
             }
           });
-          map.value?.addLayer(this.layergroup_map.get(i));
+          map.value?.addLayer(mapLayerMap.value?.get(i));
         }
       }
       this.loading = false;
-    },
-    //清除所有点位
-    clearall() {
-      for (let i of this.layergroup_map.values()) {
-        map.value?.removeLayer(i);
-      }
     },
     //点位的计数功能
     mark_count() {
@@ -447,7 +439,6 @@ export default {
         this.map_tiles = layer;
       });
       this.teleport_group = null;
-      this.layergroup_map = new Map();
       this.teleport_map = new Map();
       this.BXGroup = L.markerClusterGroup({
         maxClusterRadius: function (e) {
@@ -497,7 +488,6 @@ export default {
 
       const { redrawMap } = createMap(val.code);
       if (redrawMap) {
-        this.clearall();
         this.BXGroup.addTo(map.value);
         //获取地图背景所属的对象
         map.value?.eachLayer((layer) => {

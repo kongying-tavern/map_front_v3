@@ -176,8 +176,15 @@ import {
   query_itemlist,
   query_iconlist,
 } from "../service/base_request";
+import { mapSelectedItems } from "src/api/map_obj";
+
 export default {
   name: "ItemSelector",
+  setup() {
+    return {
+      selected_item_list: mapSelectedItems,
+    };
+  },
   data() {
     return {
       icon_list: [],
@@ -189,7 +196,6 @@ export default {
       type_list_map: new Map(),
       chest_type: 10,
       item_loading: false,
-      selected_item_list: [],
       item_list_map: new Map(),
       item_list: [],
       teleport_list: [],
@@ -263,48 +269,47 @@ export default {
       //宝箱的两种属性是互斥的，只能选择其中一种
       if (value.typeIdList.includes(10)) {
         let array = [];
-        for (let i of this.selected_item_list) {
+        for (let i of mapSelectedItems.value) {
           if (i.typeIdList.includes(11) == false) {
             array.push(i);
           }
         }
-        this.selected_item_list = array;
+        mapSelectedItems.value = array;
       } else if (value.typeIdList.includes(11)) {
         let array = [];
-        for (let i of this.selected_item_list) {
+        for (let i of mapSelectedItems.value) {
           if (i.typeIdList.includes(10) == false) {
             array.push(i);
           }
         }
-        this.selected_item_list = array;
+        mapSelectedItems.value = array;
       }
       //将已选项添加进数组
-      let index = this.selected_item_list.findIndex(
+      let index = mapSelectedItems.value.findIndex(
         (item) => item.itemId == value.itemId,
       );
       if (index == -1) {
         value.area = this.mainStore.selected_child_area.name;
-        this.selected_item_list.push(value);
+        mapSelectedItems.value.push(value);
         this.mainStore.changeitem = {
           item: value,
           type: 1,
         };
       } else {
         this.mainStore.changeitem = {
-          item: this.selected_item_list[index],
+          item: mapSelectedItems.value[index],
           type: 0,
         };
-        this.selected_item_list.splice(index, 1);
+        mapSelectedItems.value.splice(index, 1);
       }
-      this.mainStore.selected_item_list = this.selected_item_list;
+      this.mainStore.selected_item_list = mapSelectedItems.value;
       if (value.typeIdList.includes(10) || value.typeIdList.includes(11)) {
         this.$emit("refresh");
       }
     },
     //清除所有已选项
     closeall() {
-      this.selected_item_list = [];
-      this.$emit("clear");
+      mapSelectedItems.value = [];
     },
     // 图片路径映射表
     icon_list_cache() {
