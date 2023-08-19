@@ -75,9 +75,10 @@ function create_map_config(area_config_code = "") {
   const tiles_extend_name = tiles_config.extend || "";
   if (tiles_extend_name) {
     tiles_config = _.defaultsDeep(
-      tiles_config_default,
+      {},
       tiles_config,
       map_tiles_config.value[tiles_extend_name] || {},
+      tiles_config_default,
     );
   }
 
