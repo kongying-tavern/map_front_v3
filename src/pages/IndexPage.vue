@@ -403,6 +403,10 @@ export default {
     //切换点位的显隐状态
     opacity_switch() {
       this.opacity_state = !this.opacity_state;
+      document.documentElement.style.setProperty(
+        "--opacity",
+        this.opacity_state ? 1 : 0.3,
+      );
       let layers = document.getElementsByClassName("leaflet-shadow-pane");
       let imgs = document.getElementsByClassName("leaflet-marker-pane");
       if (!this.opacity_state) {
