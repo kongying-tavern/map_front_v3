@@ -30,7 +30,8 @@ export const createMap = (areaCode = "提瓦特-base0") => {
     // 不同底图，需要重绘地图
     clearLayers();
     removeMap();
-    const { map: mapObj } = create_map(mapSettings, tiles);
+    const { map: mapObj, tiles: tilesObj } = create_map(mapSettings, tiles);
+    mapTiles.value = tilesObj;
     map.value = mapObj;
     clearSelectedItems();
     redrawMap = true;
