@@ -4,10 +4,17 @@
 import * as L from "leaflet";
 import "leaflet/dist/leaflet.css";
 import _ from "lodash";
-import { map_tiles_config } from "./config";
-import { mapDom, mapTiles } from "./map_obj";
+import { map_tiles_config, map_plugin_config } from "./config";
+import { mapDom } from "./map_obj";
 
 //初始化地图中心和地图尺寸
+/**
+ * 获取地图插件配置
+ */
+function get_map_plugin_config(area_code = "") {
+  return map_plugin_config.value[area_code] || {};
+}
+
 /**
  * 注册地图瓦片
  * @param {string} area_code 地图别名 twt31：大世界 qd28：梦想群岛 yxg2：渊下宫/三界路飨祭 qd:群岛1 qd2:群岛2
@@ -73,14 +80,12 @@ function create_map_config(area_config_code = "") {
 
   // 继承配置
   const tiles_extend_name = tiles_config.extend || "";
-  if (tiles_extend_name) {
-    tiles_config = _.defaultsDeep(
-      {},
-      tiles_config,
-      map_tiles_config.value[tiles_extend_name] || {},
-      tiles_config_default,
-    );
-  }
+  tiles_config = _.defaultsDeep(
+    {},
+    tiles_config,
+    map_tiles_config.value[tiles_extend_name] || {},
+    tiles_config_default,
+  );
 
   return {
     tiles_key,
@@ -184,6 +189,7 @@ function add_map_overlay(imageUrl, imageBounds) {
 }
 
 export {
+  get_map_plugin_config,
   create_map_layer,
   create_map_config,
   create_map_tiles,

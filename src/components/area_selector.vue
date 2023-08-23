@@ -7,7 +7,7 @@
       <div
         class="area_selector_fold"
         @click="switch_area_show"
-        v-if="selected_area.name != undefined"
+        v-if="area_selected_top.name != undefined"
       >
         <div class="row">
           <div class="area_info">
@@ -16,19 +16,21 @@
                 <span class="area_switch_btn_icon"></span>
                 <span class="area_switch_btn_text">更换地区</span>
               </div>
-              <div class="area_name">{{ selected_area.name }}</div>
+              <div class="area_name">{{ area_selected_top.name }}</div>
             </div>
             <div class="selected_area_child_name">
-              当前选择 - {{ selected_child_area.name }}
+              当前选择 - {{ area_selected_child.name }}
             </div>
           </div>
           <div class="area_icon">
             <div
               class="color_bg"
-              :class="`area_${get_css_code(selected_area.code)}`"
+              :class="`area_${get_css_code(area_selected_top.code)}`"
             ></div>
             <q-img
-              :src="`/imgs/icons/${get_css_code(selected_area.code)}_off.png`"
+              :src="`/imgs/icons/${get_css_code(
+                area_selected_top.code,
+              )}_off.png`"
               spinner-color="white"
             />
           </div>
@@ -52,10 +54,10 @@
               v-for="(item, index) in area_list_top"
               :key="index"
               class="row area_type_containor items-center justify-center"
-              :class="{ on: selected_area.areaId == item.areaId }"
+              :class="{ on: area_selected_top.areaId == item.areaId }"
               @click="change_area(item)"
               v-on:mouseenter="
-                check_child_area(selected_area.areaId == item.areaId)
+                check_child_area(area_selected_top.areaId == item.areaId)
               "
               v-on:mouseleave="check_child_area(true)"
             >
@@ -84,13 +86,13 @@
         >
           <div class="col-12 row justify-center">
             <div class="area_name">
-              <span>{{ selected_area.name }}</span>
+              <span>{{ area_selected_top.name }}</span>
             </div>
           </div>
           <div class="child_area_list col-6 row justify-center items-center">
             <div
               class="child_area col-shrink"
-              :class="{ on: selected_child_area.areaId == item.areaId }"
+              :class="{ on: area_selected_child.areaId == item.areaId }"
               v-for="(item, index) in area_list_child"
               :key="index"
               @click="change_child_area(item)"
@@ -108,155 +110,56 @@
 
 <script>
 import _ from "lodash";
-import { nextTick, ref } from "vue";
 import { mapStores } from "pinia";
 import { useCounterStore } from "../stores/example-store";
 import { query_area } from "../service/base_request";
 import { openURL } from "quasar";
-import { onKeyUp } from "@vueuse/core";
-import { create_notify } from "src/api/common";
-import { map_web_config } from "src/api/config";
-import { map, createMap, removeMap } from "src/api/map_obj";
+import {
+  easterEggMode,
+  easterEggMotionClass,
+  easterEggMotionDom,
+  easterEggKeyBind,
+} from "src/api/easter-egg";
+import {
+  areaSelectorDom,
+  area_selected_top,
+  area_selected_child,
+  area_list,
+  area_group,
+  area_list_top,
+  area_list_top_full,
+  area_first_top,
+  area_list_child,
+  area_list_child_full,
+  area_first_child,
+} from "src/api/area";
 
 export default {
   name: "AreaSelector",
   setup() {
-    const areaSelector = ref(null);
-
-    const easterEggMode = ref(false);
-    const easterEggSequence = ref([]);
-    const easterEggMotionClass = ref([]);
-    const easterEggMotionDom = ref(null);
-
-    const easterShortKeyAllow = [
-      "ArrowLeft",
-      "ArrowRight",
-      "ArrowUp",
-      "ArrowDown",
-      "KeyA",
-      "KeyB",
-    ];
-    const easterShortKeyClass = {
-      ArrowLeft: "key_arrow_left",
-      ArrowRight: "key_arrow_right",
-      ArrowUp: "key_arrow_up",
-      ArrowDown: "key_arrow_down",
-      KeyA: "key_a",
-      KeyB: "key_b",
-    };
-    const easterShortKeyIgnore = [
-      "Tab",
-      "CapsLock",
-      "ShiftLeft",
-      "ShiftRight",
-      "AltLeft",
-      "AltRight",
-      "ControlLeft",
-      "ControlRight",
-      "Space",
-      "Enter",
-    ];
-    const easterEggOnSeq = [
-      "ArrowUp",
-      "ArrowUp",
-      "ArrowDown",
-      "ArrowDown",
-      "ArrowLeft",
-      "ArrowRight",
-      "ArrowLeft",
-      "ArrowRight",
-      "KeyB",
-      "KeyA",
-      "KeyB",
-      "KeyA",
-    ];
-    const easterEggOnSeqLen = easterEggOnSeq.length;
-    const easterEggOnSeqStr = easterEggOnSeq.join("|");
-    const easterEggOffSeq = [
-      "ArrowDown",
-      "ArrowDown",
-      "ArrowUp",
-      "ArrowUp",
-      "ArrowRight",
-      "ArrowLeft",
-      "ArrowRight",
-      "ArrowLeft",
-      "KeyA",
-      "KeyB",
-      "KeyA",
-      "KeyB",
-    ];
-    const easterEggOffSeqLen = easterEggOffSeq.length;
-    const easterEggOffSeqStr = easterEggOffSeq.join("|");
-
-    const easterEggMotionHanlder = () => {
-      easterEggMotionClass.value = [];
-    };
-
-    onKeyUp(
-      (e) => {
-        easterEggMotionDom.value.removeEventListener(
-          "animationend",
-          easterEggMotionHanlder,
-        );
-        easterEggMotionDom.value.addEventListener(
-          "animationend",
-          easterEggMotionHanlder,
-        );
-
-        let code = e.code || "";
-        if (easterShortKeyIgnore.indexOf(code) !== -1) {
-          return;
-        } else if (easterShortKeyAllow.indexOf(code) !== -1) {
-          const className = easterShortKeyClass[code] || "";
-          const classArr = className ? ["key_motion", className] : [];
-
-          easterEggSequence.value.push(code);
-          easterEggMotionClass.value = classArr;
-        } else {
-          easterEggSequence.value = [];
-        }
-
-        if (
-          easterEggSequence.value.length >= easterEggOnSeqLen &&
-          easterEggSequence.value.slice(-easterEggOnSeqLen).join("|") ===
-            easterEggOnSeqStr
-        ) {
-          if (!easterEggMode.value) {
-            create_notify("输入秘笈成功！开启隐藏模式！", "", "bottom");
-          }
-          easterEggMode.value = true;
-          easterEggSequence.value = [];
-        } else if (
-          easterEggSequence.value.length >= easterEggOffSeqLen &&
-          easterEggSequence.value.slice(-easterEggOffSeqLen).join("|") ===
-            easterEggOffSeqStr
-        ) {
-          if (easterEggMode.value) {
-            create_notify("输入秘笈成功！关闭隐藏模式！", "", "bottom");
-          }
-          easterEggMode.value = false;
-          easterEggSequence.value = [];
-        }
-      },
-      {
-        target: areaSelector.value,
-      },
-    );
+    easterEggKeyBind();
 
     return {
-      areaSelector,
-
       easterEggMode,
       easterEggMotionClass,
       easterEggMotionDom,
+
+      areaSelectorDom,
+
+      area_selected_top,
+      area_selected_child,
+      area_list,
+      area_group,
+      area_list_top,
+      area_list_top_full,
+      area_first_top,
+      area_list_child,
+      area_list_child_full,
+      area_first_child,
     };
   },
   data() {
     return {
-      selected_area: {},
-      selected_child_area: {},
-      area_list: [],
       area_selector_show: false,
       child_area_show: true,
       child_area_hide: false,
@@ -272,16 +175,16 @@ export default {
     },
     //切换主地区的触发事件
     change_area(area) {
-      this.selected_area = area;
-      this.selected_child_area = this.area_first_child;
-      this.mainStore.selected_area = this.selected_area.name;
-      this.mainStore.selected_child_area = this.selected_child_area;
+      this.area_selected_top = area;
+      this.area_selected_child = this.area_first_child;
+      this.mainStore.selected_area = this.area_selected_top.name;
+      this.mainStore.selected_child_area = this.area_selected_child;
       this.child_area_show = true;
       this.child_area_hide = false;
     },
     //切换子地区的触发事件
     change_child_area(area) {
-      this.selected_child_area = area;
+      this.area_selected_child = area;
       this.mainStore.selected_child_area = area;
       this.area_selector_show = false;
     },
@@ -303,8 +206,8 @@ export default {
     }).then((res) => {
       this.area_list = res.data.data || [];
       this.mainStore.area_list = this.area_list;
-      this.selected_area = this.area_first_top;
-      this.change_area(this.selected_area);
+      this.area_selected_top = this.area_first_top;
+      this.change_area(this.area_selected_top);
       this.area_selector_show = true;
     });
   },
@@ -312,39 +215,6 @@ export default {
     //请参考pinia不使用组合式api的用法的说明文档
     //https://pinia.web3doc.top/cookbook/options-api.html
     ...mapStores(useCounterStore),
-    area_group() {
-      let group = _.chain(this.area_list)
-        .filter((v) => {
-          const block_areas = map_web_config.value?.blockArea || [];
-          return block_areas.indexOf(v.code) === -1;
-        })
-        .groupBy("parentId")
-        .mapValues((v) => _.sortBy(v, (area) => -area.sortIndex))
-        .value();
-      return group;
-    },
-    area_list_top() {
-      return this.easterEggMode
-        ? this.area_list_top_full
-        : _.filter(this.area_list_top_full, (v) => v.hiddenFlag !== 3);
-    },
-    area_list_top_full() {
-      return this.area_group[-1] || [];
-    },
-    area_first_top() {
-      return this.area_list_top[0] || {};
-    },
-    area_list_child() {
-      return this.easterEggMode
-        ? this.area_list_child_full
-        : _.filter(this.area_list_child_full, (v) => v.hiddenFlag !== 3);
-    },
-    area_list_child_full() {
-      return this.area_group[this.selected_area?.areaId] || [];
-    },
-    area_first_child() {
-      return this.area_list_child[0] || {};
-    },
   },
 };
 </script>

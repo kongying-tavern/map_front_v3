@@ -55,7 +55,7 @@
     <!-- 左上侧各种开关 -->
     <extra-btn @load="load_savedata" @loading="toggle_loading"></extra-btn>
     <div class="area_components">
-      <level-switch :area="mainStore.selected_child_area || {}"></level-switch>
+      <!-- <level-switch :area="mainStore.selected_child_area || {}"></level-switch> -->
     </div>
     <q-inner-loading :showing="loading" style="z-index: 2000">
       <q-spinner-gears size="50rem" color="primary" />
