@@ -1,10 +1,15 @@
 <script setup>
 import _ from "lodash";
 import { ref, computed, defineProps, watch } from "vue";
-import { add_map_overlay } from "src/api/map";
-import { layergroup_register } from "src/api/layer";
-import { map, mapTiles } from "src/api/map_obj";
 import { map_plugin_config } from "src/api/config";
+import {
+  add_map_overlay,
+  create_map_config,
+  get_map_plugin_config,
+} from "src/api/map";
+import { layergroup_register } from "src/api/layer";
+import { area_map_code } from "src/api/area";
+import { map, mapOptions, mapTiles } from "src/api/map_obj";
 
 const lodashTemplateOptions = {
   interpolate: /{{([\s\S]+?)}}/g,
@@ -19,7 +24,7 @@ const props = defineProps({
 
 const overlay_config = computed(() => {
   const area_code = props.area.code || "";
-  const config = (map_plugin_config.value || {})[area_code] || {};
+  const config = get_map_plugin_config(area_code);
   return config;
 });
 
@@ -33,14 +38,13 @@ const overlay_options = computed(() => {
   return options;
 });
 
-const overlayIcon = computed(() =>
-  !!overlayCardVisible.value ? "mdi-layers" : "mdi-layers-outline",
-);
-const overlayIconBgColor = computed(() =>
-  !!overlayCardVisible.value ? "blue" : "white",
-);
-const overlayIconTextColor = computed(() =>
-  !!overlayCardVisible.value ? "white" : "grey",
+const overlay_code = computed(() => mapOptions.value?.code || "");
+
+const overlayIcon = computed(() => overlay_options.value?.panelIcon || "");
+
+const overlayIconColorDefault = "#9d9d9d";
+const overlayIconColor = computed(
+  () => overlay_options.value?.panelIconColor || overlayIconColorDefault,
 );
 
 const overlayMaskOpacityDefault = 0.55;
@@ -58,158 +62,215 @@ const overlayMaskOpacity = computed(() => {
 });
 
 const overlayBaseConfig = computed(() => {
-  const overlayList = [];
+  const overlayConfigList = [];
 
-  const globalUrlTemplate = overlay_options.value.urlTemplate || "";
-  const globalIdTemplate =
-    overlay_options.value.idTemplate || "{{groupValue}}#{{itemValue}}";
-  const globalMultiple = overlay_options.value.multiple;
+  for (const configAreaCode in map_plugin_config.value) {
+    const overlayList = [];
 
-  const configOverlayList = overlay_options.value.overlays || [];
-  for (const configGroup of configOverlayList) {
-    const groupLabel = configGroup.label || "";
-    const groupValue = configGroup.value || "";
-    const groupUrl = configGroup.url || "";
-    const groupUrlTemplate = configGroup.urlTemplate || "";
-    const groupBounds = configGroup.bounds;
-    const groupMultiple = configGroup.multiple;
-    const overlayMultiple = Boolean(groupMultiple ?? globalMultiple);
+    const { tiles_config: tilesConfig } = create_map_config(configAreaCode);
+    const configTilesCode = tilesConfig.code || "";
+    // 如果底图不一致则不添加数据
+    if (configTilesCode !== overlay_code.value) {
+      continue;
+    }
 
-    const groupChildren = configGroup.children || [];
-    const overlayChildren = [];
-    for (const configItem of groupChildren) {
-      const itemLabel = configItem.label || "";
-      const itemValue = configItem.value || "";
-      const itemUrl = configItem.url || "";
-      const itemUrlTemplate = configItem.urlTemplate || "";
-      const itemChunks = configItem.chunks || [{}];
-      const itemBounds = configItem.bounds;
+    const configAreaData = area_map_code.value[configAreaCode] || {};
+    const configPluginConfig = get_map_plugin_config(configAreaCode);
+    const configOverlay = Boolean(configPluginConfig.overlay);
+    const configOptions = configOverlay
+      ? configPluginConfig?.overlayConfig || {}
+      : {};
 
-      // 叠层渲染数据
-      const overlayDataPackItem = {
-        groupLabel,
-        groupValue,
-        itemLabel,
-        itemValue,
-      };
+    const globalUrlTemplate = configOptions.urlTemplate || "";
+    const globalIdTemplate =
+      configOptions.idTemplate || "{{groupValue}}#{{itemValue}}";
+    const globalMultiple = configOptions.multiple;
 
-      const overlayChunks = [];
-      for (const configChunk of itemChunks) {
-        const chunkLabel = configChunk.label || "";
-        const chunkValue = configChunk.value || "";
-        const chunkUrl = configChunk.url || "";
-        const chunkBounds = configChunk.bounds;
+    const configOverlayList = configOptions.overlays || [];
+    for (const configGroup of configOverlayList) {
+      const groupLabel = configGroup.label || "";
+      const groupValue = configGroup.value || "";
+      const groupUrl = configGroup.url || "";
+      const groupUrlTemplate = configGroup.urlTemplate || "";
+      const groupBounds = configGroup.bounds;
+      const groupMultiple = configGroup.multiple;
+      const overlayMultiple = Boolean(groupMultiple ?? globalMultiple);
+
+      const groupChildren = configGroup.children || [];
+      const overlayChildren = [];
+      for (const configItem of groupChildren) {
+        const itemLabel = configItem.label || "";
+        const itemValue = configItem.value || "";
+        const itemUrl = configItem.url || "";
+        const itemUrlTemplate = configItem.urlTemplate || "";
+        const itemChunks = configItem.chunks || [{}];
+        const itemBounds = configItem.bounds;
 
         // 叠层渲染数据
-        const overlayDataPackChunk = {
+        const overlayDataPackItem = {
           groupLabel,
           groupValue,
           itemLabel,
           itemValue,
-          chunkLabel,
-          chunkValue,
         };
 
-        // 判断边界是否有效
-        const overlayBounds = chunkBounds || itemBounds || groupBounds;
-        if (
-          !overlayBounds ||
-          !_.isArray(overlayBounds) ||
-          overlayBounds.length !== 2
-        ) {
+        const overlayChunks = [];
+        for (const configChunk of itemChunks) {
+          const chunkLabel = configChunk.label || "";
+          const chunkValue = configChunk.value || "";
+          const chunkUrl = configChunk.url || "";
+          const chunkBounds = configChunk.bounds;
+
+          // 叠层渲染数据
+          const overlayDataPackChunk = {
+            groupLabel,
+            groupValue,
+            itemLabel,
+            itemValue,
+            chunkLabel,
+            chunkValue,
+          };
+
+          // 判断边界是否有效
+          const overlayBounds = chunkBounds || itemBounds || groupBounds;
+          if (
+            !overlayBounds ||
+            !_.isArray(overlayBounds) ||
+            overlayBounds.length !== 2
+          ) {
+            continue;
+          }
+
+          // 判断地址是否存在
+          let overlayUrl = chunkUrl || itemUrl || groupUrl;
+          if (!chunkUrl) {
+            // 构造地图地址
+            const overlayUrlTemplate =
+              itemUrlTemplate || groupUrlTemplate || globalUrlTemplate || "";
+            const overlayUrlRender = _.template(
+              overlayUrlTemplate,
+              lodashTemplateOptions,
+            );
+            overlayUrl = overlayUrlRender(overlayDataPackChunk);
+          }
+
+          if (!overlayUrl) {
+            continue;
+          }
+
+          overlayChunks.push({
+            label: chunkLabel,
+            value: chunkValue,
+            url: overlayUrl,
+            bounds: overlayBounds,
+          });
+        }
+
+        // 判断是否有叠图配置
+        if (!_.isArray(overlayChunks) || overlayChunks.length <= 0) {
           continue;
         }
 
-        // 判断地址是否存在
-        let overlayUrl = chunkUrl || itemUrl || groupUrl;
-        if (!chunkUrl) {
-          // 构造地图地址
-          const overlayUrlTemplate =
-            itemUrlTemplate || groupUrlTemplate || globalUrlTemplate || "";
-          const overlayUrlRender = _.template(
-            overlayUrlTemplate,
-            lodashTemplateOptions,
-          );
-          overlayUrl = overlayUrlRender(overlayDataPackChunk);
-        }
+        // 自动生成ID
+        const overlayIdRender = _.template(
+          globalIdTemplate,
+          lodashTemplateOptions,
+        );
+        const overlayId = overlayIdRender(overlayDataPackItem);
 
-        if (!overlayUrl) {
-          continue;
-        }
-
-        overlayChunks.push({
-          label: chunkLabel,
-          value: chunkValue,
-          url: overlayUrl,
-          bounds: overlayBounds,
+        overlayChildren.push({
+          id: overlayId,
+          label: itemLabel,
+          value: itemValue,
+          chunks: overlayChunks,
         });
       }
 
-      // 判断是否有叠图配置
-      if (!_.isArray(overlayChunks) || overlayChunks.length <= 0) {
-        continue;
-      }
-
-      // 自动生成ID
-      const overlayIdRender = _.template(
-        globalIdTemplate,
-        lodashTemplateOptions,
-      );
-      const overlayId = overlayIdRender(overlayDataPackItem);
-
-      overlayChildren.push({
-        id: overlayId,
-        label: itemLabel,
-        value: itemValue,
-        chunks: overlayChunks,
+      overlayList.push({
+        label: groupLabel,
+        value: groupValue,
+        multiple: overlayMultiple,
+        children: overlayChildren,
       });
     }
 
-    overlayList.push({
-      label: groupLabel,
-      value: groupValue,
-      multiple: overlayMultiple,
-      children: overlayChildren,
-    });
+    // 如果为空则不加入数据
+    if (!_.isEmpty(overlayList)) {
+      overlayConfigList.push({
+        area: configAreaData,
+        overlays: overlayList,
+      });
+    }
   }
 
-  return overlayList;
+  return overlayConfigList;
 });
 
-const overlaySelectionConfig = computed(() => {
-  const configList = [];
-  for (const configGroup of overlayBaseConfig.value) {
-    const configGroupNew = _.cloneDeep(configGroup);
-    const configGroupChildren = _.map(configGroup.children || [], (child) => {
-      child.value = child.id;
-      return child;
-    });
-    configGroupNew.children = configGroupChildren;
-    configList.push(configGroupNew);
-  }
+/** Quasar only */
+const overlaySelectionConfig = computed(() =>
+  _.chain(overlayBaseConfig.value)
+    .map((section) => {
+      const sectionNew = _.cloneDeep(section);
+      const sectionOverlays = _.chain(sectionNew.overlays)
+        .map((group) => {
+          const children = _.chain(group.children || [])
+            .map((item) => {
+              item.value = item.id || "";
+              return item;
+            })
+            .value();
 
-  return configList;
-});
+          group.children = children;
+          return group;
+        })
+        .value();
+
+      sectionNew.overlays = sectionOverlays;
+      return sectionNew;
+    })
+    .value(),
+);
+/** Quasar only */
 
 const overlayCardVisible = ref(false);
 
-const overlaySelections = ref([]);
+const overlayAreaTab = ref("");
+
+const overlaySelections = ref({});
 
 const overlaySelectionIds = computed(() =>
   _.chain(overlaySelections.value)
+    .values()
     .flattenDeep()
     .filter((v) => v)
+    .uniq()
+    .value(),
+);
+
+const overlaySelectionCounts = computed(() =>
+  _.chain(overlaySelections.value)
+    .mapValues(
+      (v) =>
+        _.chain(v)
+          .flattenDeep()
+          .filter((v) => v)
+          .uniq()
+          .value().length,
+    )
     .value(),
 );
 
 const overlayConfigMap = computed(() => {
   const configMap = {};
-  for (const configGroup of overlayBaseConfig.value) {
-    const configGroupChildren = configGroup.children || [];
-    for (const configItem of configGroupChildren) {
-      const configItemId = configItem.id || "";
-      if (configItemId) {
-        configMap[configItemId] = configItem;
+  for (const configSection of overlayBaseConfig.value) {
+    const configOverlays = configSection?.overlays || [];
+    for (const configGroup of configOverlays) {
+      const configGroupChildren = configGroup.children || [];
+      for (const configItem of configGroupChildren) {
+        const configItemId = configItem.id || "";
+        if (configItemId) {
+          configMap[configItemId] = configItem;
+        }
       }
     }
   }
@@ -218,31 +279,53 @@ const overlayConfigMap = computed(() => {
 });
 
 const overlayInitState = computed(() => {
-  const overlayInitData = [];
-  for (const configGroup of overlayBaseConfig.value) {
-    let overlayInitValue = null;
+  const overlayInitDataMap = {};
 
-    if (configGroup.multiple) {
-      overlayInitValue = [];
-    } else {
-      const configChildren = configGroup.children || [];
-      const configChildrenFirst = configChildren[0];
+  for (const configSection of overlayBaseConfig.value) {
+    const configAreaCode = configSection?.area?.code || "";
+    const configOverlays = configSection?.overlays || [];
 
-      if (configChildrenFirst && _.isPlainObject(configChildrenFirst)) {
-        overlayInitValue = configChildrenFirst.id || "";
+    const overlayInitData = [];
+
+    for (const configGroup of configOverlays) {
+      let overlayInitValue = null;
+
+      if (configGroup.multiple) {
+        overlayInitValue = [];
+      } else {
+        const configChildren = configGroup.children || [];
+        const configChildrenFirst = configChildren[0];
+
+        if (configChildrenFirst && _.isPlainObject(configChildrenFirst)) {
+          overlayInitValue = configChildrenFirst.id || "";
+        }
       }
+
+      overlayInitData.push(overlayInitValue);
     }
 
-    overlayInitData.push(overlayInitValue);
+    overlayInitDataMap[configAreaCode] = overlayInitData;
   }
 
-  return overlayInitData;
+  return overlayInitDataMap;
 });
 
 const overlayLayerHandle = ref(layergroup_register());
 
 const overlayInit = () => {
-  overlaySelections.value = overlayInitState.value;
+  overlayAreaTab.value = props.area?.code || "";
+  overlaySelections.value = _.cloneDeep(overlayInitState.value);
+};
+
+const overlayInitGroup = (areaCode = "", groupIndex = -1) => {
+  if (
+    overlaySelections.value[areaCode] &&
+    overlaySelections.value[areaCode][groupIndex]
+  ) {
+    overlaySelections.value[areaCode][groupIndex] = _.cloneDeep(
+      (overlayInitState.value[areaCode] || {})[groupIndex],
+    );
+  }
 };
 
 const overlayRefresh = () => {
@@ -251,12 +334,20 @@ const overlayRefresh = () => {
 
   overlayLayerHandle.value?.clearLayers();
 
+  const matchedValues = new Set();
   // 添加新层
   for (const overlaySelectionId of overlaySelectionIds.value) {
     const overlayLayerConfig = overlayConfigMap.value[overlaySelectionId];
     if (overlayLayerConfig) {
+      const overlayLayerValue = overlayLayerConfig.value || "";
       const overlayLayerChunks = overlayLayerConfig.chunks || [];
-      if (_.isArray(overlayLayerChunks)) {
+      if (
+        _.isArray(overlayLayerChunks) &&
+        overlayLayerValue &&
+        !matchedValues.has(overlayLayerValue)
+      ) {
+        matchedValues.add(overlayLayerValue);
+
         for (const overlayLayerChunk of overlayLayerChunks) {
           const overlayLayerUrl = overlayLayerChunk.url || "";
           const overlayLayerBounds = overlayLayerChunk.bounds;
@@ -287,10 +378,10 @@ watch(() => overlaySelectionIds.value, overlayRefresh);
       v-if="!overlayCardVisible"
       round
       color="white"
-      text-color="grey"
       :icon="overlayIcon"
       size="25rem"
       class="switchButton"
+      :style="{ color: `${overlayIconColor} !important` }"
       @click="overlayCardVisible = true"
     >
       <q-tooltip anchor="center right" self="center left">
@@ -308,21 +399,62 @@ watch(() => overlaySelectionIds.value, overlayRefresh);
         style="z-index: 100; right: 20rem"
         @click="overlayCardVisible = false"
       />
-      <q-card class="q-pa-md switchWrapper">
-        <div
-          class="q-pb-sm"
-          v-for="(group, groupIndex) in overlaySelectionConfig"
-          :key="groupIndex"
-        >
-          <span style="font-weight: bold">{{ group.label }}</span>
-          <q-option-group
-            v-model="overlaySelections[groupIndex]"
-            :options="group.children"
-            :type="group.multiple ? 'checkbox' : 'radio'"
-            size="sm"
-            inline
-          />
-        </div>
+      <q-card class="q-pa-md q-pt-lg switchWrapper">
+        <q-tabs v-model="overlayAreaTab" dense align="justify">
+          <q-tab
+            v-for="(area, areaIndex) in overlaySelectionConfig"
+            :key="areaIndex"
+            :name="area?.area?.code"
+          >
+            <template #default>
+              <div>
+                <span>{{ area?.area?.name }}</span>
+                <span
+                  v-if="overlaySelectionCounts[area?.area?.code]"
+                  class="countBadge bg-blue-8 text-white text-bold"
+                >
+                  {{ overlaySelectionCounts[area?.area?.code] || 0 }}
+                </span>
+              </div>
+            </template>
+          </q-tab>
+        </q-tabs>
+
+        <q-tab-panels v-model="overlayAreaTab" animated>
+          <q-tab-panel
+            v-for="(area, areaIndex) in overlaySelectionConfig"
+            :key="areaIndex"
+            :name="area?.area?.code"
+            class="q-mt-sm switchScroll"
+            style="padding: 0"
+          >
+            <div
+              v-for="(group, groupIndex) in area.overlays"
+              :key="groupIndex"
+              class="q-pb-sm"
+            >
+              <span style="font-weight: bold">{{ group.label }}</span>
+              <q-btn
+                v-if="group.multiple"
+                class="q-ml-sm"
+                flat
+                dense
+                bg-color="grey-6"
+                size="sm"
+                icon="mdi-close"
+                @click="overlayInitGroup(area?.area?.code, groupIndex)"
+              >
+              </q-btn>
+              <q-option-group
+                v-model="overlaySelections[area?.area?.code][groupIndex]"
+                :options="group.children"
+                :type="group.multiple ? 'checkbox' : 'radio'"
+                size="sm"
+                inline
+              />
+            </div>
+          </q-tab-panel>
+        </q-tab-panels>
       </q-card>
     </div>
   </div>
@@ -354,8 +486,25 @@ $button-height: 80rem;
 }
 
 .switchWrapper {
-  overflow: auto;
   width: 500rem;
-  max-height: 450rem;
+}
+
+.switchScroll {
+  overflow-y: auto;
+  max-height: 350rem;
+}
+
+.countBadge {
+  $badge-line-height: 13rem;
+  $badge-padding: 3rem;
+  $badge-size: $badge-line-height + 2 * $badge-padding;
+
+  display: inline-block;
+  font-size: $badge-line-height;
+  line-height: $badge-line-height;
+  border-radius: $badge-size / 2;
+  padding: $badge-padding;
+  min-width: $badge-size;
+  margin-left: 5rem;
 }
 </style>
