@@ -22,7 +22,7 @@
           size="64rem"
           font-size="64rem"
           text-color="white"
-          icon="mdi-download-box-outline"
+          icon="laptop"
         >
         </q-avatar>
         <q-tooltip> 下载客户端 </q-tooltip>
@@ -33,11 +33,12 @@
           size="64rem"
           font-size="64rem"
           text-color="white"
-          icon="mdi-content-save"
+          :icon="is_logged ? 'mdi-content-save' : 'mdi-account-outline'"
         >
           <q-badge v-if="save_marked" color="red" rounded floating />
         </q-avatar>
-        <q-tooltip v-if="!save_marked"> 存档 </q-tooltip>
+        <q-tooltip v-if="!is_logged"> 登录 </q-tooltip>
+        <q-tooltip v-else-if="!save_marked"> 存档 </q-tooltip>
         <q-tooltip v-else> 存档(有改动尚未保存) </q-tooltip>
       </div>
     </div>
@@ -92,7 +93,7 @@ export default {
     openURL,
     //检查登录状态：如果无code便请求code，如果有code则检查有无access_token，如果有access_token则检查其是否过期
     check_log_state() {
-      if (get_Storage("_gitee_usercode") != undefined) {
+      if (this.is_logged) {
         if (get_Storage("_gitee_access_token") != undefined) {
           if (get_Cookies("_gitee_access_expires") == null) {
             refresh_gitee_token().then((res) => {
@@ -122,8 +123,9 @@ export default {
         .dialog({
           title: "跳转提示",
           html: true,
-          message: `<div class="text-bold">你即将跳转至gitee进行登录授权</div>
-          <div class="text-red text-bold">空荧酒馆所属产品不会以*任何理由*要求用户使用米哈游通行证登录或授权，也无法以*任何方式*获取您的米哈游通行证的用户信息，敬请知晓</div>
+          message: `
+            <div class="text-bold">你即将跳转至 Gitee 进行登录授权</div>
+            <div class="text-red text-bold">空荧酒馆所属产品不会以 *任何理由* 要求用户使用米哈游通行证登录或授权，也无法以 *任何方式* 获取您的米哈游通行证的用户信息，敬请知晓</div>
           `,
           cancel: true,
           persistent: true,
@@ -215,6 +217,9 @@ export default {
     //请参考pinia不使用组合式api的用法的说明文档
     //https://pinia.web3doc.top/cookbook/options-api.html
     ...mapStores(useCounterStore),
+    is_logged() {
+      return get_Storage("_gitee_usercode") != undefined;
+    },
   },
   watch: {
     "mainStore.change_mark": function (val) {
