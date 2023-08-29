@@ -33,7 +33,7 @@ export const opNonOfficialMsgShow = () => {
             <div>&nbsp;</div>
             <div>官方声明：</div>
             <div>网页版地址：<a target="_blank" href="https://yuanshen.site/">https://yuanshen.site/</a></div>
-            <div>客户端下载：<a target="_blank" href="https://yuanshen.site/docs/download-client">点击此处</a></div>
+            <div>PC客户端下载：<a target="_blank" href="https://yuanshen.site/docs/download-client">点击此处</a></div>
             <div>&nbsp;</div>
             <div>目前 <span class="text-teal">空荧酒馆</span> 暂未提供手机版，<br>可使用网页版，或 <a target="_blank" href="https://yuanshen.site/docs/join">加入开发</a></div>
           </div>
