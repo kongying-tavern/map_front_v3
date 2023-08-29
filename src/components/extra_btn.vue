@@ -27,7 +27,7 @@
         </q-avatar>
         <q-tooltip> 下载客户端 </q-tooltip>
       </div>
-      <div class="btn" @click="check_log_state">
+      <div class="btn" @click.alt.ctrl="show_ua" @click.exact="check_log_state">
         <q-avatar
           square
           size="64rem"
@@ -91,6 +91,13 @@ export default {
   },
   methods: {
     openURL,
+    show_ua() {
+      this.$q.dialog({
+        title: "调试",
+        html: true,
+        message: `<div>UA: ${window.navigator?.userAgent}</div>`,
+      });
+    },
     //检查登录状态：如果无code便请求code，如果有code则检查有无access_token，如果有access_token则检查其是否过期
     check_log_state() {
       if (this.is_logged) {
