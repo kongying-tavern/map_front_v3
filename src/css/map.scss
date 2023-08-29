@@ -54,6 +54,11 @@ img {
   background: transparent;
   //   z-index: 1000;
   background: radial-gradient(transparent 70%, rgba(0, 0, 0, 0.5));
+
+  &.non-official {
+    border: 5rem inset red;
+    filter: hue-rotate(35deg);
+  }
 }
 
 .leaflet-bottom {

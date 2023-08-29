@@ -133,6 +133,7 @@ import {
   area_list_child_full,
   area_first_child,
 } from "src/api/area";
+import { opNonOfficialMsgShow } from "src/api/operation";
 
 export default {
   name: "AreaSelector",
@@ -172,6 +173,7 @@ export default {
       this.area_selector_show = !this.area_selector_show;
       this.child_area_show = false;
       this.child_area_hide = false;
+      opNonOfficialMsgShow();
     },
     //切换主地区的触发事件
     change_area(area) {
@@ -181,12 +183,14 @@ export default {
       this.mainStore.selected_child_area = this.area_selected_child;
       this.child_area_show = true;
       this.child_area_hide = false;
+      opNonOfficialMsgShow();
     },
     //切换子地区的触发事件
     change_child_area(area) {
       this.area_selected_child = area;
       this.mainStore.selected_child_area = area;
       this.area_selector_show = false;
+      opNonOfficialMsgShow();
     },
     //子地区的显示隐藏
     check_child_area(e) {

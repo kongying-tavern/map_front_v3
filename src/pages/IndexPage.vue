@@ -6,7 +6,11 @@
     <div class="map_containor">
       <div class="stars"></div>
       <div class="twinkling"></div>
-      <div id="map" ref="mapDom"></div>
+      <div
+        id="map"
+        ref="mapDom"
+        :class="!opIsOfficial ? 'non-official' : ''"
+      ></div>
     </div>
     <!-- 地区选择器 -->
     <area-selector></area-selector>
@@ -83,12 +87,14 @@ import { query_itemlayer_byid } from "../service/base_request";
 import { mapLoadConfig } from "../api/config";
 import { map, mapDom, mapLayerMap, createMap } from "src/api/map_obj";
 import { map_plugin_config } from "../api/config";
+import { opIsOfficial } from "../api/operation";
 
 export default {
   name: "IndexPage",
   setup() {
     return {
       mapDom,
+      opIsOfficial,
     };
   },
   data() {

@@ -178,6 +178,7 @@ import {
 } from "../service/base_request";
 import { mapSelectedItems } from "src/api/map_obj";
 import { clearLayers } from "src/api/map_obj";
+import { opNonOfficialMsgShow } from "src/api/operation";
 
 export default {
   name: "ItemSelector",
@@ -307,11 +308,13 @@ export default {
       if (value.typeIdList.includes(10) || value.typeIdList.includes(11)) {
         this.$emit("refresh");
       }
+      opNonOfficialMsgShow();
     },
     //清除所有已选项
     closeall() {
       mapSelectedItems.value = [];
       clearLayers();
+      opNonOfficialMsgShow();
     },
     // 图片路径映射表
     icon_list_cache() {

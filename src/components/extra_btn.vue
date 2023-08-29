@@ -73,6 +73,8 @@ import {
   create_notify,
 } from "../api/common";
 import { client_list } from "../api/client";
+import { opNonOfficialMsgShow } from "../api/operation";
+
 export default {
   name: "ExtraBtn",
   data() {
@@ -219,6 +221,10 @@ export default {
         this.save_window = true;
       });
     }
+
+    this.$nextTick(() => {
+      opNonOfficialMsgShow();
+    });
   },
   computed: {
     //请参考pinia不使用组合式api的用法的说明文档
