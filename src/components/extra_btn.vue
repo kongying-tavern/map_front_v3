@@ -1,6 +1,7 @@
 <template>
   <div>
-    <div class="extra_btn row">
+    <!-- 横向布局 -->
+    <div class="extra_btn row orientation-landscape">
       <div
         class="btn feedback"
         @click="openURL('https://yuanshen.site/docs/community.html')"
@@ -42,6 +43,23 @@
         <q-tooltip v-else> 存档(有改动尚未保存) </q-tooltip>
       </div>
     </div>
+    <!-- 纵向布局 -->
+    <div class="extra_btn row orientation-portrait">
+      <div class="btn" @click="show_bottom_sheet">
+        <q-avatar
+          square
+          size="64rem"
+          font-size="64rem"
+          text-color="white"
+          icon="mdi-dots-horizontal-circle"
+        >
+        </q-avatar>
+        <q-tooltip anchor="center right" self="center left">
+          功能菜单
+        </q-tooltip>
+      </div>
+    </div>
+
     <q-dialog v-model="save_window">
       <div style="max-width: 100vw; max-height: 80vh">
         <save-dialog @load="load_save"></save-dialog>
@@ -55,7 +73,8 @@
 </template>
 
 <script>
-import { date } from "quasar";
+import _ from "lodash";
+import { Dark, date } from "quasar";
 import SaveDialog from "./save_dialogs.vue";
 import { mapStores } from "pinia";
 import { useCounterStore } from "../stores/example-store";
@@ -99,6 +118,81 @@ export default {
         html: true,
         message: `<div>UA: ${window.navigator?.userAgent}</div>`,
       });
+    },
+    show_bottom_sheet() {
+      let options_list = [
+        {
+          label: "加入讨论组",
+          img: "/imgs/icon_feedback.png",
+          id: "discuss",
+          executor: () => {
+            openURL("https://yuanshen.site/docs/community.html");
+          },
+        },
+        {
+          label: "反馈/建议",
+          img: "/imgs/icon_fankui.png",
+          id: "feedback",
+          executor: () => {
+            openURL("https://support.qq.com/product/321980");
+          },
+        },
+        {
+          label: "下载客户端",
+          icon: "laptop",
+          id: "download-client",
+          desktopOnly: true,
+          executor: () => {
+            openURL("https://yuanshen.site/docs/download-client.html");
+          },
+        },
+        {
+          label: () => {
+            if (!this.is_logged) {
+              return "登录";
+            } else if (!this.save_marked) {
+              return "存档";
+            } else {
+              return "存档(有改动尚未保存)";
+            }
+          },
+          icon: () =>
+            this.is_logged ? "mdi-content-save" : "mdi-account-outline",
+          id: "save",
+          executor: () => {
+            this.check_log_state();
+          },
+        },
+      ];
+
+      options_list = _.chain(options_list)
+        .map((v) => {
+          v.label = _.isFunction(v.label) ? v.label() : v.label;
+          v.icon = _.isFunction(v.icon) ? v.icon() : v.icon;
+          v.img = _.isFunction(v.img) ? v.img() : v.img;
+
+          if (v.desktopOnly && !this.is_desktop) {
+            return null;
+          }
+          return v;
+        })
+        .filter((v) => v)
+        .value();
+
+      this.$q
+        .bottomSheet({
+          message: "功能菜单",
+          class: 'q-pb-lg',
+          dark: true,
+          grid: true,
+          actions: options_list,
+        })
+        .onOk((action) => {
+          action = action || {};
+          if (_.isFunction(action.executor)) {
+            action.executor();
+          }
+        });
     },
     //检查登录状态：如果无code便请求code，如果有code则检查有无access_token，如果有access_token则检查其是否过期
     check_log_state() {
@@ -232,6 +326,9 @@ export default {
     ...mapStores(useCounterStore),
     is_logged() {
       return get_Storage("_gitee_usercode") != undefined;
+    },
+    is_desktop() {
+      return !!this.$q.platform.is.desktop;
     },
   },
   watch: {
