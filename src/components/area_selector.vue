@@ -232,7 +232,10 @@ export default {
     //切换主地区的触发事件
     change_area(area, autoCloseChild = false) {
       let resetChild = true;
-      if (this.area_selected_top.code === area.code) {
+      if (
+        this.area_selected_child?.code &&
+        this.area_selected_top.code === area.code
+      ) {
         resetChild = false;
       }
       this.area_selected_top = area;
