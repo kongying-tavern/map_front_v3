@@ -18,14 +18,16 @@
     <item-selector
       @callback="item_selector_callback"
       @refresh="refresh_layergroup"
-    ></item-selector>
+    >
+    </item-selector>
     <!-- 地图上点位的弹窗 -->
     <div id="popup_window" ref="window" v-show="popup_window_show">
       <popup-window
         :layer="handle_layer"
         @callback="popup_callback"
         @close="close_popup"
-      ></popup-window>
+      >
+      </popup-window>
     </div>
     <!-- 左下侧各种开关 -->
     <div class="switch_list">
@@ -69,7 +71,9 @@
 
 <script>
 import ItemSelector from "../components/item_selector.vue";
-import AreaSelector from "../components/area_selector.vue";
+const AreaSelector = defineAsyncComponent(() =>
+  import("../components/area_selector.vue"),
+);
 import PopupWindow from "../components/popup_window.vue";
 import ExtraBtn from "../components/extra_btn.vue";
 import LevelSwitch from "../components/overlay/level_switch.vue";
@@ -88,6 +92,7 @@ import { mapLoadConfig } from "../api/config";
 import { map, mapDom, mapLayerMap, createMap } from "src/api/map_obj";
 import { map_plugin_config } from "../api/config";
 import { opIsOfficial } from "../api/operation";
+import { defineAsyncComponent } from "vue";
 
 export default {
   name: "IndexPage",

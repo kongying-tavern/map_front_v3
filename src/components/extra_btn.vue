@@ -182,7 +182,7 @@ export default {
       this.$q
         .bottomSheet({
           message: "功能菜单",
-          class: 'q-pb-lg',
+          class: "q-pb-lg",
           dark: true,
           grid: true,
           actions: options_list,

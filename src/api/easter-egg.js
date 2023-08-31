@@ -1,7 +1,6 @@
 import { ref } from "vue";
 import { onKeyUp } from "@vueuse/core";
 import { create_notify } from "src/api/common";
-import { areaSelectorDom } from "./area";
 
 export const easterEggMode = ref(false);
 export const easterEggSequence = ref([]);
@@ -74,54 +73,49 @@ export const easterEggMotionHanlder = () => {
 };
 
 export const easterEggKeyBind = () => {
-  onKeyUp(
-    (e) => {
-      easterEggMotionDom.value.removeEventListener(
-        "animationend",
-        easterEggMotionHanlder,
-      );
-      easterEggMotionDom.value.addEventListener(
-        "animationend",
-        easterEggMotionHanlder,
-      );
+  onKeyUp((e) => {
+    easterEggMotionDom.value.removeEventListener(
+      "animationend",
+      easterEggMotionHanlder,
+    );
+    easterEggMotionDom.value.addEventListener(
+      "animationend",
+      easterEggMotionHanlder,
+    );
 
-      let code = e.code || "";
-      if (easterShortKeyIgnore.indexOf(code) !== -1) {
-        return;
-      } else if (easterShortKeyAllow.indexOf(code) !== -1) {
-        const className = easterShortKeyClass[code] || "";
-        const classArr = className ? ["key_motion", className] : [];
+    let code = e.code || "";
+    if (easterShortKeyIgnore.indexOf(code) !== -1) {
+      return;
+    } else if (easterShortKeyAllow.indexOf(code) !== -1) {
+      const className = easterShortKeyClass[code] || "";
+      const classArr = className ? ["key_motion", className] : [];
 
-        easterEggSequence.value.push(code);
-        easterEggMotionClass.value = classArr;
-      } else {
-        easterEggSequence.value = [];
+      easterEggSequence.value.push(code);
+      easterEggMotionClass.value = classArr;
+    } else {
+      easterEggSequence.value = [];
+    }
+
+    if (
+      easterEggSequence.value.length >= easterEggOnSeqLen &&
+      easterEggSequence.value.slice(-easterEggOnSeqLen).join("|") ===
+        easterEggOnSeqStr
+    ) {
+      if (!easterEggMode.value) {
+        create_notify("输入秘笈成功！开启隐藏模式！", "", "bottom");
       }
-
-      if (
-        easterEggSequence.value.length >= easterEggOnSeqLen &&
-        easterEggSequence.value.slice(-easterEggOnSeqLen).join("|") ===
-          easterEggOnSeqStr
-      ) {
-        if (!easterEggMode.value) {
-          create_notify("输入秘笈成功！开启隐藏模式！", "", "bottom");
-        }
-        easterEggMode.value = true;
-        easterEggSequence.value = [];
-      } else if (
-        easterEggSequence.value.length >= easterEggOffSeqLen &&
-        easterEggSequence.value.slice(-easterEggOffSeqLen).join("|") ===
-          easterEggOffSeqStr
-      ) {
-        if (easterEggMode.value) {
-          create_notify("输入秘笈成功！关闭隐藏模式！", "", "bottom");
-        }
-        easterEggMode.value = false;
-        easterEggSequence.value = [];
+      easterEggMode.value = true;
+      easterEggSequence.value = [];
+    } else if (
+      easterEggSequence.value.length >= easterEggOffSeqLen &&
+      easterEggSequence.value.slice(-easterEggOffSeqLen).join("|") ===
+        easterEggOffSeqStr
+    ) {
+      if (easterEggMode.value) {
+        create_notify("输入秘笈成功！关闭隐藏模式！", "", "bottom");
       }
-    },
-    {
-      target: areaSelectorDom.value,
-    },
-  );
+      easterEggMode.value = false;
+      easterEggSequence.value = [];
+    }
+  });
 };

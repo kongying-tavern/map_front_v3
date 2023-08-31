@@ -120,49 +120,53 @@
           <q-spinner-gears size="50rem" color="primary" />
         </q-inner-loading>
       </div>
-      <!-- 已选项 -->
-      <div class="item_selected_bar" v-show="selected_item_list.length != 0">
-        <div class="close-all" @click="closeall">
-          <q-tooltip
-            anchor="center left"
-            self="center right"
-            :offset="[10, 10]"
-            transition-show="jump-left"
-            transition-hide="jump-right"
-          >
-            清除所有
-          </q-tooltip>
-        </div>
-        <div class="item_list">
-          <q-scroll-area
-            style="height: 100%; width: 100%"
-            :thumb-style="{ background: 'none' }"
-          >
-            <div
-              class="item"
-              v-for="(item, index) in selected_item_list"
-              :key="index"
-              @click="insert_selected_item(item)"
+      <div class="item_selected_wrapper">
+        <!-- 已选项 -->
+        <div class="item_selected_bar" v-if="selected_item_list.length !== 0">
+          <div class="close-all" @click="closeall">
+            <q-tooltip
+              anchor="center left"
+              self="center right"
+              :offset="[10, 10]"
+              transition-show="jump-left"
+              transition-hide="jump-right"
             >
-              <div class="item_close"></div>
-              <q-img
-                :src="get_itemicon(item)"
-                style="width: 48rem; height: 48rem; margin: 1rem"
-                referrerpolicy="no-referrer"
-                @error="handle_item_icon_error(item)"
-              />
-              <q-tooltip
-                anchor="center left"
-                self="center right"
-                :offset="[10, 10]"
-                transition-show="jump-left"
-                transition-hide="jump-right"
+              清除所有
+            </q-tooltip>
+          </div>
+          <div class="item_list">
+            <q-scroll-area
+              style="height: 100%; width: 100%"
+              :thumb-style="{ background: 'none' }"
+            >
+              <div
+                class="item"
+                v-for="(item, index) in selected_item_list"
+                :key="index"
+                @click="insert_selected_item(item)"
               >
-                {{ item.area }}-{{ item.name }}
-              </q-tooltip>
-            </div>
-          </q-scroll-area>
+                <div class="item_close"></div>
+                <q-img
+                  :src="get_itemicon(item)"
+                  style="width: 48rem; height: 48rem; margin: 1rem"
+                  referrerpolicy="no-referrer"
+                  @error="handle_item_icon_error(item)"
+                />
+                <q-tooltip
+                  anchor="center left"
+                  self="center right"
+                  :offset="[10, 10]"
+                  transition-show="jump-left"
+                  transition-hide="jump-right"
+                >
+                  {{ item.area }}-{{ item.name }}
+                </q-tooltip>
+              </div>
+            </q-scroll-area>
+          </div>
         </div>
+        <!-- 地区选择器（远程挂载） -->
+        <div ref="areaSelectorDom" class="area_selector_foreign"></div>
       </div>
     </div>
   </div>
@@ -178,6 +182,7 @@ import {
 } from "../service/base_request";
 import { mapSelectedItems } from "src/api/map_obj";
 import { clearLayers } from "src/api/map_obj";
+import { areaSelectorDom } from "src/api/area";
 import { opNonOfficialMsgShow } from "src/api/operation";
 
 export default {
@@ -185,6 +190,7 @@ export default {
   setup() {
     return {
       selected_item_list: mapSelectedItems,
+      areaSelectorDom,
     };
   },
   data() {

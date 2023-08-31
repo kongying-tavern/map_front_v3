@@ -1,7 +1,7 @@
 <!-- 地区选择器 -->
 <template>
   <!-- 电脑版 -->
-  <div class="area_selector" ref="areaSelector">
+  <div class="area_selector">
     <div class="area_selector_container">
       <!-- 右方地区信息和切换部分 -->
       <div
@@ -12,9 +12,13 @@
         <div class="row">
           <div class="area_info">
             <div class="row justify-end" style="margin-top: 10rem">
-              <div class="row items-center area_switch_btn">
+              <div
+                class="row items-center area_switch_btn orientation-landscape"
+              >
                 <span class="area_switch_btn_icon"></span>
-                <span class="area_switch_btn_text">更换地区</span>
+                <span class="area_switch_btn_text area_switch_btn_text">
+                  更换地区
+                </span>
               </div>
               <div class="area_name">{{ area_selected_top.name }}</div>
             </div>
@@ -36,8 +40,12 @@
           </div>
         </div>
       </div>
+
       <!-- 地区选择器的展开部分 -->
-      <div class="area_selector_unfold" :class="{ on: area_selector_show }">
+      <div
+        class="area_selector_unfold orientation-landscape"
+        :class="{ on: area_selector_show }"
+      >
         <span class="area_selector_background"></span>
         <span class="area_selector_line">
           <span
@@ -104,6 +112,57 @@
           </div>
         </div>
       </div>
+      <teleport :to="areaSelectorDom">
+        <div class="area_selector_unfold orientation-portrait">
+          <!-- 父级地区选择器 -->
+          <div class="parent_selector">
+            <div
+              v-for="(item, index) in area_list_top"
+              :key="index"
+              class="area_button"
+              :class="{ on: area_selected_top.areaId == item.areaId }"
+              @click="
+                () => {
+                  change_area(item, false);
+                  switch_area_show();
+                }
+              "
+            >
+              <div class="area_icon">
+                <div :class="`bg area_${get_css_code(item.code)}`"></div>
+                <q-img
+                  class="icon"
+                  :src="`/imgs/icons/${get_css_code(item.code)}_off.png`"
+                  no-spinner
+                >
+                </q-img>
+              </div>
+
+              <!-- 子级地区选择器 -->
+              <div
+                v-if="area_selected_top.areaId == item.areaId"
+                class="child_selector"
+                :class="{
+                  on: area_selector_show,
+                  off: !area_selector_show,
+                }"
+              >
+                <div class="child_area_list">
+                  <div
+                    class="child_area"
+                    :class="{ on: area_selected_child.areaId == child.areaId }"
+                    v-for="(child, index) in area_list_child"
+                    :key="index"
+                    @click="change_child_area(child)"
+                  >
+                    {{ child.name }}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </teleport>
     </div>
   </div>
 </template>
@@ -176,11 +235,13 @@ export default {
       opNonOfficialMsgShow();
     },
     //切换主地区的触发事件
-    change_area(area) {
+    change_area(area, resetChild = true) {
       this.area_selected_top = area;
-      this.area_selected_child = this.area_first_child;
-      this.mainStore.selected_area = this.area_selected_top.name;
-      this.mainStore.selected_child_area = this.area_selected_child;
+      this.mainStore.selected_area = area.name;
+      if (resetChild) {
+        this.area_selected_child = this.area_first_child;
+        this.mainStore.selected_child_area = this.area_first_child;
+      }
       this.child_area_show = true;
       this.child_area_hide = false;
       opNonOfficialMsgShow();

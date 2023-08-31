@@ -315,7 +315,7 @@
       }
     }
 
-    .area_selector_unfold {
+    .area_selector_unfold.orientation-landscape {
       position: absolute;
       width: 100%;
       height: 157rem;
@@ -345,7 +345,6 @@
         left: 0rem;
         right: 0rem;
         top: 0rem;
-
         background: linear-gradient(90deg, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 0.5) 50%, rgba(0, 0, 0, 0) 100%);
 
         @media screen and (max-width:850px) {
@@ -567,6 +566,104 @@
               outline: 4rem solid #fffaed;
             }
           }
+        }
+      }
+    }
+  }
+}
+
+.area_selector_unfold.orientation-portrait {
+  position: relative;
+  $button-size: 60rem;
+
+  .parent_selector {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 12rem;
+
+    .area_button {
+      position: relative;
+    }
+
+    .area_icon {
+      border-radius: $button-size / 2;
+      height: $button-size;
+      width: $button-size;
+      border: 3rem solid #111;
+      background-color: #666;
+      overflow: hidden;
+
+      .bg {
+        @include active-bg-style;
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        transform: translate(-50%, -50%);
+        width: 80% !important;
+        height: 80% !important;
+        overflow: hidden;
+      }
+
+      .icon {
+        width: 100%;
+        height: 100%;
+      }
+    }
+  }
+
+  .child_selector {
+    position: absolute;
+    transform: translateX(-100%);
+    left: -20rem;
+    top: 0;
+
+    &.on {
+      opacity: 1;
+      -webkit-transition: all .45s;
+      -moz-transition: all .45s;
+      -ms-transition: all .45s;
+      -o-transition: all .45s;
+      transition: all .45s;
+      transition-timing-function: cubic-bezier(0, 1, 0, 1);
+    }
+
+    &.off {
+      opacity: 0;
+      -webkit-transition: all .45s;
+      -moz-transition: all .45s;
+      -ms-transition: all .45s;
+      -o-transition: all .45s;
+      transition: all .45s;
+      transition-timing-function: cubic-bezier(0.075, 0.82, 0.165, 1);
+    }
+
+    .child_area_list {
+      .child_area {
+        padding: 0rem 24rem 0rem;
+        background: rgba(0, 0, 0, 0.5);
+        border-radius: 20.5rem;
+        color: #ffffff;
+        font-size: 20rem;
+        margin-top: 10rem;
+        margin-bottom: 10rem;
+        height: 38rem;
+        line-height: 40rem;
+        pointer-events: all;
+        outline: 2rem solid transparent;
+        white-space: nowrap;
+        text-align: center;
+
+        &:hover {
+          outline: 3rem solid #fffaed;
+        }
+
+        &:active {
+          outline: 3rem solid #fffaed;
+        }
+
+        &.on {
+          outline: 4rem solid #fffaed;
         }
       }
     }
@@ -833,72 +930,83 @@
   animation: item_selector_on 1s forwards;
 }
 
-.item_selected_bar {
+.item_selected_wrapper {
+  display: flex;
+  flex-direction: row-reverse;
+  gap: 20rem;
   position: absolute;
   top: 100rem;
-  left: -64rem;
-  z-index: 5000;
-  width: 56rem;
+  right: 400rem;
   bottom: 32rem;
-  background: rgba(0, 0, 0, 0.3);
-  border: 3rem solid rgba(0, 0, 0, 0.3);
-  border-radius: 32rem;
-  box-sizing: border-box;
+  z-index: 5000;
 
-  .close-all {
-    position: absolute;
-    top: -3rem;
-    left: -3rem;
-    width: 56rem;
-    height: 56rem;
-    background: url(/imgs/btn_close.png) no-repeat;
-    background-size: 100% 100%;
-    // cursor: pointer;
+  .area_selector_foreign {
+    height: 100%;
   }
 
-  .item_list {
-    position: absolute;
-    margin-top: 56rem;
-    margin-bottom: 25rem;
-    left: -3rem;
-    right: -8rem;
-    bottom: -3rem;
-    top: -3rem;
+  .item_selected_bar {
+    position: relative;
+    width: 56rem;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.3);
+    border: 3rem solid rgba(0, 0, 0, 0.3);
+    border-radius: 32rem;
+    box-sizing: border-box;
 
-    .item {
-      position: relative;
-      width: 55.5rem;
-      height: 55.5rem;
-      margin: 16rem auto 16rem 0;
-      background: rgba(0, 0, 0, 0.3);
-      border: 3rem solid rgba(0, 0, 0, 0.3);
-      border-radius: 28rem;
-      // cursor: pointer;
+    .close-all {
+      position: absolute;
+      top: -3rem;
+      left: -3rem;
+      width: 56rem;
+      height: 56rem;
+      background: url(/imgs/btn_close.png) no-repeat;
+      background-size: 100% 100%;
+    }
 
-      &:hover .item_close {
-        opacity: 1;
-        -webkit-transition: all .5s;
-        -moz-transition: all .5s;
-        -ms-transition: all .5s;
-        -o-transition: all .5s;
-        transition: all .5s;
-      }
+    .item_list {
+      position: absolute;
+      margin-top: 56rem;
+      margin-bottom: 25rem;
+      left: -3rem;
+      right: -8rem;
+      bottom: -3rem;
+      top: -3rem;
 
-      .item_close {
-        opacity: 0;
-        position: absolute;
-        z-index: 5001;
-        right: -8rem;
-        top: -8rem;
-        width: 24rem;
-        height: 24rem;
-        background: url(/imgs/btn_close_mini.png) no-repeat;
-        background-size: 100% 100%;
-        -webkit-transition: all .5s;
-        -moz-transition: all .5s;
-        -ms-transition: all .5s;
-        -o-transition: all .5s;
-        transition: all .5s;
+      .item {
+        position: relative;
+        width: 55.5rem;
+        height: 55.5rem;
+        margin: 16rem auto 16rem 0;
+        background: rgba(0, 0, 0, 0.3);
+        border: 3rem solid rgba(0, 0, 0, 0.3);
+        translate: 3rem 0;
+        border-radius: 28rem;
+
+        &:hover .item_close {
+          opacity: 1;
+          -webkit-transition: all .5s;
+          -moz-transition: all .5s;
+          -ms-transition: all .5s;
+          -o-transition: all .5s;
+          transition: all .5s;
+        }
+
+        .item_close {
+          opacity: 0;
+          position: absolute;
+          z-index: 5001;
+          right: -8rem;
+          top: -8rem;
+          width: 24rem;
+          height: 24rem;
+          background: url(/imgs/btn_close_mini.png) no-repeat;
+          background-size: 100% 100%;
+          -webkit-transition: all .5s;
+          -moz-transition: all .5s;
+          -ms-transition: all .5s;
+          -o-transition: all .5s;
+          transition: all .5s;
+        }
       }
     }
   }
