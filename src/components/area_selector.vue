@@ -121,12 +121,7 @@
               :key="index"
               class="area_button"
               :class="{ on: area_selected_top.areaId == item.areaId }"
-              @click="
-                () => {
-                  change_area(item, false);
-                  switch_area_show();
-                }
-              "
+              @click="change_area(item, true)"
             >
               <div class="area_icon">
                 <div :class="`bg area_${get_css_code(item.code)}`"></div>
@@ -235,7 +230,11 @@ export default {
       opNonOfficialMsgShow();
     },
     //切换主地区的触发事件
-    change_area(area, resetChild = true) {
+    change_area(area, autoCloseChild = false) {
+      let resetChild = true;
+      if (this.area_selected_top.code === area.code) {
+        resetChild = false;
+      }
       this.area_selected_top = area;
       this.mainStore.selected_area = area.name;
       if (resetChild) {
@@ -244,6 +243,11 @@ export default {
       }
       this.child_area_show = true;
       this.child_area_hide = false;
+
+      if (autoCloseChild && !resetChild) {
+        this.switch_area_show();
+      }
+
       opNonOfficialMsgShow();
     },
     //切换子地区的触发事件
