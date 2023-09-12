@@ -46,7 +46,7 @@ export const area_list_child = computed(() => {
 });
 
 export const area_list_child_full = computed(() => {
-  return area_group.value[area_selected_top.value?.areaId] || [];
+  return area_group.value[area_selected_top.value?.id] || [];
 });
 
 export const area_first_child = computed(() => {

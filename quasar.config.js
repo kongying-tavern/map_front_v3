@@ -9,7 +9,25 @@
 // https://v2.quasar.dev/quasar-cli-vite/quasar-config-js
 
 const { configure } = require("quasar/wrappers");
+const fs = require("fs");
 const path = require("path");
+const dotenv = require("dotenv");
+
+let env = {};
+const envName = process.env.NODE_ENV || "development";
+const envPaths = [
+  path.resolve(__dirname, `./.env.${envName}.local`),
+  path.resolve(__dirname, `./.env.${envName}`),
+  path.resolve(__dirname, "./.env.local"),
+  path.resolve(__dirname, "./.env"),
+];
+
+for (const envPath of envPaths) {
+  if (fs.existsSync(envPath)) {
+    env = dotenv.config({ path: envPath }).parsed;
+    break;
+  }
+}
 
 module.exports = configure(function (/* ctx */) {
   return {
@@ -63,7 +81,7 @@ module.exports = configure(function (/* ctx */) {
 
       // publicPath: '/',
       // analyze: true,
-      // env: {},
+      env,
       // rawDefine: {}
       // ignorePublicFolder: true,
       // minify: false,
@@ -91,6 +109,14 @@ module.exports = configure(function (/* ctx */) {
     devServer: {
       // https: true
       open: true, // opens browser window automatically
+      proxy: {
+        // 将所有以/api开头的请求代理
+        "/api": {
+          target: env.VITE_API_PROXY_TARGET,
+          changeOrigin: true,
+          rewrite: (path) => path.replace(/^\/api/, ""),
+        },
+      },
     },
 
     // https://v2.quasar.dev/quasar-cli-vite/quasar-config-js#framework

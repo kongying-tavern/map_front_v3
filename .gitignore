@@ -33,3 +33,5 @@ yarn-error.log*
 # Lock files
 yarn.lock
 pnpm-lock.yaml
+
+.env.*

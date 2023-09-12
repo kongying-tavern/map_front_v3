@@ -9,7 +9,7 @@ import { create_notify } from "../api/common";
 // for each client)
 
 const api = axios.create({
-  baseURL: "https://cloud.yuanshen.site/api",
+  baseURL: `${process.env.VITE_API_BASE}/api`,
 });
 api.interceptors.response.use(
   (res) => {

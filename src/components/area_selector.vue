@@ -62,10 +62,10 @@
               v-for="(item, index) in area_list_top"
               :key="index"
               class="row area_type_containor items-center justify-center"
-              :class="{ on: area_selected_top.areaId == item.areaId }"
+              :class="{ on: area_selected_top.id == item.id }"
               @click="change_area(item)"
               v-on:mouseenter="
-                check_child_area(area_selected_top.areaId == item.areaId)
+                check_child_area(area_selected_top.id == item.id)
               "
               v-on:mouseleave="check_child_area(true)"
             >
@@ -100,7 +100,7 @@
           <div class="child_area_list col-6 row justify-center items-center">
             <div
               class="child_area col-shrink"
-              :class="{ on: area_selected_child.areaId == item.areaId }"
+              :class="{ on: area_selected_child.id == item.id }"
               v-for="(item, index) in area_list_child"
               :key="index"
               @click="change_child_area(item)"
@@ -120,7 +120,7 @@
               v-for="(item, index) in area_list_top"
               :key="index"
               class="area_button"
-              :class="{ on: area_selected_top.areaId == item.areaId }"
+              :class="{ on: area_selected_top.id == item.id }"
               @click="change_area(item, true)"
             >
               <div class="area_icon">
@@ -135,7 +135,7 @@
 
               <!-- 子级地区选择器 -->
               <div
-                v-if="area_selected_top.areaId == item.areaId"
+                v-if="area_selected_top.id == item.id"
                 class="child_selector"
                 :class="{
                   on: area_selector_show,
@@ -145,7 +145,7 @@
                 <div class="child_area_list">
                   <div
                     class="child_area"
-                    :class="{ on: area_selected_child.areaId == child.areaId }"
+                    :class="{ on: area_selected_child.id == child.id }"
                     v-for="(child, index) in area_list_child"
                     :key="index"
                     @click="change_child_area(child)"

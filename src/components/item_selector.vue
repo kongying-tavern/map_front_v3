@@ -71,13 +71,12 @@
                 <div
                   class="item_option row"
                   v-for="(i, index) in item_list[
-                    item.typeId == 9 ? chest_type : item.typeId
+                    item.id == 9 ? chest_type : item.id
                   ]"
                   :class="{
                     on:
-                      selected_item_list.find(
-                        (item) => item.itemId == i.itemId,
-                      ) != undefined,
+                      selected_item_list.find((item) => item.id == i.id) !=
+                      undefined,
                   }"
                   :key="index"
                   @click="insert_selected_item(i)"
@@ -98,9 +97,9 @@
                     <span class="item_option_title ellipsis">
                       {{ i.name }}
                     </span>
-                    <span class="item_option_count ellipsis"
-                      >{{ count_layer(i) }}/{{ i.count }}</span
-                    >
+                    <span class="item_option_count ellipsis">
+                      {{ count_layer(i) }}/{{ i.count }}
+                    </span>
                     <span class="item_option_progress">
                       <span
                         class="item_option_progress_bar"
@@ -223,10 +222,7 @@ export default {
     },
     //改变宝箱状态
     change_chest_type() {
-      this.get_itemlist(
-        this.mainStore.selected_child_area.areaId,
-        this.chest_type,
-      );
+      this.get_itemlist(this.mainStore.selected_child_area.id, this.chest_type);
     },
     //查询类型下属的物品列表
     async get_itemlist(areaid) {
@@ -240,8 +236,8 @@ export default {
         this.teleport_list = [];
         this.item_loading = false;
         for (let i of this.type_list) {
-          if (i.typeId != 9) {
-            this.item_list[i.typeId] = [];
+          if (i.id != 9) {
+            this.item_list[i.id] = [];
           } else {
             this.item_list[10] = [];
             this.item_list[11] = [];
@@ -294,7 +290,7 @@ export default {
       }
       //将已选项添加进数组
       let index = mapSelectedItems.value.findIndex(
-        (item) => item.itemId == value.itemId,
+        (item) => item.id == value.id,
       );
       if (index == -1) {
         value.area = this.mainStore.selected_child_area.name;
@@ -337,10 +333,10 @@ export default {
     },
     //隐藏无可选性的分类
     check_item_length(item) {
-      if (item.typeId != 9) {
+      if (item.id != 9) {
         if (
-          this.item_list[item.typeId] == undefined ||
-          this.item_list[item.typeId].length == 0
+          this.item_list[item.id] == undefined ||
+          this.item_list[item.id].length == 0
         ) {
           return false;
         }
@@ -349,8 +345,8 @@ export default {
     },
     //计算计数的点位数量，反映到物品选择器上
     count_layer(item) {
-      if (this.mainStore.layer_count.get(item.itemId)) {
-        return this.mainStore.layer_count.get(item.itemId);
+      if (this.mainStore.layer_count.get(item.id)) {
+        return this.mainStore.layer_count.get(item.id);
       }
       return 0;
     },
@@ -407,7 +403,7 @@ export default {
   },
   watch: {
     "mainStore.selected_child_area": function (val, oldval) {
-      this.get_itemlist(val.areaId);
+      this.get_itemlist(val.id);
     },
   },
 };

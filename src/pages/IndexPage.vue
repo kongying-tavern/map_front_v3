@@ -144,12 +144,12 @@ export default {
       //添加点位组
       if (value.type == 1) {
         //如果没有点位缓存，则请求点位信息
-        if (!mapLayerMap.value?.has(value.item.itemId)) {
+        if (!mapLayerMap.value?.has(value.item.id)) {
           this.loading = true;
           query_itemlayer_infolist({
             typeIdList: [],
             areaIdList: [],
-            itemIdList: [value.item.itemId],
+            itemIdList: [value.item.id],
             getBeta: 0,
           }).then((res) => {
             let iconurl = this.get_itemicon(value.item);
@@ -189,7 +189,7 @@ export default {
           });
           //否则使用缓存，直接从点位组map对象中调取队应的点位组
         } else {
-          let layergroup = mapLayerMap.value?.get(value.item.itemId);
+          let layergroup = mapLayerMap.value?.get(value.item.id);
           layergroup.eachLayer((layer) => {
             layer_mark(layer, "on");
             let arr = JSON.parse(localStorage.getItem("marked_layers"));
@@ -202,7 +202,7 @@ export default {
         }
         //移除点位组
       } else {
-        let layergroup = mapLayerMap.value?.get(value.item.itemId);
+        let layergroup = mapLayerMap.value?.get(value.item.id);
         map.value?.removeLayer(layergroup);
       }
     },
@@ -211,7 +211,7 @@ export default {
       this.loading = true;
       for (let i of mapLayerMap.value?.keys()) {
         if (
-          this.mainStore.selected_item_list.find((item) => item.itemId == i) !=
+          this.mainStore.selected_item_list.find((item) => item.id == i) !=
           undefined
         ) {
           let layergroup = mapLayerMap.value?.get(i);
@@ -319,9 +319,9 @@ export default {
         let item_list = [];
         let icon_list = [];
         for (let i of this.mainStore.teleport_list) {
-          item_list.push(i.itemId);
+          item_list.push(i.id);
           icon_list.push({
-            itemId: i.itemId,
+            itemId: i.id,
             itemName: i.name,
             iconurl: this.get_itemicon(i),
           });
