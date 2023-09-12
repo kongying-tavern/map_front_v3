@@ -172,6 +172,7 @@
 </template>
 
 <script>
+import _ from "lodash";
 import { mapStores } from "pinia";
 import { useCounterStore } from "../stores/example-store";
 import {
@@ -301,7 +302,7 @@ export default {
         };
       } else {
         this.mainStore.changeitem = {
-          item: mapSelectedItems.value[index],
+          item: _.cloneDeep(mapSelectedItems.value[index]),
           type: 0,
         };
         mapSelectedItems.value.splice(index, 1);

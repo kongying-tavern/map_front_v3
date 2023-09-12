@@ -184,7 +184,7 @@ export default {
               }
             });
             map.value?.addLayer(layergroup);
-            mapLayerMap.value?.set(value.item.itemId, layergroup);
+            mapLayerMap.value?.set(value.item.id, layergroup);
             this.loading = false;
           });
           //否则使用缓存，直接从点位组map对象中调取队应的点位组
