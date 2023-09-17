@@ -9,11 +9,20 @@ export const mapTiles = ref(null);
 
 export const mapOptions = ref({});
 
+export const mapBounds = ref([
+  [0, 0],
+  [0, 0],
+]);
+
 export const createMap = (areaCode = "提瓦特-base0") => {
   let mapConfig = create_map_tiles(areaCode);
   let tiles = mapConfig.tiles;
   let tilesConfig = mapConfig.tiles_config || {};
   let mapSettings = mapConfig.map_settings || {};
+  const mapMaxBounds = mapConfig.map_bounds || [
+    [0, 0],
+    [0, 0],
+  ];
   let currentMapCode = mapOptions.value?.code || "";
   let newMapCode = tilesConfig.code || "";
 
@@ -24,6 +33,7 @@ export const createMap = (areaCode = "提瓦特-base0") => {
     let zoom = tilesConfig.settings?.zoom;
     if (center) {
       map.value?.flyTo(center, zoom);
+      mapBounds.value = mapMaxBounds;
     }
     redrawMap = false;
   } else {
@@ -33,6 +43,7 @@ export const createMap = (areaCode = "提瓦特-base0") => {
     const { map: mapObj, tiles: tilesObj } = create_map(mapSettings, tiles);
     mapTiles.value = tilesObj;
     map.value = mapObj;
+    mapBounds.value = mapMaxBounds;
     clearSelectedItems();
     redrawMap = true;
   }
