@@ -30,6 +30,14 @@
           </template>
         </q-img>
         <q-avatar
+          class="sound_btn"
+          :icon="sound_playing ? 'mdi-volume-off' : 'mdi-volume-high'"
+          font-size="30px"
+          text-color="white"
+          @click="playSound(layer_data.content)"
+        >
+        </q-avatar>
+        <q-avatar
           v-if="layer_data.videoPath != ''"
           class="video_btn"
           icon="mdi-play-speed"
@@ -94,10 +102,35 @@ export default {
       full_img_window: false,
       marked: false,
       teleport_type: false,
+      sound_player: null,
+      sound_playing: false,
     };
   },
   methods: {
     openURL,
+    playSound(text = "") {
+      if (!this.sound_player) {
+        this.sound_player = new window.SpeechSynthesisUtterance();
+        this.sound_player.lang = "zh-CN";
+        this.sound_player.pitch = 1.5;
+        this.sound_player.onstart = () => {
+          this.sound_playing = true;
+        };
+        this.sound_player.onend = () => {
+          this.sound_playing = false;
+        };
+      }
+
+      if (this.sound_playing) {
+        window.speechSynthesis.cancel();
+        this.sound_playing = false;
+      } else {
+        text = (text || "").replace(/[【】]/giu, "");
+        this.sound_player.text = text;
+        window.speechSynthesis.cancel();
+        window.speechSynthesis.speak(this.sound_player);
+      }
+    },
     marklayer() {
       this.marked = !this.marked;
       this.$emit("callback", [this.layer, this.marked]);
@@ -127,10 +160,19 @@ export default {
     //请参考pinia不使用组合式api的用法的说明文档
     //https://pinia.web3doc.top/cookbook/options-api.html
     ...mapStores(useCounterStore),
+    isSpeechSupported() {
+      const speechSupported =
+        !!window.SpeechSynthesisUtterance && !!window.speechSynthesis;
+      if (!speechSupported) return false;
+      const voices = window.speechSynthesis.getVoices();
+      const voiceCN = voices.filter((v) => v.lang === "zh-CN");
+      if (voiceCN <= 0) return false;
+      return true;
+    },
   },
 };
 </script>
-<style scoped>
+<style lang="scss" scoped>
 .title {
   font-size: 16rem;
   color: #4b5368;
@@ -154,5 +196,17 @@ export default {
   left: 68%;
   top: 60%;
   cursor: pointer;
+}
+
+.sound_btn {
+  position: absolute;
+  right: 0;
+  top: 0;
+  cursor: pointer;
+  opacity: 0.2;
+
+  .layer_img_content:hover & {
+    opacity: 1;
+  }
 }
 </style>
