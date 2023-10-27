@@ -30,6 +30,7 @@
           </template>
         </q-img>
         <q-avatar
+          v-if="isSpeechSupported"
           class="sound_btn"
           :icon="sound_playing ? 'mdi-volume-off' : 'mdi-volume-high'"
           font-size="30px"
