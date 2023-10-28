@@ -6,7 +6,11 @@ import {
   createWebHashHistory,
 } from "vue-router";
 import routes from "./routes";
-import { quest_request } from "../service/user_request";
+import {
+  is_visitor_expired,
+  quest_request,
+  set_user_data,
+} from "../service/user_request";
 import { set_Cookies, get_Cookies } from "../api/common";
 /*
  * If not building with SSR mode, you can
@@ -43,13 +47,9 @@ export default route(function (/* { store, ssrContext } */) {
       }
     }
     //鉴定是否存在token，若否，默认以游客身份登录
-    if (get_Cookies("_yuanshen_map_usertoken") == null) {
+    if (is_visitor_expired()) {
       quest_request().then((res) => {
-        set_Cookies(
-          "_yuanshen_map_usertoken",
-          res.data.access_token,
-          res.data.expires_in,
-        );
+        set_user_data(res.data || {});
         next();
       });
     } else {

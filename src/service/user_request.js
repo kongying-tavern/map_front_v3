@@ -1,13 +1,28 @@
 import axios from "axios";
 import { create_notify, get_Storage } from "../api/common";
 import { client_list } from "../api/client";
+import { Cookies } from "quasar";
+
+function set_user_data(data = {}) {
+  const access_token = data?.access_token || "";
+  const expires_in = Number(data?.expires_in) || 0;
+
+  Cookies.set("_yuanshen_map_usertoken", access_token, {
+    expires: `${expires_in}s`,
+  });
+  localStorage.setItem(
+    "_yuanshen_map_expire",
+    Date.now() + expires_in * 1e3 - 360e3,
+  );
+}
+
 //游客权限认证
 function quest_request() {
   return axios({
     method: "post",
     url: `${process.env.VITE_API_BASE}/oauth/token`,
     params: {
-      scope: "all",
+      refresh_token: "all",
       grant_type: "client_credentials",
     },
     headers: {
@@ -26,6 +41,12 @@ function quest_request() {
     }
   });
 }
+
+function is_visitor_expired() {
+  const expire_time = Number(localStorage.getItem("_yuanshen_map_expire"));
+  return Date.now() > expire_time;
+}
+
 //gitee请求access_token
 function get_gitee_token() {
   let params = {};
@@ -119,7 +140,9 @@ function delete_gitee_gist(data) {
   });
 }
 export {
+  set_user_data,
   quest_request,
+  is_visitor_expired,
   get_gitee_token,
   refresh_gitee_token,
   add_gitee_gist,

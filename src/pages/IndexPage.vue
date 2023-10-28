@@ -93,6 +93,7 @@ import { map, mapDom, mapLayerMap, createMap } from "src/api/map_obj";
 import { map_plugin_config } from "../api/config";
 import { opIsOfficial } from "../api/operation";
 import { defineAsyncComponent } from "vue";
+import { is_visitor_expired, quest_request } from "src/service/user_request";
 
 export default {
   name: "IndexPage",
@@ -485,6 +486,14 @@ export default {
       this.opacity_switch();
       this.mark_count();
     });
+
+    setInterval(() => {
+      if (is_visitor_expired()) {
+        quest_request().then((res) => {
+          set_user_data(res.data || {});
+        });
+      }
+    }, 300e3);
   },
   computed: {
     //请参考pinia不使用组合式api的用法的说明文档
