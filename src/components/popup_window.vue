@@ -164,11 +164,7 @@ export default {
     isSpeechSupported() {
       const speechSupported =
         !!window.SpeechSynthesisUtterance && !!window.speechSynthesis;
-      if (!speechSupported) return false;
-      const voices = window.speechSynthesis.getVoices();
-      const voiceCN = voices.filter((v) => v.lang === "zh-CN");
-      if (voiceCN <= 0) return false;
-      return true;
+      return speechSupported;
     },
   },
 };
