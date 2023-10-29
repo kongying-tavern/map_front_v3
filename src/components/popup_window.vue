@@ -30,12 +30,12 @@
           </template>
         </q-img>
         <q-avatar
-          v-if="isSpeechSupported"
+          v-if="ttsIsSupported"
           class="sound_btn"
-          :icon="sound_playing ? 'mdi-volume-off' : 'mdi-volume-high'"
+          :icon="ttsIsPlaying ? 'mdi-volume-off' : 'mdi-volume-high'"
           font-size="30px"
           text-color="white"
-          @click="playSound(layer_data.content)"
+          @click="ttsSpeechPlay(layer_data.content)"
         >
         </q-avatar>
         <q-avatar
@@ -95,43 +95,28 @@
 import { mapStores } from "pinia";
 import { useCounterStore } from "../stores/example-store";
 import { openURL } from "quasar";
+import { ttsIsSupported, ttsIsPlaying, ttsSpeechPlay } from "src/api/tts";
+
 export default {
   name: "PopupWindow",
+  setup() {
+    return {
+      ttsIsSupported,
+      ttsIsPlaying,
+      ttsSpeechPlay,
+    };
+  },
   data() {
     return {
       layer_data: {},
       full_img_window: false,
       marked: false,
       teleport_type: false,
-      sound_player: null,
-      sound_playing: false,
     };
   },
   methods: {
     openURL,
-    playSound(text = "") {
-      if (!this.sound_player) {
-        this.sound_player = new window.SpeechSynthesisUtterance();
-        this.sound_player.lang = "zh-CN";
-        this.sound_player.pitch = 1.5;
-        this.sound_player.onstart = () => {
-          this.sound_playing = true;
-        };
-        this.sound_player.onend = () => {
-          this.sound_playing = false;
-        };
-      }
-
-      if (this.sound_playing) {
-        window.speechSynthesis.cancel();
-        this.sound_playing = false;
-      } else {
-        text = (text || "").replace(/[【】]/giu, "");
-        this.sound_player.text = text;
-        window.speechSynthesis.cancel();
-        window.speechSynthesis.speak(this.sound_player);
-      }
-    },
+    playSound(text = "") {},
     marklayer() {
       this.marked = !this.marked;
       this.$emit("callback", [this.layer, this.marked]);
@@ -161,11 +146,6 @@ export default {
     //请参考pinia不使用组合式api的用法的说明文档
     //https://pinia.web3doc.top/cookbook/options-api.html
     ...mapStores(useCounterStore),
-    isSpeechSupported() {
-      const speechSupported =
-        !!window.SpeechSynthesisUtterance && !!window.speechSynthesis;
-      return speechSupported;
-    },
   },
 };
 </script>
