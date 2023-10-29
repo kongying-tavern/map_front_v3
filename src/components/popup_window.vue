@@ -30,8 +30,17 @@
           </template>
         </q-img>
         <q-avatar
+          v-if="rythmAranaIsSupported(layer_data.content)"
+          class="music_btn hover_active_btn"
+          icon="mdi-music-circle-outline"
+          font-size="30px"
+          text-color="white"
+          @click="rythmAranaPlay(layer_data.content)"
+        >
+        </q-avatar>
+        <q-avatar
           v-if="ttsIsSupported"
-          class="sound_btn"
+          class="sound_btn hover_active_btn"
           :icon="ttsIsPlaying ? 'mdi-volume-off' : 'mdi-volume-high'"
           font-size="30px"
           text-color="white"
@@ -96,6 +105,7 @@ import { mapStores } from "pinia";
 import { useCounterStore } from "../stores/example-store";
 import { openURL } from "quasar";
 import { ttsIsSupported, ttsIsPlaying, ttsSpeechPlay } from "src/api/tts";
+import { rythmAranaIsSupported, rythmAranaPlay } from "src/api/rythm-arana";
 
 export default {
   name: "PopupWindow",
@@ -104,6 +114,9 @@ export default {
       ttsIsSupported,
       ttsIsPlaying,
       ttsSpeechPlay,
+
+      rythmAranaIsSupported,
+      rythmAranaPlay,
     };
   },
   data() {
@@ -141,7 +154,6 @@ export default {
       }
     },
   },
-  mounted() {},
   computed: {
     //请参考pinia不使用组合式api的用法的说明文档
     //https://pinia.web3doc.top/cookbook/options-api.html
@@ -149,7 +161,15 @@ export default {
   },
 };
 </script>
+
 <style lang="scss" scoped>
+.layer_img_content .hover_active_btn {
+  opacity: 0.6;
+}
+.layer_img_content:hover .hover_active_btn {
+  opacity: 1;
+}
+
 .title {
   font-size: 16rem;
   color: #4b5368;
@@ -180,10 +200,12 @@ export default {
   right: 0;
   top: 0;
   cursor: pointer;
-  opacity: 0.2;
+}
 
-  .layer_img_content:hover & {
-    opacity: 1;
-  }
+.music_btn {
+  position: absolute;
+  left: 0;
+  top: 0;
+  cursor: pointer;
 }
 </style>
