@@ -1,4 +1,5 @@
 //点位相关
+import _ from "lodash";
 import * as L from "leaflet";
 import "leaflet/dist/leaflet.css";
 import "../api/leaflet_markercluster/leaflet.markercluster-src.js";
@@ -109,9 +110,21 @@ function create_icon_options(url, type = "off", extra) {
     // className: type == 'on' ? `opacity_on` : 'opactiy_off'
     className: `${type == "on" ? "opacity_on" : "opactiy_off"}`,
   };
-  if (extra != null) {
+
+  // 处理extra数据
+  let extra_data = {};
+  try {
+    if (typeof extra === "string") {
+      extra_data = JSON.parse(extra);
+    } else if (_.isPlainObject(extra)) {
+      extra_data = _.cloneDeep(extra);
+    }
+  } catch (e) {
+    extra_data = {};
+  }
+
+  if (_.isPlainObject(extra_data) && !_.isEmpty(extra_data)) {
     let className = options.className;
-    let extra_data = JSON.parse(extra);
     if (!!extra_data?.underground?.is_underground) {
       options.className = `${className} marker_underground`;
     }
@@ -200,7 +213,8 @@ function create_icon_options(url, type = "off", extra) {
  * @returns {Object} marker对象
  */
 function layer_register(data, iconurl, type = "off") {
-  let extra = data.markerExtraContent;
+  let extra = data.extra;
+  console.log(extra);
   let marker = L.marker(data.position.split(","), {
     icon: L.divIcon(create_icon_options(iconurl, type, extra)),
     data: {
@@ -254,7 +268,7 @@ function subgroup_register(parentGroup, data = [], iconurl) {
 function layer_mark(layer, marktype) {
   let type = marktype == undefined ? layer.options.icon.options.type : marktype;
   let icon = "";
-  let extra = layer.options.data.markerExtraContent;
+  let extra = layer.options.data.extra;
   if (type == "on") {
     icon = L.divIcon(
       create_icon_options(layer.options.icon.options.iconUrl, "off", extra),
