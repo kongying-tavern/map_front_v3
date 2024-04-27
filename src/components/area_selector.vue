@@ -148,7 +148,7 @@
                     :class="{ on: area_selected_child.id == child.id }"
                     v-for="(child, index) in area_list_child"
                     :key="index"
-                    @click="change_child_area(child)"
+                    @click.stop="change_child_area(child)"
                   >
                     {{ child.name }}
                   </div>
