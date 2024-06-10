@@ -26,10 +26,12 @@ export const opNonOfficialMsgShow = () => {
     Dialog.create({
       title: "【空荧酒馆】通知",
       html: true,
+      ok: false,
+      cancel: false,
       message: `
           <div class="text-bold">
+            <div class="text-red">你使用的软件非官方出品，使用中出现的一切问题我方概不负责。</div>
             <div class="text-red">本地图为 <span class="text-teal">空荧酒馆</span> 提供的网页版本。</div>
-            <div class="text-red">您当前使用的并非官方出品，使用中出现的一切问题我方概不负责。</div>
             <div>&nbsp;</div>
             <div><span class="text-teal">空荧酒馆</span> 暂未提供手机客户端</div>
             <div>手机请使用官网：<a target="_blank" href="https://yuanshen.site">yuanshen.site</a></div>
@@ -39,8 +41,6 @@ export const opNonOfficialMsgShow = () => {
           </div>
         `,
       persistent: true,
-    }).onOk(() => {
-      opNonOfficialMsgVisible.value = false;
     });
   }
 };
