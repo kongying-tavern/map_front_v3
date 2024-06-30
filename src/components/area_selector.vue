@@ -6,7 +6,7 @@
       <!-- 右方地区信息和切换部分 -->
       <div
         class="area_selector_fold"
-        @click="switch_area_show"
+        @click.stop="switch_area_show"
         v-if="area_selected_top.name != undefined"
       >
         <div class="row">
@@ -63,7 +63,7 @@
               :key="index"
               class="row area_type_containor items-center justify-center"
               :class="{ on: area_selected_top.id == item.id }"
-              @click="change_area(item)"
+              @click.stop="change_area(item)"
               v-on:mouseenter="
                 check_child_area(area_selected_top.id == item.id)
               "
@@ -103,7 +103,7 @@
               :class="{ on: area_selected_child.id == item.id }"
               v-for="(item, index) in area_list_child"
               :key="index"
-              @click="change_child_area(item)"
+              @click.stop="change_child_area(item)"
             >
               <p>
                 {{ item.name }}
@@ -121,7 +121,7 @@
               :key="index"
               class="area_button"
               :class="{ on: area_selected_top.id == item.id }"
-              @click="change_area(item, true)"
+              @click.stop="change_area(item, true)"
             >
               <div class="area_icon">
                 <div :class="`bg area_${get_css_code(item.code)}`"></div>
