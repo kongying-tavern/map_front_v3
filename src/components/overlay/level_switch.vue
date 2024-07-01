@@ -452,7 +452,7 @@ watch(() => overlaySelectionIds.value, overlayRefresh);
       size="25rem"
       class="switchButton"
       :style="{ color: `${overlayIconColor} !important` }"
-      @click="overlayCardVisible = true"
+      @click.stop="overlayCardVisible = true"
     >
       <q-tooltip anchor="center right" self="center left">
         选择地下层级
@@ -467,7 +467,7 @@ watch(() => overlaySelectionIds.value, overlayRefresh);
         icon="mdi-close"
         class="absolute-top-right"
         style="z-index: 100; right: 20rem"
-        @click="overlayCardVisible = false"
+        @click.stop="overlayCardVisible = false"
       />
       <q-card class="q-pa-md q-pt-lg switchWrapper">
         <q-tabs v-model="overlayAreaTab" dense align="justify">
@@ -512,7 +512,7 @@ watch(() => overlaySelectionIds.value, overlayRefresh);
                 bg-color="grey-6"
                 size="sm"
                 icon="mdi-close"
-                @click="overlayInitGroup(area?.area?.code, groupIndex)"
+                @click.stop="overlayInitGroup(area?.area?.code, groupIndex)"
               >
               </q-btn>
               <q-option-group

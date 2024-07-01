@@ -619,7 +619,7 @@
     top: 0;
 
     &.on {
-      opacity: 1;
+      display: block;
       -webkit-transition: all .45s;
       -moz-transition: all .45s;
       -ms-transition: all .45s;
@@ -629,7 +629,7 @@
     }
 
     &.off {
-      opacity: 0;
+      display: none;
       -webkit-transition: all .45s;
       -moz-transition: all .45s;
       -ms-transition: all .45s;
