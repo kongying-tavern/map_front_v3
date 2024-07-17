@@ -1,26 +1,22 @@
+@use 'sass:color';
+
+$area_colors: (
+  C_APPLE: #308bf3,
+  C_VELURIYAM: #60FFB5,
+  C_SIMULANKA: #F4ABFD,
+  C_LY: #FFC700,
+  C_MD: #00FFD1,
+  C_DQ: #8F00FF,
+  C_XM: #ADFF00,
+  C_FD: #52e5ff,
+);
+
 @mixin active-highlight-style {
-  &.area_C_LY {
-    background: linear-gradient(180deg, rgba(255, 239, 96, 0) 0%, #FFDC60 98.73%);
-  }
-
-  &.area_C_MD {
-    background: linear-gradient(180deg, rgba(96, 255, 245, 0) 0%, #60FFF5 98.73%);
-  }
-
-  &.area_C_DQ {
-    background: linear-gradient(180deg, rgba(214, 96, 255, 0) 0%, #9360FF 98.73%);
-  }
-
-  &.area_C_XM {
-    background: linear-gradient(180deg, rgba(255, 249, 96, 0) 0%, #AFFF60 98.73%);
-  }
-
-  &.area_C_VELURIYAM {
-    background: linear-gradient(180deg, rgba(255, 249, 96, 0) 0%, #60ffb5 98.73%);
-  }
-
-  &.area_C_FD {
-    background: linear-gradient(180deg, rgba(255, 249, 96, 0) 0%, #52e5ff 98.73%);
+  @each $area_code, $area_color in $area_colors {
+    &.area_#{$area_code} {
+      $final_color: color.adjust($area_color, $lightness: -20%);
+      background: linear-gradient(180deg, transparent 0%, $final_color 98.73%);
+    }
   }
 }
 
@@ -28,74 +24,23 @@
   width: 72rem;
   opacity: 1;
 
-  &.area_C_LY {
-    background: #FFF27C;
-  }
-
-  &.area_C_MD {
-    background: #7CFFE7;
-  }
-
-  &.area_C_DQ {
-    background: #C78FFF;
-  }
-
-  &.area_C_XM {
-    background: #C8FF52;
-  }
-
-  &.area_C_VELURIYAM {
-    background: #52ffcb;
-  }
-
-  &.area_C_FD {
-    background: #52e5ff;
+  @each $area_code, $area_color in $area_colors {
+    &.area_#{$area_code} {
+      background: $area_color;
+    }
   }
 }
 
 @mixin active-bg-style {
+  width: 45rem;
+  height: 45rem;
   transform: translateY(0rem);
+  filter: blur(20rem);
 
-  &.area_C_LY {
-    width: 39.27rem;
-    height: 39.27rem;
-    background: #FFC700;
-    filter: blur(12.2727rem);
-  }
-
-  &.area_C_MD {
-    width: 34.36rem;
-    height: 34.36rem;
-    background: #00FFD1;
-    filter: blur(13.5rem);
-  }
-
-  &.area_C_DQ {
-    width: 34.36rem;
-    height: 34.36rem;
-    background: #8F00FF;
-    filter: blur(11.4545rem);
-  }
-
-  &.area_C_XM {
-    width: 36rem;
-    height: 36rem;
-    background: #ADFF00;
-    filter: blur(13.5rem);
-  }
-
-  &.area_C_VELURIYAM {
-    width: 36rem;
-    height: 36rem;
-    background: #60ffb5;
-    filter: blur(13.5rem);
-  }
-
-  &.area_C_FD {
-    width: 36rem;
-    height: 36rem;
-    background: #52e5ff;
-    filter: blur(13.5rem);
+  @each $area_code, $area_color in $area_colors {
+    &.area_#{$area_code} {
+      background: color.adjust($area_color, $lightness: -10%);
+    }
   }
 }
 
