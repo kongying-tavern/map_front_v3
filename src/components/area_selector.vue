@@ -23,7 +23,7 @@
               <div class="area_name">{{ area_selected_top.name }}</div>
             </div>
             <div class="selected_area_child_name">
-              当前选择 - {{ area_selected_child.name }}
+              {{ area_selected_child.name }}
             </div>
           </div>
           <div class="area_icon">
