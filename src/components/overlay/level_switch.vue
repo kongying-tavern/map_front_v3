@@ -455,7 +455,7 @@ watch(() => overlaySelectionIds.value, overlayRefresh);
       @click.stop="overlayCardVisible = true"
     >
       <q-tooltip anchor="center right" self="center left">
-        选择地下层级
+        选择分层层级
       </q-tooltip>
     </q-btn>
     <div v-if="overlayCardVisible" class="switchCard">

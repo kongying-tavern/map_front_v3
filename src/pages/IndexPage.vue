@@ -54,7 +54,7 @@
             :class="{ on: underground_opacity }"
             @click="underground_opacity_switch"
           ></div>
-          <div class="text">仅显示地下点位</div>
+          <div class="text">仅显示分层点位</div>
         </div>
       </div>
     </div>
@@ -429,7 +429,7 @@ export default {
         imgs[0].className = imgs[0].className.replace(/opacity_on/g, "");
       }
     },
-    //切换须弥地下点位的显隐状态
+    //切换分层点位的显隐状态
     underground_opacity_switch() {
       this.underground_opacity = !this.underground_opacity;
       let layers = document.getElementsByClassName("leaflet-shadow-pane");
