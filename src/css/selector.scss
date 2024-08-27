@@ -10,12 +10,13 @@ $area_colors: (
   C_XM: #ADFF00,
   C_FD: #52e5ff,
   C_NT: #fa4a4a,
+  C_ZD: #cbe4e0,
 );
 
 @mixin active-highlight-style {
   @each $area_code, $area_color in $area_colors {
     &.area_#{$area_code} {
-      $final_color: color.adjust($area_color, $lightness: -20%);
+      $final_color: color.adjust($area_color, $lightness: -15%);
       background: linear-gradient(180deg, transparent 0%, $final_color 98.73%);
     }
   }
