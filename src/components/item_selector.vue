@@ -178,7 +178,7 @@ import { useCounterStore } from "../stores/example-store";
 import {
   query_type,
   query_itemlist,
-  query_iconlist,
+  query_taglist,
 } from "../service/base_request";
 import { mapSelectedItems } from "src/api/map_obj";
 import { clearLayers } from "src/api/map_obj";
@@ -195,7 +195,7 @@ export default {
   },
   data() {
     return {
-      icon_list: [],
+      tag_list: [],
       icon_list_map: new Map(),
       test: false,
       selector_type: false,
@@ -321,8 +321,8 @@ export default {
     },
     // 图片路径映射表
     icon_list_cache() {
-      this.icon_list.forEach(({ name, url }) => {
-        this.icon_list_map.set(name, url);
+      this.tag_list.forEach(({ tag, url }) => {
+        this.icon_list_map.set(tag, url);
       });
     },
     // 图片加载异常处理
@@ -357,7 +357,7 @@ export default {
     this.$axios
       .all([
         //查询所有物品图标
-        query_iconlist({
+        query_taglist({
           iconIdList: [],
           typeIdList: [],
           current: 0,
@@ -372,8 +372,8 @@ export default {
       ])
       .then(
         this.$axios.spread((res1, res2) => {
-          this.icon_list = res1.data.data.record;
-          this.$emit("callback", this.icon_list);
+          this.tag_list = res1.data.data.record;
+          this.$emit("callback", this.tag_list);
           for (let i of res2.data.data.record) {
             if (i.specialFlag != 1) {
               this.type_list.push(i);

@@ -106,7 +106,7 @@ export default {
   data() {
     return {
       loading: false,
-      icon_list: [],
+      tag_list: [],
       item_list: [],
       popup_window_show: false,
       handle_layer: null,
@@ -129,11 +129,12 @@ export default {
   methods: {
     //返回图标数组
     item_selector_callback(value) {
-      this.icon_list = value;
+      this.tag_list = value;
     },
     //查询物品类型对应的图标
     get_itemicon(value) {
-      let icon = this.icon_list.find((item) => item.name == value.iconTag);
+      console.log(this.tag_list);
+      let icon = this.tag_list.find((item) => item.tag == value.iconTag);
       if (icon != undefined) {
         return icon.url;
       }
