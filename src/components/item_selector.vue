@@ -233,7 +233,7 @@ export default {
         areaIdList: [areaid],
         current: 0,
         size: 9999,
-        sort: ['sortIndex-'],
+        sort: ["sortIndex-"],
       }).then((res) => {
         this.teleport_list = [];
         this.item_loading = false;

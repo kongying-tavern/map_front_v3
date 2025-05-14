@@ -10,7 +10,7 @@
       </div>
       <div
         class="btn discuss"
-        @click="openURL('https://support.qq.com/product/321980')"
+        @click="openURL('https://yuanshen.site/docs/feedback/#ALL')"
       >
         <q-tooltip> 反馈/建议 </q-tooltip>
       </div>
@@ -134,7 +134,7 @@ export default {
           img: "/imgs/icon_fankui.png",
           id: "feedback",
           executor: () => {
-            openURL("https://support.qq.com/product/321980");
+            openURL("https://yuanshen.site/docs/feedback/#ALL");
           },
         },
         {

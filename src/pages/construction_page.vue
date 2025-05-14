@@ -38,15 +38,12 @@
       <div class="leaflet-bottom leaflet-left">
         <div class="leaflet-control-attribution leaflet-control">
           <footer role="contentinfo" class="footer">
-            <a
-              href="/docs/disclaimer.html"
-              target="_blank"
-              title="空荧酒馆免责声明"
+            <a href="/docs/disclaimer" target="_blank" title="空荧酒馆免责声明"
               >免责声明</a
             >
             <a href="/join" target="_blank" title="加入我们">招募</a>
             <a
-              href="https://support.qq.com/products/321980/blog/505810"
+              href="/docs/blog/changelog-web"
               target="_blank"
               rel="noopener noreferrer"
               title="空荧酒馆原神地图更新日志"
