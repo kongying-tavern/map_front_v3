@@ -57,11 +57,11 @@
         </span>
 
         <div class="parent_selector row justify-center">
-          <div class="row">
+          <div class="row" style="column-gap: 20rem">
             <div
               v-for="(item, index) in area_list_top"
               :key="index"
-              class="row area_type_containor items-center justify-center"
+              class="row area_type_container items-center justify-center"
               :class="{ on: area_selected_top.id == item.id }"
               @click.stop="change_area(item)"
               v-on:mouseenter="
