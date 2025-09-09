@@ -71,8 +71,8 @@
 
 <script>
 import ItemSelector from "../components/item_selector.vue";
-const AreaSelector = defineAsyncComponent(() =>
-  import("../components/area_selector.vue"),
+const AreaSelector = defineAsyncComponent(
+  () => import("../components/area_selector.vue"),
 );
 import PopupWindow from "../components/popup_window.vue";
 import ExtraBtn from "../components/extra_btn.vue";

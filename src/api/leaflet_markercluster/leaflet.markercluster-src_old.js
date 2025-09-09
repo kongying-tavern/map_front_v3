@@ -8,11 +8,11 @@
   typeof exports === "object" && typeof module !== "undefined"
     ? factory(exports)
     : typeof define === "function" && define.amd
-    ? define(["exports"], factory)
-    : factory(
-        ((global.Leaflet = global.Leaflet || {}),
-        (global.Leaflet.markercluster = global.Leaflet.markercluster || {})),
-      );
+      ? define(["exports"], factory)
+      : factory(
+          ((global.Leaflet = global.Leaflet || {}),
+          (global.Leaflet.markercluster = global.Leaflet.markercluster || {})),
+        );
 })(this, function (exports) {
   "use strict";
 
