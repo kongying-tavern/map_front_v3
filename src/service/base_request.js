@@ -74,8 +74,8 @@ function query_itemlayer_byid(data) {
  * @param {Array} typeIdList 图标标签分类列表
  * @returns 物品点位图标信息
  */
-function query_taglist(data) {
-  return default_request(`/tag/get/list`, data);
+function query_iconlist(data) {
+  return default_request(`/icon/get/list`, data);
 }
 function clear_cache() {
   return default_request(`/cache/item`, undefined, "delete");
@@ -85,7 +85,7 @@ export {
   query_type,
   query_itemlist,
   query_itemlayer_infolist,
-  query_taglist,
+  query_iconlist,
   query_itemlayer_byid,
   clear_cache,
 };
