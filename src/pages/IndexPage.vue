@@ -233,7 +233,9 @@ export default {
     mark_count() {
       if (localStorage.getItem("marked_layers") != null) {
         let arr = JSON.parse(localStorage.getItem("marked_layers"));
-        query_itemlayer_byid(arr).then((res) => {
+        query_itemlayer_byid({
+          markerIdList: arr || [],
+        }).then((res) => {
           for (let i of res.data.data) {
             for (let j of i.itemList) {
               if (j.count == 1) {
