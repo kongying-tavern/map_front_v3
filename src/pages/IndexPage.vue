@@ -460,8 +460,14 @@ export default {
       this.teleport_map = new Map();
       this.BXGroup = L.markerClusterGroup({
         maxClusterRadius: function (e) {
-          let radius = 80;
-          let radius_map = new Map([[4, 100], [(5, 80)], [(6, 55)], [(7, 25)]]);
+          let radius = 5;
+          let radius_map = new Map([
+            [0, 100],
+            [-1, 80],
+            [-2, 55],
+            [-3, 25],
+            [-4, 15],
+          ]);
           if (radius_map.has(e)) {
             radius = radius_map.get(e);
             return radius;
