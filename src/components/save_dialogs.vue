@@ -157,7 +157,7 @@
             </div>
             <div style="margin-left: 20px; font-size: 16px">
               <div class="text-bold">本地存档</div>
-              <div>最后修改时间：{{ local_save.time }}</div>
+              <div>最后修改时间：{{ dateformat(local_save.ts) }}</div>
             </div>
           </div>
         </q-card-section>
@@ -172,7 +172,7 @@
             </div>
             <div style="margin-left: 20px; font-size: 16px">
               <div class="text-bold">云端存档</div>
-              <div>最后修改时间：{{ cloud_save.time }}</div>
+              <div>最后修改时间：{{ dateformat(cloud_save.ts) }}</div>
             </div>
           </div>
         </q-card-section>
@@ -190,7 +190,7 @@
 <script>
 import { mapStores } from "pinia";
 import { useCounterStore } from "../stores/example-store";
-import { date } from "quasar";
+import { fmtTs, toUnixSeconds, toTimestampString } from "../api/time";
 import {
   get_gitee_token,
   refresh_gitee_token,
@@ -229,15 +229,15 @@ export default {
           name: "created_at",
           align: "center",
           label: "创建时间",
-          field: "created_at",
-          format: (val) => `${date.formatDate(val, "YYYY-MM-DD HH:mm:ss")}`,
+          field: "created_at_ts",
+          format: (val) => fmtTs(val),
         },
         {
           name: "updated_at",
           align: "center",
           label: "最后修改时间",
-          field: "updated_at",
-          format: (val) => `${date.formatDate(val, "YYYY-MM-DD HH:mm:ss")}`,
+          field: "updated_at_ts",
+          format: (val) => fmtTs(val),
         },
         {
           name: "handle",
@@ -250,18 +250,24 @@ export default {
       save_marked: false,
       save_compare_window: false,
       local_save: {
-        data: "",
-        time: "",
+        data: null,
+        ts: null,
       },
       cloud_save: {
-        data: "",
-        time: "",
+        data: null,
+        ts: null,
       },
     };
   },
   methods: {
     dateformat(val) {
-      return date.formatDate(val, "YYYY-MM-DD HH:mm:ss");
+      return fmtTs(val);
+    },
+    // 归一化：把 Gitee 返回的 ISO 时间换算为秒级时间戳字段
+    normalize_gist(gist) {
+      gist.created_at_ts = toUnixSeconds(gist.created_at);
+      gist.updated_at_ts = toUnixSeconds(gist.updated_at);
+      return gist;
     },
     //查询存档信息
     async query_saves() {
@@ -271,7 +277,7 @@ export default {
         this.loading = false;
         for (let i of res.data) {
           if (i.files.Data_KYJG != undefined) {
-            this.save_data.push(i);
+            this.save_data.push(this.normalize_gist(i));
           }
         }
       });
@@ -303,12 +309,17 @@ export default {
           alert("未查询到该存档在服务器上的信息，请刷新后重试");
           return;
         }
-        if (cloud_data.updated_at != local_data.updated_at) {
+        if (!local_data) {
+          alert("未查询到本地存档信息，请刷新后重试");
+          return;
+        }
+        // 秒级时间戳数值比较；两侧均经 toUnixSeconds 归一化
+        if (cloud_data.updated_at_ts !== local_data.updated_at_ts) {
           this.local_save = {
             data: local_data,
-            time: localStorage.getItem("_yuanshenmap_save_time"),
+            ts: toUnixSeconds(localStorage.getItem("_yuanshenmap_save_time")),
           };
-          this.cloud_save = { data: cloud_data, time: cloud_time };
+          this.cloud_save = { data: cloud_data, ts: cloud_data.updated_at_ts };
           this.save_compare_window = true;
         } else {
           this.submit_data();
@@ -324,23 +335,22 @@ export default {
               "_yuanshenmap_saveid",
               this.local_save.data.id,
             );
-            localStorage.setItem(
-              "_yuanshenmap_save_time",
-              this.local_save.time,
-            );
+            if (this.local_save.ts != null) {
+              localStorage.setItem(
+                "_yuanshenmap_save_time",
+                String(this.local_save.ts),
+              );
+            }
           }
           this.submit_data();
           break;
         case 2:
           if (confirm("你确定要使用云端存档吗")) {
-            localStorage.setItem(
-              "_yuanshenmap_saveid",
-              this.cloud_save.data.id,
-            );
-            localStorage.setItem(
-              "_yuanshenmap_save_time",
-              this.cloud_save.time,
-            );
+            // 交由父组件统一读档：写 saveid/save_time 并把云端数据覆盖到本地
+            this.$emit("load", {
+              data: this.cloud_save.data,
+              id: this.save_id,
+            });
           }
           break;
       }
@@ -367,6 +377,11 @@ export default {
           this.loading = false;
           if (res.status == 200) {
             create_notify("保存成功！");
+            // 以服务端返回的最新 updated_at 刷新本地时间锚点（秒级）
+            let ts = toTimestampString(res.data?.updated_at);
+            if (ts) {
+              localStorage.setItem("_yuanshenmap_save_time", ts);
+            }
             this.query_saves();
             this.mainStore.change_mark = false;
           }
@@ -481,7 +496,7 @@ export default {
                     this.loading = false;
                     for (let i of res.data) {
                       if (i.files.Data_KYJG != undefined) {
-                        this.save_data.push(i);
+                        this.save_data.push(this.normalize_gist(i));
                       }
                     }
                   });

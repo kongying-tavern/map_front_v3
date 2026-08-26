@@ -74,7 +74,8 @@
 
 <script>
 import _ from "lodash";
-import { Dark, date } from "quasar";
+import { Dark } from "quasar";
+import { toTimestampString } from "../api/time";
 import SaveDialog from "./save_dialogs.vue";
 import { mapStores } from "pinia";
 import { useCounterStore } from "../stores/example-store";
@@ -260,11 +261,10 @@ export default {
       get_gitee_gist().then((res) => {
         localStorage.setItem("_yuanshenmap_saveid", data.data.id);
         let cloud_data = res.data.find((item) => item.id == data.data.id);
-        let cloud_time = date.formatDate(
-          cloud_data.updated_at,
-          "YYYY-MM-DD HH:mm:ss",
+        localStorage.setItem(
+          "_yuanshenmap_save_time",
+          toTimestampString(cloud_data.updated_at),
         );
-        localStorage.setItem("_yuanshenmap_save_time", cloud_time);
         this.$emit("load", cloud_data);
         create_notify("读取成功");
         this.loading = false;
