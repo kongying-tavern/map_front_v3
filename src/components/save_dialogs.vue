@@ -313,13 +313,16 @@ export default {
           alert("未查询到本地存档信息，请刷新后重试");
           return;
         }
-        // 秒级时间戳数值比较；两侧均经 toUnixSeconds 归一化
-        if (cloud_data.updated_at_ts !== local_data.updated_at_ts) {
+        // 秒级时间戳数值比较：现拉对象未经过 normalize_gist，
+        // 在这里现场归一化，两侧始终同源同级，避免 undefined 参与比较
+        let cloud_ts = toUnixSeconds(cloud_data.updated_at);
+        let local_ts = toUnixSeconds(local_data.updated_at);
+        if (cloud_ts !== local_ts) {
           this.local_save = {
             data: local_data,
             ts: toUnixSeconds(localStorage.getItem("_yuanshenmap_save_time")),
           };
-          this.cloud_save = { data: cloud_data, ts: cloud_data.updated_at_ts };
+          this.cloud_save = { data: cloud_data, ts: cloud_ts };
           this.save_compare_window = true;
         } else {
           this.submit_data();
